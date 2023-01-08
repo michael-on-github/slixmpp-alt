@@ -290,8 +290,8 @@ class XMLStream(asyncio.BaseProtocol):
         self.xml_depth = 0
         self.xml_root = None
 
-        self.force_starttls = None
-        self.disable_starttls = None
+        self.force_starttls = True
+        self.disable_starttls = False
 
         self.waiting_queue = asyncio.Queue()
 
@@ -405,8 +405,9 @@ class XMLStream(asyncio.BaseProtocol):
             self.disconnected.set_result(True)
         self.disconnected = asyncio.Future()
 
-    def connect(self, host: str = '', port: int = 0, use_ssl: Optional[bool] = False,
-                force_starttls: Optional[bool] = True, disable_starttls: Optional[bool] = False) -> None:
+    def connect(self, host: str = '', port: int = 0, use_ssl: Optional[bool] = None,
+                force_starttls: Optional[bool] = None,
+                disable_starttls: Optional[bool] = None) -> None:
         """Create a new socket and connect to the server.
 
         :param host: The name of the desired server for the connection.

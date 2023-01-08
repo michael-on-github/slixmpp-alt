@@ -9,6 +9,8 @@
 import logging
 import hashlib
 
+from typing import Optional
+
 from slixmpp import Message, Iq, Presence
 from slixmpp.basexmpp import BaseXMPP
 from slixmpp.stanza import Handshake
@@ -93,7 +95,7 @@ class ComponentXMPP(BaseXMPP):
         for st in Message, Iq, Presence:
             register_stanza_plugin(st, Error)
 
-    def connect(self, host=None, port=None, use_ssl=False):
+    def connect(self, host: str = '', port: int = 0, use_ssl: Optional[bool] = None) -> None:
         """Connect to the server.
 
 
@@ -104,16 +106,15 @@ class ComponentXMPP(BaseXMPP):
         :param use_ssl: Flag indicating if SSL should be used by connecting
                         directly to a port using SSL.
         """
-        if host is None:
-            host = self.server_host
-        if port is None:
-            port = self.server_port
+        if host is not None:
+            self.server_host = host
+        if port:
+            self.server_port = port
 
         self.server_name = self.boundjid.host
 
         log.debug("Connecting to %s:%s", host, port)
-        return XMLStream.connect(self, host=host, port=port,
-                                       use_ssl=use_ssl)
+        XMLStream.connect(self, host=self.server_host, port=self.server_port, use_ssl=use_ssl)
 
     def incoming_filter(self, xml):
         """
