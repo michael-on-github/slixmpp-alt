@@ -162,7 +162,7 @@ class XEP_0115(BasePlugin):
         if pres['caps']['hash'] not in self.hashes:
             try:
                 log.debug("Unknown caps hash: %s", pres['caps']['hash'])
-                self.xmpp['xep_0030'].get_info(jid=pres['from'], ifrom=ifrom)
+                await self.xmpp['xep_0030'].get_info(jid=pres['from'], ifrom=ifrom)
                 return
             except XMPPError:
                 return
