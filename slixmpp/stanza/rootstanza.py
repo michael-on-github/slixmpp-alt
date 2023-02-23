@@ -63,6 +63,8 @@ class RootStanza(StanzaBase):
             reply['error']['condition'] = e.condition
             reply['error']['text'] = e.text
             reply['error']['type'] = e.etype
+            if e.by:
+                reply["error"]["by"] = e.by
             if e.extension is not None:
                 # Extended error tag
                 extxml = ET.Element("{%s}%s" % (e.extension_ns, e.extension),

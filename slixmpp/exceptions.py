@@ -7,7 +7,8 @@
 
 from typing import Optional
 
-from .types import ErrorConditions, ErrorTypes
+from .types import ErrorConditions, ErrorTypes, JidStr
+
 
 class XMPPError(Exception):
 
@@ -43,7 +44,7 @@ class XMPPError(Exception):
 
     def __init__(self, condition: ErrorConditions='undefined-condition', text='',
                 etype: Optional[ErrorTypes]=None, extension=None, extension_ns=None,
-                extension_args=None, clear=True):
+                extension_args=None, clear=True, by: Optional[JidStr] = None):
         if extension_args is None:
             extension_args = {}
         if condition not in _DEFAULT_ERROR_TYPES:
@@ -51,6 +52,7 @@ class XMPPError(Exception):
         if etype is None:
             etype = _DEFAULT_ERROR_TYPES[condition]
 
+        self.by = by
         self.condition = condition
         self.text = text
         self.etype = etype
