@@ -279,10 +279,10 @@ class BaseXMPP(XMLStream):
         if self.plugin_whitelist:
             plugin_list = self.plugin_whitelist
         else:
-            plugin_list = plugins.__all__
+            plugin_list = plugins.PLUGINS
 
         for plugin in plugin_list:
-            if plugin in plugins.__all__:
+            if plugin in plugins.PLUGINS:
                 self.register_plugin(plugin)
             else:
                 raise NameError("Plugin %s not in plugins.__all__." % plugin)

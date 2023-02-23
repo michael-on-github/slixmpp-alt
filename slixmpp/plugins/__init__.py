@@ -6,7 +6,7 @@ from slixmpp.plugins.base import PluginManager, PluginNotFound, BasePlugin
 from slixmpp.plugins.base import register_plugin, load_plugin
 
 
-__all__ = [
+PLUGINS = [
     # XEPS
     'xep_0004',  # Data Forms
     'xep_0009',  # Jabber-RPC
@@ -116,5 +116,12 @@ __all__ = [
     'xep_0444',  # Message Reactions
     'xep_0461',  # Message Replies
     # Meant to be imported by plugins
-    'BasePlugin'
+]
+
+__all__ = PLUGINS + [
+    'PluginManager',
+    'PluginNotFound',
+    'BasePlugin',
+    'register_plugin',
+    'load_plugin',
 ]
