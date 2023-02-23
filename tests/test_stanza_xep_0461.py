@@ -33,7 +33,7 @@ class TestReply(SlixTest):
         self.check(
             message,
             """
-            <message xmlns="jabber:client">M
+            <message xmlns="jabber:client">
               <body>12345\nrealbody</body>
               <fallback xmlns='urn:xmpp:feature-fallback:0' for='NS'>
                 <body start="0" end="6" />

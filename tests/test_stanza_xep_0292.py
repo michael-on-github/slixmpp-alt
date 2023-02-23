@@ -1,4 +1,5 @@
 import datetime
+import unittest
 
 from slixmpp import Iq
 from slixmpp.test import SlixTest
@@ -116,3 +117,5 @@ class TestVcard(SlixTest):
             """,
             use_values=False
         )
+
+suite = unittest.TestLoader().loadTestsFromTestCase(TestVcard)
