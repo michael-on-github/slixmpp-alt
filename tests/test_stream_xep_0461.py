@@ -28,7 +28,7 @@ class TestReply(SlixTest):
             <message id="other-id" from="from@from.com/res">
               <reply xmlns="urn:xmpp:reply:0" id="some-id" />
               <body>&gt; quoted\nsome-body</body>
-                <fallback xmlns='urn:xmpp:feature-fallback:0' for='urn:xmpp:reply:0'>
+                <fallback xmlns='urn:xmpp:fallback:0' for='urn:xmpp:reply:0'>
                    <body start="0" end="8" />
                 </fallback>
             </message>

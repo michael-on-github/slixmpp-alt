@@ -35,7 +35,7 @@ class TestReply(SlixTest):
             """
             <message xmlns="jabber:client">
               <body>12345\nrealbody</body>
-              <fallback xmlns='urn:xmpp:feature-fallback:0' for='NS'>
+              <fallback xmlns='urn:xmpp:fallback:0' for='NS'>
                 <body start="0" end="6" />
               </fallback>
             </message>
