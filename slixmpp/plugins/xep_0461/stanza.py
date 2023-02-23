@@ -13,7 +13,7 @@ class Reply(ElementBase):
 
 class FeatureFallBack(ElementBase):
     # should also be a multi attrib
-    namespace = "urn:xmpp:feature-fallback:0"
+    namespace = "urn:xmpp:fallback:0"
     name = "fallback"
     plugin_attrib = "feature_fallback"
     interfaces = {"for"}
@@ -24,7 +24,7 @@ class FeatureFallBack(ElementBase):
         end = self["fallback_body"]["end"]
         body = self.parent()["body"]
         if start <= end:
-            return body[start:end+1]
+            return body[start:end]
         else:
             return ""
 
@@ -44,7 +44,7 @@ class FeatureFallBack(ElementBase):
         msg["body"] = quoted + msg["body"]
         msg["feature_fallback"]["for"] = NS
         msg["feature_fallback"]["fallback_body"]["start"] = 0
-        msg["feature_fallback"]["fallback_body"]["end"] = len(quoted) - 1
+        msg["feature_fallback"]["fallback_body"]["end"] = len(quoted)
 
 
 class FallBackBody(ElementBase):
