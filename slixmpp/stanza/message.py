@@ -176,7 +176,7 @@ class Message(RootStanza):
         """
         new_message = StanzaBase.reply(self, clear)
 
-        if self['type'] == 'groupchat':
+        if not getattr(self.stream, "is_component", False) and self['type'] == 'groupchat':
             new_message['to'] = new_message['to'].bare
 
         new_message['thread'] = self['thread']
