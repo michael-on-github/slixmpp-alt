@@ -83,8 +83,35 @@ MAMDefault = Literal['always', 'never', 'roster']
 
 FilterString = Literal['in', 'out', 'out_sync']
 
+ErrorTypes = Literal["modify", "cancel", "auth", "wait", "cancel"]
+
+ErrorConditions = Literal[
+    "bad-request",
+    "conflict",
+    "feature-not-implemented",
+    "forbidden",
+    "gone",
+    "internal-server-error",
+    "item-not-found",
+    "jid-malformed",
+    "not-acceptable",
+    "not-allowed",
+    "not-authorized",
+    "payment-required",
+    "recipient-unavailable",
+    "redirect",
+    "registration-required",
+    "remote-server-not-found",
+    "remote-server-timeout",
+    "resource-constraint",
+    "service-unavailable",
+    "subscription-required",
+    "undefined-condition",
+    "unexpected-request",
+]
+
 __all__ = [
     'Protocol', 'TypedDict', 'Literal', 'OptJid', 'OptJidStr', 'JidStr', 'MAMDefault',
     'PresenceTypes', 'PresenceShows', 'MessageTypes', 'IqTypes', 'MucRole',
-    'MucAffiliation', 'FilterString',
+    'MucAffiliation', 'FilterString', 'ErrorConditions', 'ErrorTypes'
 ]

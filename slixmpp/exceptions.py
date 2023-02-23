@@ -5,6 +5,10 @@
 # :copyright: (c) 2011 Nathanael C. Fritz
 # :license: MIT, see LICENSE for more details
 
+from typing import Optional
+
+from .types import ErrorConditions, ErrorTypes
+
 class XMPPError(Exception):
 
     """
@@ -37,11 +41,15 @@ class XMPPError(Exception):
                   Defaults to ``True``.
     """
 
-    def __init__(self, condition='undefined-condition', text='',
-                etype='cancel', extension=None, extension_ns=None,
+    def __init__(self, condition: ErrorConditions='undefined-condition', text='',
+                etype: Optional[ErrorTypes]=None, extension=None, extension_ns=None,
                 extension_args=None, clear=True):
         if extension_args is None:
             extension_args = {}
+        if condition not in _DEFAULT_ERROR_TYPES:
+            raise ValueError("This is not a valid condition type", condition)
+        if etype is None:
+            etype = _DEFAULT_ERROR_TYPES[condition]
 
         self.condition = condition
         self.text = text
@@ -110,3 +118,29 @@ class PresenceError(XMPPError):
             etype=pres['error']['type'],
         )
         self.presence = pres
+
+
+_DEFAULT_ERROR_TYPES: dict[ErrorConditions, ErrorTypes] = {
+    "bad-request": "modify",
+    "conflict": "cancel",
+    "feature-not-implemented": "cancel",
+    "forbidden": "auth",
+    "gone": "modify",
+    "internal-server-error": "wait",
+    "item-not-found": "cancel",
+    "jid-malformed": "modify",
+    "not-acceptable": "modify",
+    "not-allowed": "cancel",
+    "not-authorized": "auth",
+    "payment-required": "auth",
+    "recipient-unavailable": "wait",
+    "redirect": "modify",
+    "registration-required": "auth",
+    "remote-server-not-found": "cancel",
+    "remote-server-timeout": "wait",
+    "resource-constraint": "wait",
+    "service-unavailable": "cancel",
+    "subscription-required": "auth",
+    "undefined-condition": "cancel",
+    "unexpected-request": "modify",
+}
