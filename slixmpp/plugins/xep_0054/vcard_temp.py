@@ -134,8 +134,10 @@ class XEP_0054(BasePlugin):
             return
         elif iq['type'] == 'get' and self.xmpp.is_component:
             vcard = await self.api['get_vcard'](iq['to'].bare, ifrom=iq['from'])
-            if isinstance(vcard, Iq):
-                vcard.send()
+            if vcard is None:
+                raise XMPPError("item-not-found")
+            elif isinstance(vcard, Iq):
+                await vcard.send()
             else:
                 iq = iq.reply()
                 iq.append(vcard)
