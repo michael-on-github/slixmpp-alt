@@ -14,9 +14,6 @@ class TestSIMS(SlixTest):
             mode="component", jid="whatevs.shakespeare.lit", plugins={"xep_0385"}
         )
 
-    def tearDown(self):
-        self.stream_close()
-
     def test_set_file(self):
         with NamedTemporaryFile("wb+") as f:
             n = 10

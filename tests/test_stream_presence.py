@@ -11,9 +11,6 @@ class TestStreamPresence(SlixTest):
     def setUp(self):
         self.stream_start(jid='tester@localhost', plugins=[])
 
-    def tearDown(self):
-        self.stream_close()
-
     def testInitialUnavailablePresences(self):
         """
         Test receiving unavailable presences from JIDs that

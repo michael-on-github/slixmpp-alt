@@ -15,9 +15,6 @@ class TestStreamPubsub(SlixTest):
     def setUp(self):
         self.stream_start()
 
-    def tearDown(self):
-        self.stream_close()
-
     def testCreateInstantNode(self):
         """Test creating an instant node"""
         self.xmpp['xep_0060'].create_node('pubsub.example.com', None)

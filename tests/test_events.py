@@ -8,9 +8,6 @@ class TestEvents(SlixTest):
     def setUp(self):
         self.stream_start()
 
-    def tearDown(self):
-        self.stream_close()
-
     def testEventHappening(self):
         """Test handler working"""
         happened = []

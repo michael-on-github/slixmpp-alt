@@ -6,9 +6,6 @@ from slixmpp.test import SlixTest
 
 class TestOOB(SlixTest):
 
-    def tearDown(self):
-        self.stream_close()
-
     def testSendOOB(self):
         """Test sending an OOB transfer request."""
         self.stream_start(plugins=['xep_0066', 'xep_0030'])

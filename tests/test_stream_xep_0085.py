@@ -6,9 +6,6 @@ from slixmpp.test import SlixTest
 
 class TestStreamChatStates(SlixTest):
 
-    def tearDown(self):
-        self.stream_close()
-
     def testChatStates(self):
         self.stream_start(mode='client', plugins=['xep_0030', 'xep_0085'])
 

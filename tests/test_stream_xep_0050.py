@@ -16,9 +16,6 @@ class TestAdHocCommands(SlixTest):
         # a dummy value.
         self.xmpp['xep_0050'].new_session = lambda: '_sessionid_'
 
-    def tearDown(self):
-        self.stream_close()
-
     def testInitialPayloadCommand(self):
         """Test a command with an initial payload."""
 

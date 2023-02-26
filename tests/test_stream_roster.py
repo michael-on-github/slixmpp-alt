@@ -13,9 +13,6 @@ class TestStreamRoster(SlixTest):
     Test handling roster updates.
     """
 
-    def tearDown(self):
-        self.stream_close()
-
     def testGetRoster(self):
         """Test handling roster requests."""
         self.stream_start(mode='client', jid='tester@localhost')

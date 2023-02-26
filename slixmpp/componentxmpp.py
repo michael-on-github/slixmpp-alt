@@ -9,13 +9,14 @@
 import logging
 import hashlib
 
+from slixmpp import Message, Iq, Presence
 from slixmpp.basexmpp import BaseXMPP
 from slixmpp.stanza import Handshake
+from slixmpp.stanza.error import Error
 from slixmpp.xmlstream import XMLStream
-from slixmpp.xmlstream import ET
 from slixmpp.xmlstream.matcher import MatchXPath
 from slixmpp.xmlstream.handler import Callback
-
+from slixmpp.xmlstream.stanzabase import register_stanza_plugin
 
 log = logging.getLogger(__name__)
 
@@ -39,9 +40,17 @@ class ComponentXMPP(BaseXMPP):
                       should be used instead of the standard
                       ``'jabber:component:accept'`` namespace.
                       Defaults to ``False``.
+    :param fix_error_ns: Fix the namespace of error stanzas.
+        If you use ``use_jc_ns`` namespace, you probably want that, but
+        it can be a problem if you use both a ClientXMPP and a ComponentXMPP
+        in the same interpreter. This is ``False`` by default for backwards
+        compatibility.
     """
 
-    def __init__(self, jid, secret, host=None, port=None, plugin_config=None, plugin_whitelist=None, use_jc_ns=False):
+    def __init__(self, jid, secret,
+                 host=None, port=None, plugin_config=None,
+                 plugin_whitelist=None, use_jc_ns=False,
+                 fix_error_ns=False):
 
         if not plugin_whitelist:
             plugin_whitelist = []
@@ -52,6 +61,8 @@ class ComponentXMPP(BaseXMPP):
             default_ns = 'jabber:client'
         else:
             default_ns = 'jabber:component:accept'
+        if fix_error_ns:
+            self._fix_error_ns()
         BaseXMPP.__init__(self, jid, default_ns)
 
         self.auto_authorize = None
@@ -76,6 +87,11 @@ class ComponentXMPP(BaseXMPP):
                          self._handle_handshake))
         self.add_event_handler('presence_probe',
                                self._handle_probe)
+
+    def _fix_error_ns(self):
+        Error.namespace = self.default_ns
+        for st in Message, Iq, Presence:
+            register_stanza_plugin(st, Error)
 
     def connect(self, host=None, port=None, use_ssl=False):
         """Connect to the server.

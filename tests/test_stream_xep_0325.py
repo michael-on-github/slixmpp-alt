@@ -30,9 +30,6 @@ class TestStreamControl(SlixTest):
     def _time_now(self):
         return datetime.datetime.now().replace(microsecond=0).isoformat()
 
-    def tearDown(self):
-        self.stream_close()
-
     def testRequestSetOk(self):
         self.stream_start(mode='component',
                           plugins=['xep_0030',

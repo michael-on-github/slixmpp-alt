@@ -7,9 +7,6 @@ class TestReply(SlixTest):
     def setUp(self):
         self.stream_start(plugins=["xep_0461"])
 
-    def tearDown(self):
-        self.stream_close()
-
     def testFallBackBody(self):
         async def on_reply(msg):
             start = msg["feature_fallback"]["fallback_body"]["start"]

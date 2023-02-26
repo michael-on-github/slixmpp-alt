@@ -8,9 +8,6 @@ class TestStreamExtendedDisco(SlixTest):
     Test using the XEP-0128 plugin.
     """
 
-    def tearDown(self):
-        self.stream_close()
-
     def testUsingExtendedInfo(self):
         self.stream_start(mode='client',
                           jid='tester@localhost',

@@ -8,9 +8,6 @@ class TestLiveStream(SlixTest):
     Test that we can test a live stanza stream.
     """
 
-    def tearDown(self):
-        self.stream_close()
-
     def testClientConnection(self):
         """Test that we can interact with a live ClientXMPP instance."""
         self.stream_start(mode='client',

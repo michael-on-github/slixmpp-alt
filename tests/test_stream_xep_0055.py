@@ -19,9 +19,6 @@ class TestJabberSearch(SlixTest):
         self.xmpp["xep_0055"].api.register(get_results, "search_query")
         self.xmpp["xep_0055"].api.register(get_results, "search_query")
 
-    def tearDown(self):
-        self.stream_close()
-
     def testRequestingSearchFields(self):
         self.recv(
             """
