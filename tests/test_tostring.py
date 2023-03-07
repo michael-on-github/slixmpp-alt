@@ -10,9 +10,6 @@ class TestToString(SlixTest):
     Test the implementation of slixmpp.xmlstream.tostring
     """
 
-    def tearDown(self):
-        self.stream_close()
-
     def tryTostring(self, original='', expected=None, message='', **kwargs):
         """
         Compare the result of calling tostring against an

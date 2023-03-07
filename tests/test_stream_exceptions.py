@@ -10,9 +10,6 @@ class TestStreamExceptions(SlixTest):
     Test handling roster updates.
     """
 
-    def tearDown(self):
-        self.stream_close()
-
     def testExceptionContinueWorking(self):
         """Test that Slixmpp continues to respond after an XMPPError is raised."""
 

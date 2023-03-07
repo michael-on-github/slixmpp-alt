@@ -6,9 +6,6 @@ from slixmpp.test import SlixTest
 
 class TestStreamSet(SlixTest):
 
-    def tearDown(self):
-        self.stream_close()
-
     def testHandleSoftwareVersionRequest(self):
         self.stream_start(mode='client', plugins=['xep_0030', 'xep_0092'])
 

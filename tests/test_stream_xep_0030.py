@@ -11,9 +11,6 @@ class TestStreamDisco(SlixTest):
     Test using the XEP-0030 plugin.
     """
 
-    def tearDown(self):
-        self.stream_close()
-
     def testInfoEmptyDefaultNode(self):
         """
         Info query result from an entity MUST have at least one identity

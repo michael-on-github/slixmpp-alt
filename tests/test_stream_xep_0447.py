@@ -15,8 +15,6 @@ class TestStatelessFileSharing(SlixTest):
             mode="component", jid="whatevs.shakespeare.lit", plugins={"xep_0447"}
         )
 
-    def tearDown(self):
-        self.stream_close()
 
     def test_set_file(self):
         with NamedTemporaryFile("wb+") as f:

@@ -14,9 +14,6 @@ class TestFilters(SlixTest):
     def setUp(self):
         self.stream_start()
 
-    def tearDown(self):
-        self.stream_close()
-
     def testIncoming(self):
 
         data = []

@@ -10,9 +10,6 @@ class TestStreamDirectInvite(SlixTest):
     Test using the XEP-0249 plugin.
     """
 
-    def tearDown(self):
-        self.stream_close()
-
     def testReceiveInvite(self):
         self.stream_start(mode='client',
                           plugins=['xep_0030',

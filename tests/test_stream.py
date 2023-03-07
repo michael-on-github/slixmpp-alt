@@ -8,9 +8,6 @@ class TestStreamTester(SlixTest):
     Test that we can simulate and test a stanza stream.
     """
 
-    def tearDown(self):
-        self.stream_close()
-
     def testClientEcho(self):
         """Test that we can interact with a ClientXMPP instance."""
         self.stream_start(mode='client')

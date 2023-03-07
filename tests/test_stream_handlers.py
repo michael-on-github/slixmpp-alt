@@ -15,9 +15,6 @@ class TestHandlers(SlixTest):
     def setUp(self):
         self.stream_start()
 
-    def tearDown(self):
-        self.stream_close()
-
     def testCallback(self):
         """Test using stream callback handlers."""
 

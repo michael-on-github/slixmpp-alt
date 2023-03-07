@@ -19,6 +19,7 @@ class TestStreamGateway(SlixTest):
                 "xep_0100": {"component_name": "AIM Gateway", "type": "aim"}
             },
         )
+        self.xmpp._fix_error_ns()
 
     def next_sent(self):
         self.wait_for_send_queue()
@@ -160,7 +161,6 @@ class TestStreamGateway(SlixTest):
             </iq>
             """
         )
-        # xmlns="jabber:client" in error substanza, bug in XEP-0077 plugin or OK?
         self.send(
             """
             <iq type='error'
@@ -171,7 +171,7 @@ class TestStreamGateway(SlixTest):
                 <username>RomeoMyRomeo</username>
                 <password>ILoveJuliet</password>
             </query>
-            <error code='406' type='modify' xmlns="jabber:client">
+            <error code='406' type='modify'>
                 <not-acceptable
                     xmlns='urn:ietf:params:xml:ns:xmpp-stanzas'/>
                 <text xmlns="urn:ietf:params:xml:ns:xmpp-stanzas">Not good</text>

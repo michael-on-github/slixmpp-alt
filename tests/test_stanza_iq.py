@@ -5,10 +5,6 @@ from slixmpp.xmlstream.stanzabase import ET
 
 class TestIqStanzas(SlixTest):
 
-    def tearDown(self):
-        """Shutdown the XML stream after testing."""
-        self.stream_close()
-
     def testSetup(self):
         """Test initializing default Iq values."""
         iq = self.Iq()

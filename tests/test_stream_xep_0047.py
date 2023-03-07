@@ -11,9 +11,6 @@ class TestInBandByteStreams(SlixTest):
     def setUp(self):
         self.stream_start(plugins=['xep_0047', 'xep_0030'])
 
-    def tearDown(self):
-        self.stream_close()
-
     def testOpenStream(self):
         """Test requesting a stream, successfully"""
 

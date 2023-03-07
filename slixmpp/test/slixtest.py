@@ -10,11 +10,13 @@ from xml.parsers.expat import ExpatError
 from slixmpp.test import TestTransport
 from slixmpp import ClientXMPP, ComponentXMPP
 from slixmpp.stanza import Message, Iq, Presence
+from slixmpp.stanza.error import Error
 from slixmpp.xmlstream import ET
 from slixmpp.xmlstream import ElementBase
 from slixmpp.xmlstream.tostring import tostring, highlight
 from slixmpp.xmlstream.matcher import StanzaPath, MatcherId, MatchIDSender
 from slixmpp.xmlstream.matcher import MatchXMLMask, MatchXPath
+from slixmpp.xmlstream.stanzabase import register_stanza_plugin
 
 import asyncio
 
@@ -322,6 +324,7 @@ class SlixTest(unittest.TestCase):
         if not plugin_config:
             plugin_config = {}
 
+        self.mode = mode
         if mode == 'client':
             self.xmpp = ClientXMPP(jid, password,
                                    sasl_mech=sasl_mech,
@@ -740,3 +743,10 @@ class SlixTest(unittest.TestCase):
 
         # Everything matches
         return True
+
+    def tearDown(self):
+        self.stream_close()
+        if getattr(self, "mode", None) == "component":
+            Error.namespace = 'jabber:client'
+            for st in Message, Iq, Presence:
+                register_stanza_plugin(st, Error)

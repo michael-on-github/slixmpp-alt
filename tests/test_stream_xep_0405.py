@@ -8,9 +8,6 @@ class TestMIXPAM(SlixTest):
     def setUp(self):
         self.stream_start(plugins=['xep_0405'])
 
-    def tearDown(self):
-        self.stream_close()
-
     def testGetRosterEmpty(self):
         """Test requesting an empty annotated roster"""
 
