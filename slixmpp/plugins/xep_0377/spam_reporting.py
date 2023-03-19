@@ -26,6 +26,9 @@ class XEP_0377(BasePlugin):
     dependencies = {'xep_0030', 'xep_0191'}
     stanza = stanza
 
+    SPAM = 'urn:xmpp:reporting:spam'
+    ABUSE = 'urn:xmpp:reporting:abuse'
+
     def plugin_init(self):
         register_stanza_plugin(Block, stanza.Report)
         register_stanza_plugin(stanza.Report, stanza.Text)
