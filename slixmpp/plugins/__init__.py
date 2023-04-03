@@ -102,6 +102,7 @@ PLUGINS = [
     'xep_0380',  # Explicit Message Encryption
     'xep_0382',  # Spoiler Messages
     'xep_0394',  # Message Markup
+    'xep_0402',  # PEP Native Bookmarks
     'xep_0403',  # MIX-Presence
     'xep_0404',  # MIX-Anon
     'xep_0405',  # MIX-PAM
