@@ -303,13 +303,15 @@ class JID:
 
     :param string jid:
         A string of the form ``'[user@]domain[/resource]'``.
+    :param bool bare:
+        If present, discard the provided resource.
 
     :raises InvalidJID:
     """
 
     __slots__ = ('_node', '_domain', '_resource', '_bare', '_full')
 
-    def __init__(self, jid: Optional[Union[str, 'JID']] = None):
+    def __init__(self, jid: Optional[Union[str, 'JID']] = None, bare: bool = False):
         if not jid:
             self._node = ''
             self._domain = ''
@@ -318,11 +320,14 @@ class JID:
             self._full = ''
             return
         elif not isinstance(jid, JID):
-            self._node, self._domain, self._resource = _parse_jid(jid)
+            node, domain, resource = _parse_jid(jid)
+            self._node = node
+            self._domain = domain
+            self._resource = resource if not bare else ''
         else:
             self._node = jid._node
             self._domain = jid._domain
-            self._resource = jid._resource
+            self._resource = jid._resource if not bare else ''
         self._update_bare_full()
 
     def unescape(self):
