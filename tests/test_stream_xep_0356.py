@@ -1,7 +1,7 @@
 import unittest
 
-from slixmpp import ComponentXMPP, Iq, Message
-from slixmpp.roster import RosterItem
+from slixmpp import Message, JID, Iq
+from slixmpp.plugins.xep_0356 import permissions
 from slixmpp.test import SlixTest
 
 
@@ -9,9 +9,9 @@ class TestPermissions(SlixTest):
     def setUp(self):
         self.stream_start(
             mode="component",
-            plugins=["xep_0356"],
+            plugins=["xep_0356", "xep_0045"],
             jid="pubsub.capulet.lit",
-            server="capulet.net",
+            server="capulet.lit",
         )
 
     def testPluginEnd(self):
@@ -23,26 +23,44 @@ class TestPermissions(SlixTest):
         self.assertFalse(exc)
 
     def testGrantedPrivileges(self):
-        # https://xmpp.org/extensions/xep-0356.html#example-4
         results = {"event": False}
+        x = self.xmpp["xep_0356"]
         self.xmpp.add_event_handler(
             "privileges_advertised", lambda msg: results.__setitem__("event", True)
         )
         self.recv(
             """
-            <message from='capulet.net' to='pubub.capulet.lit' id='54321'>
+            <message from='capulet.lit' to='pubsub.capulet.lit' id='54321'>
                 <privilege xmlns='urn:xmpp:privilege:2'>
                     <perm access='roster' type='both'/>
                     <perm access='message' type='outgoing'/>
+                    <perm access='iq'>
+                      <namespace ns='some_ns' type='get' />
+                      <namespace ns='some_other_ns' type='both' />
+                    </perm>
                 </privilege>
             </message>
             """
         )
-        self.assertEqual(self.xmpp["xep_0356"].granted_privileges["roster"], "both")
+        server = JID("capulet.lit")
         self.assertEqual(
-            self.xmpp["xep_0356"].granted_privileges["message"], "outgoing"
+            x.granted_privileges[server].roster, permissions.RosterAccess.BOTH
         )
-        self.assertEqual(self.xmpp["xep_0356"].granted_privileges["presence"], "none")
+        self.assertEqual(
+            x.granted_privileges[server].message, permissions.MessagePermission.OUTGOING
+        )
+        self.assertEqual(
+            x.granted_privileges[server].presence, permissions.PresencePermission.NONE
+        )
+        self.assertEqual(
+            x.granted_privileges[server].iq["nope"], permissions.IqPermission.NONE
+        )
+        self.assertEqual(
+            x.granted_privileges[server].iq["some_ns"], permissions.IqPermission.GET
+        )
+        self.assertEqual(
+            x.granted_privileges[server].iq["some_other_ns"], permissions.IqPermission.BOTH
+        )
         self.assertTrue(results["event"])
 
     def testGetRosterIq(self):
@@ -94,7 +112,7 @@ class TestPermissions(SlixTest):
 
     def testMakeOutgoingMessage(self):
         xmlstring = """
-        <message xmlns="jabber:component:accept" from='pubsub.capulet.lit' to='capulet.net'>
+        <message xmlns="jabber:component:accept" from='pubsub.capulet.lit' to='capulet.lit'>
             <privilege xmlns='urn:xmpp:privilege:2'>
                 <forwarded xmlns='urn:xmpp:forward:0'>
                     <message from="juliet@capulet.lit" to="romeo@montague.lit" xmlns="jabber:client">
@@ -108,9 +126,49 @@ class TestPermissions(SlixTest):
         msg["from"] = "juliet@capulet.lit"
         msg["to"] = "romeo@montague.lit"
         msg["body"] = "I do not hate you"
-        
+
         priv_msg = self.xmpp["xep_0356"]._make_privileged_message(msg)
         self.check(priv_msg, xmlstring, use_values=False)
+
+    def testDetectServer(self):
+        msg = Message()
+        msg["from"] = "juliet@something"
+        msg["to"] = "romeo@montague.lit"
+        msg["body"] = "I do not hate you"
+
+        priv_msg = self.xmpp["xep_0356"]._make_privileged_message(msg)
+        assert priv_msg.get_to() == "something"
+        assert priv_msg.get_from() == "pubsub.capulet.lit"
+
+    def testIqOnBehalf(self):
+        iq = Iq()
+        iq["mucadmin_query"]["item"]["affiliation"] = "member"
+        iq.set_from("juliet@xxx")
+        iq.set_to("somemuc@conf")
+        iq.set_type("get")
+        self.xmpp["xep_0356"].granted_privileges["conf"].iq["http://jabber.org/protocol/muc#admin"] = permissions.IqPermission.BOTH
+        r = self.xmpp.loop.create_task(self.xmpp["xep_0356"].send_privileged_iq(iq, iq_id="0"))
+        self.send(
+            """
+            <iq from="pubsub.capulet.lit"
+                to="juliet@xxx"
+                xmlns="jabber:component:accept"
+                type="get" id="0">
+                <privileged_iq xmlns='urn:xmpp:privilege:2'>
+                    <iq xmlns='jabber:client'
+                        type='get'
+                        to='somemuc@conf'
+                        from='juliet@xxx'
+                         id="0">
+                          <query xmlns='http://jabber.org/protocol/muc#admin'>
+                            <item affiliation='member'/>
+                          </query>
+                    </iq>
+                </privileged_iq>
+            </iq>
+            """,
+            use_values=False
+        )
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestPermissions)

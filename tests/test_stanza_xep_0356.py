@@ -1,9 +1,7 @@
 import unittest
-from slixmpp import Message
 from slixmpp.test import SlixTest
-from slixmpp.xmlstream import register_stanza_plugin
 
-from slixmpp.plugins.xep_0356 import stanza
+from slixmpp.plugins.xep_0356 import stanza, permissions
 
 
 class TestPermissions(SlixTest):
@@ -12,30 +10,57 @@ class TestPermissions(SlixTest):
 
     def testAdvertisePermission(self):
         xmlstring = """
-            <message from='capulet.net' to='pubub.capulet.lit'>
+            <message from='capulet.lit' to='pubsub.capulet.lit'>
                 <privilege xmlns='urn:xmpp:privilege:2'>
                     <perm access='roster' type='both'/>
                     <perm access='message' type='outgoing'/>
                     <perm access='presence' type='managed_entity'/>
+                    <perm access='iq' type='both'/>
                 </privilege>
             </message>
         """
         msg = self.Message()
-        msg["from"] = "capulet.net"
-        msg["to"] = "pubub.capulet.lit"
-        # This raises AttributeError: 'NoneType' object has no attribute 'use_origin_id'
-        # msg["id"] = "id"
+        msg["from"] = "capulet.lit"
+        msg["to"] = "pubsub.capulet.lit"
 
         for access, type_ in [
-            ("roster", "both"),
-            ("message", "outgoing"),
-            ("presence", "managed_entity"),
+            ("roster", permissions.RosterAccess.BOTH),
+            ("message", permissions.MessagePermission.OUTGOING),
+            ("presence", permissions.PresencePermission.MANAGED_ENTITY),
+            ("iq", permissions.IqPermission.BOTH),
         ]:
             msg["privilege"].add_perm(access, type_)
 
         self.check(msg, xmlstring)
-        # Should this one work? →        # AttributeError: 'Message' object has no attribute 'permission'
-        # self.assertEqual(msg.permission["roster"], "both")
+
+    def testIqPermission(self):
+        x = stanza.Privilege()
+        x["access"] = "iq"
+        ns = stanza.NameSpace()
+        ns["ns"] = "some_ns"
+        ns["type"] = "get"
+        x["perm"]["access"] = "iq"
+        x["perm"].append(ns)
+        ns = stanza.NameSpace()
+        ns["ns"] = "some_other_ns"
+        ns["type"] = "both"
+        x["perm"].append(ns)
+        self.check(
+            x,
+            """
+              <privilege xmlns='urn:xmpp:privilege:2'>
+                <perm access='iq'>
+                  <namespace ns='some_ns' type='get' />
+                  <namespace ns='some_other_ns' type='both' />
+                </perm>
+              </privilege>
+            """
+        )
+        nss = set()
+        for perm in x["perms"]:
+            for ns in perm["namespaces"]:
+                nss.add((ns["ns"], ns["type"]))
+        assert nss == {("some_ns", "get"), ("some_other_ns", "both")}
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestPermissions)
