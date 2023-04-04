@@ -9,18 +9,25 @@ class Conference(ElementBase):
     namespace = NS
     name = "conference"
     plugin_attrib = "conference"
-    interfaces = {"name", "autojoin", "nick"}
-    sub_interfaces = {"nick"}
+    interfaces = {"name", "autojoin", "nick", "password"}
+    sub_interfaces = {"nick", "password"}
 
     def set_autojoin(self, v: bool):
-        self._set_attr('autojoin', "true" if v else "false")
+        self._set_attr("autojoin", "true" if v else "false")
 
     def get_autojoin(self):
-        v = self._get_attr('autojoin', '')
+        v = self._get_attr("autojoin", "")
         if not v:
             return False
         return v == "1" or v.lower() == "true"
 
 
+class Extensions(ElementBase):
+    namespace = NS
+    name = "extensions"
+    plugin_attrib = "extensions"
+
+
 def register_plugin():
+    register_stanza_plugin(Conference, Extensions)
     register_stanza_plugin(Item, Conference)
