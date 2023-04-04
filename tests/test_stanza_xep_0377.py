@@ -23,34 +23,30 @@ class TestSpamReporting(SlixTest):
         report = """
           <iq type="set">
             <block xmlns="urn:xmpp:blocking">
-                <report xmlns="urn:xmpp:reporting:0">
-                    <spam/>
-                </report>
+                <report xmlns="urn:xmpp:reporting:1" reason="urn:xmpp:reporting:spam"/>
             </block>
           </iq>
         """
 
         iq = self.Iq()
         iq['type'] = 'set'
-        iq['block']['report']['spam'] = True
+        iq['block']['report']['reason'] = xep_0377.XEP_0377.SPAM
 
-        self.check(iq, report)
+        self.check(iq, report, use_values=False)
 
     def testEnforceOnlyOneSubElement(self):
         report = """
           <iq type="set">
             <block xmlns="urn:xmpp:blocking">
-                <report xmlns="urn:xmpp:reporting:0">
-                    <abuse/>
-                </report>
+                <report xmlns="urn:xmpp:reporting:1" reason="urn:xmpp:reporting:abuse"/>
             </block>
           </iq>
         """
 
         iq = self.Iq()
         iq['type'] = 'set'
-        iq['block']['report']['spam'] = True
-        iq['block']['report']['abuse'] = True
-        self.check(iq, report)
+        iq['block']['report']['reason'] = xep_0377.XEP_0377.SPAM
+        iq['block']['report']['reason'] = xep_0377.XEP_0377.ABUSE
+        self.check(iq, report, use_values=False)
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestSpamReporting)

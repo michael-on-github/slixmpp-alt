@@ -784,7 +784,7 @@
         <xmpp:SupportedXep>
             <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0377.html"/>
             <xmpp:status>complete</xmpp:status>
-            <xmpp:version>0.2</xmpp:version>
+            <xmpp:version>0.3</xmpp:version>
             <xmpp:since>1.6.0</xmpp:since>
         </xmpp:SupportedXep>
     </implements>
