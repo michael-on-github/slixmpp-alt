@@ -12,14 +12,14 @@ mypy:
     - pip3 install mypy
     - mypy slixmpp
 
-test:
+test-3.7:
   stage: test
   tags:
     - docker
-  image: ubuntu:latest
+  image: python:3.7
   script:
-    - apt update
-    - apt install -y python3 python3-pip cython3 gpg
+    - apt-get update
+    - apt-get install -y python3 python3-pip cython3 gpg
     - pip3 install emoji aiohttp cryptography
     - ./run_tests.py
 
@@ -30,7 +30,7 @@ test-3.10:
   image: python:3.10
   script:
     - apt update
-    - apt install -y python3 python3-pip cython3 gpg
+    - apt-get install -y python3 python3-pip cython3 gpg
     - pip3 install emoji aiohttp cryptography
     - ./run_tests.py
 
@@ -38,11 +38,22 @@ test-3.11:
   stage: test
   tags:
     - docker
-  image: python:3.11-rc
+  image: python:3.11
+  script:
+    - apt-get update
+    - apt-get install -y python3 python3-pip cython3 gpg
+    - pip3 install emoji aiohttp cryptography
+    - ./run_tests.py
+
+test-3.12:
+  stage: test
+  tags:
+    - docker
+  image: python:3.12-rc
   allow_failure: true
   script:
-    - apt update
-    - apt install -y python3 python3-pip cython3 gpg
+    - apt-get update
+    - apt-get install -y python3 python3-pip cython3 gpg
     - pip3 install emoji aiohttp cryptography
     - ./run_tests.py
 
@@ -50,14 +61,14 @@ test_integration:
   stage: test
   tags:
     - docker
-  image: ubuntu:latest
+  image: python:3
   only:
     variables:
         - $CI_ACCOUNT1
         - $CI_ACCOUNT2
   script:
-    - apt update
-    - apt install -y python3 python3-pip cython3 gpg
+    - apt-get update
+    - apt-get install -y python3 python3-pip cython3 gpg
     - pip3 install emoji aiohttp aiodns
     - ./run_integration_tests.py
 
