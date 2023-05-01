@@ -1339,6 +1339,8 @@ class XMLStream(asyncio.BaseProtocol):
                     passthrough = True
                 elif data.get_plugin('session', check=True):
                     passthrough = True
+                elif data.get_plugin('register', check=True):
+                    passthrough = True
             elif isinstance(data, Handshake):
                 passthrough = True
 
