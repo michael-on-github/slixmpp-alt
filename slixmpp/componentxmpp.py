@@ -61,9 +61,9 @@ class ComponentXMPP(BaseXMPP):
             default_ns = 'jabber:client'
         else:
             default_ns = 'jabber:component:accept'
+        BaseXMPP.__init__(self, jid, default_ns)
         if fix_error_ns:
             self._fix_error_ns()
-        BaseXMPP.__init__(self, jid, default_ns)
 
         self.auto_authorize = None
         self.stream_header = '<stream:stream %s %s to="%s">' % (
