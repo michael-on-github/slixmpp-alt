@@ -101,6 +101,7 @@ PLUGINS = [
     'xep_0377',  # Spam reporting
     'xep_0380',  # Explicit Message Encryption
     'xep_0382',  # Spoiler Messages
+    'xep_0385',  # Stateless Inline Media Sharing (SIMS)
     'xep_0394',  # Message Markup
     'xep_0402',  # PEP Native Bookmarks
     'xep_0403',  # MIX-Presence
@@ -115,6 +116,7 @@ PLUGINS = [
     'xep_0439',  # Quick Response
     'xep_0441',  # Message Archive Management Preferences
     'xep_0444',  # Message Reactions
+    'xep_0447',  # Stateless file sharing
     'xep_0461',  # Message Replies
     # Meant to be imported by plugins
 ]
