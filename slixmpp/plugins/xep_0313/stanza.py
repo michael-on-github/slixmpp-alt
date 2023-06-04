@@ -187,7 +187,7 @@ class Fin(ElementBase):
     name = 'fin'
     namespace = 'urn:xmpp:mam:2'
     plugin_attrib = 'mam_fin'
-    interfaces = {'results'}
+    interfaces = {'results', 'stable', 'complete'}
 
     def setup(self, xml=None):
         ElementBase.setup(self, xml)
