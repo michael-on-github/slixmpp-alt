@@ -285,7 +285,7 @@ class BaseXMPP(XMLStream):
             if plugin in plugins.PLUGINS:
                 self.register_plugin(plugin)
             else:
-                raise NameError("Plugin %s not in plugins.__all__." % plugin)
+                raise NameError("Plugin %s not in plugins.PLUGINS." % plugin)
 
     def __getitem__(self, key):
         """Return a plugin given its name, if it has been registered."""
