@@ -1,3 +1,5 @@
+from typing import Optional
+
 from slixmpp.stanza import Message
 from slixmpp.xmlstream import ElementBase, register_stanza_plugin
 
@@ -38,9 +40,22 @@ class FeatureFallBack(ElementBase):
         else:
             return body
 
-    def add_quoted_fallback(self, fallback: str):
+    def add_quoted_fallback(self, fallback: str, nickname: Optional[str] = None):
+        """
+        Add plain text fallback for clients not implementing XEP-0461.
+
+        ``msg["feature_fallback"].add_quoted_fallback("Some text", "Bob")`` will
+        prepend "> Bob:\n> Some text\n" to the body of the message, and set the
+        fallback_body attributes accordingly, so that clients implementing
+        XEP-0461 can hide the fallback text.
+
+        :param fallback: Body of the quoted message.
+        :param nickname: Optional, nickname of the quoted participant.
+        """
         msg = self.parent()
         quoted = "\n".join("> " + x.strip() for x in fallback.split("\n")) + "\n"
+        if nickname:
+            quoted = "> " + nickname + ":\n" + quoted
         msg["body"] = quoted + msg["body"]
         msg["feature_fallback"]["for"] = NS
         msg["feature_fallback"]["fallback_body"]["start"] = 0
