@@ -10,5 +10,5 @@ from slixmpp.xmlstream.tostring import tostring, highlight
 from slixmpp.xmlstream.xmlstream import XMLStream, RESPONSE_TIMEOUT
 
 __all__ = ['JID', 'StanzaBase', 'ElementBase',
-           'ET', 'StateMachine', 'tostring', 'highlight', 'XMLStream',
-           'RESPONSE_TIMEOUT']
+           'ET', 'tostring', 'highlight', 'XMLStream',
+           'RESPONSE_TIMEOUT', 'register_stanza_plugin']
