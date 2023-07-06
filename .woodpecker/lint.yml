@@ -1,0 +1,6 @@
+steps:
+  mypy:
+    image: python:3
+    script:
+      - pip3 install mypy types-setuptools
+      - mypy slixmpp

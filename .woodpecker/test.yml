@@ -1,0 +1,17 @@
+steps:
+  unit_tests:
+    image: "python:${TAG}"
+    commands:
+    - apt-get update
+    - apt-get install -y python3 python3-pip cython3 gpg
+    - pip3 install emoji aiohttp cryptography
+    - ./run_tests.py
+
+matrix:
+  TAG:
+    - "3.7"
+    - "3.9"
+    - "3.8"
+    - "3.10"
+    - "3.11"
+    - "3.12"

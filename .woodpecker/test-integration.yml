@@ -1,0 +1,9 @@
+steps:
+  test_integration:
+    image: "python:3.11"
+    secrets: [ci_account1, ci_account1_password, ci_account2, ci_account2_password]
+    commands:
+      - apt-get update
+      - apt-get install -y python3-pip cython3 gpg
+      - pip3 install emoji aiohttp aiodns
+      - ./run_integration_tests.py
