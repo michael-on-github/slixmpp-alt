@@ -4,9 +4,9 @@ Slixmpp
 .. sidebar:: Get the Code
 
     The latest source code for Slixmpp may be found on the `Git repo
-    <https://lab.louiz.org/poezio/slixmpp>`_. ::
+    <https://codeberg.org/poezio/slixmpp>`_. ::
 
-        git clone https://lab.louiz.org/poezio/slixmpp
+        git clone https://codeberg.org/poezio/slixmpp
 
     An XMPP chat room is available for discussing and getting help with slixmpp.
 
@@ -14,7 +14,7 @@ Slixmpp
         `slixmpp@muc.poez.io <xmpp:slixmpp@muc.poez.io?join>`_
 
     **Reporting bugs**
-        You can report bugs at http://lab.louiz.org/poezio/slixmpp/issues.
+        You can report bugs at http://codeberg.org/poezio/slixmpp/issues.
 
 Slixmpp is an :ref:`MIT licensed <license>` XMPP library for Python 3.7+,
 

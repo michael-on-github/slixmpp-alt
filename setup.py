@@ -80,7 +80,7 @@ setup(
     long_description=LONG_DESCRIPTION,
     author='Florent Le Coz',
     author_email='louiz@louiz.org',
-    url='https://lab.louiz.org/poezio/slixmpp',
+    url='https://codeberg.org/poezio/slixmpp',
     license='MIT',
     platforms=['any'],
     package_data={'slixmpp': ['py.typed']},
