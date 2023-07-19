@@ -9,8 +9,8 @@ class TestReply(SlixTest):
 
     def testFallBackBody(self):
         async def on_reply(msg):
-            start = msg["feature_fallback"]["fallback_body"]["start"]
-            end = msg["feature_fallback"]["fallback_body"]["end"]
+            start = msg["fallback"]["body"]["start"]
+            end = msg["fallback"]["body"]["end"]
             self.xmpp["xep_0461"].send_reply(
                 reply_to=msg.get_from(),
                 reply_id=msg.get_id(),

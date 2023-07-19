@@ -2,6 +2,7 @@ from typing import Optional
 
 from slixmpp.stanza import Message
 from slixmpp.xmlstream import ElementBase, register_stanza_plugin
+from slixmpp.plugins.xep_0428.stanza import Fallback
 
 NS = "urn:xmpp:reply:0"
 
@@ -12,39 +13,11 @@ class Reply(ElementBase):
     plugin_attrib = "reply"
     interfaces = {"id", "to"}
 
-
-class FeatureFallBack(ElementBase):
-    # should also be a multi attrib
-    namespace = "urn:xmpp:fallback:0"
-    name = "fallback"
-    plugin_attrib = "feature_fallback"
-    interfaces = {"for"}
-
-    def get_fallback_body(self):
-        # only works for a single fallback_body attrib
-        start = self["fallback_body"]["start"]
-        end = self["fallback_body"]["end"]
-        body = self.parent()["body"]
-        if start <= end:
-            return body[start:end]
-        else:
-            return ""
-
-    def get_stripped_body(self):
-        # only works for a single fallback_body attrib
-        start = self["fallback_body"]["start"]
-        end = self["fallback_body"]["end"]
-        body = self.parent()["body"]
-        if start <= end < len(body):
-            return body[:start] + body[end:]
-        else:
-            return body
-
     def add_quoted_fallback(self, fallback: str, nickname: Optional[str] = None):
         """
         Add plain text fallback for clients not implementing XEP-0461.
 
-        ``msg["feature_fallback"].add_quoted_fallback("Some text", "Bob")`` will
+        ``msg["reply"].add_quoted_fallback("Some text", "Bob")`` will
         prepend "> Bob:\n> Some text\n" to the body of the message, and set the
         fallback_body attributes accordingly, so that clients implementing
         XEP-0461 can hide the fallback text.
@@ -57,39 +30,27 @@ class FeatureFallBack(ElementBase):
         if nickname:
             quoted = "> " + nickname + ":\n" + quoted
         msg["body"] = quoted + msg["body"]
-        msg["feature_fallback"]["for"] = NS
-        msg["feature_fallback"]["fallback_body"]["start"] = 0
-        msg["feature_fallback"]["fallback_body"]["end"] = len(quoted)
+        fallback = Fallback()
+        fallback["for"] = NS
+        fallback["body"]["start"] = 0
+        fallback["body"]["end"] = len(quoted)
+        msg.append(fallback)
 
-
-class FallBackBody(ElementBase):
-    # According to https://xmpp.org/extensions/inbox/compatibility-fallback.html
-    # this should be a multi_attrib *but* since it's a protoXEP, we'll see...
-    namespace = FeatureFallBack.namespace
-    name = "body"
-    plugin_attrib = "fallback_body"
-    interfaces = {"start", "end"}
-
-    def set_start(self, v: int):
-        self._set_attr("start", str(v))
-
-    def get_start(self):
-        try:
-            return int(self._get_attr("start"))
-        except ValueError:
-            return 0
-
-    def set_end(self, v: int):
-        self._set_attr("end", str(v))
-
-    def get_end(self):
-        try:
-            return int(self._get_attr("end"))
-        except ValueError:
-            return 0
+    def get_fallback_body(self) -> str:
+        msg = self.parent()
+        for fallback in msg["fallbacks"]:
+            if fallback["for"] == NS:
+                break
+        else:
+            return ""
+        start = fallback["body"]["start"]
+        end = fallback["body"]["end"]
+        body = msg["body"]
+        if start <= end:
+            return body[start:end]
+        else:
+            return ""
 
 
 def register_plugins():
     register_stanza_plugin(Message, Reply)
-    register_stanza_plugin(Message, FeatureFallBack)
-    register_stanza_plugin(FeatureFallBack, FallBackBody)

@@ -1,11 +1,13 @@
 import unittest
 from slixmpp import Message
 from slixmpp.test import SlixTest
+from slixmpp.plugins.xep_0428 import stanza as fallback_stanza
 from slixmpp.plugins.xep_0461 import stanza
 
 
 class TestReply(SlixTest):
     def setUp(self):
+        fallback_stanza.register_plugins()
         stanza.register_plugins()
 
     def testReply(self):
@@ -26,9 +28,9 @@ class TestReply(SlixTest):
     def testFallback(self):
         message = Message()
         message["body"] = "12345\nrealbody"
-        message["feature_fallback"]["for"] = "NS"
-        message["feature_fallback"]["fallback_body"]["start"] = 0
-        message["feature_fallback"]["fallback_body"]["end"] = 6
+        message["fallback"]["for"] = "NS"
+        message["fallback"]["body"]["start"] = 0
+        message["fallback"]["body"]["end"] = 6
 
         self.check(
             message,
@@ -42,18 +44,18 @@ class TestReply(SlixTest):
             """,
         )
 
-        assert message["feature_fallback"].get_stripped_body() == "realbody"
+        assert message["fallback"].get_stripped_body("NS") == "realbody"
 
     def testAddFallBackHelper(self):
         msg = Message()
         msg["body"] = "Great"
-        msg["feature_fallback"].add_quoted_fallback("Anna wrote:\nHi, how are you?")
-        # ugly dedent but the test does not pass without it
+        msg["reply"].add_quoted_fallback("Anna wrote:\nHi, how are you?")
         self.check(
-            msg,
+            msg,  # language=XML
             """
         <message xmlns="jabber:client" type="normal">
             <body>> Anna wrote:\n> Hi, how are you?\nGreat</body>
+            <reply xmlns="urn:xmpp:reply:0" />
             <fallback xmlns="urn:xmpp:fallback:0" for="urn:xmpp:reply:0">
                 <body start='0' end='33' />
             </fallback>
@@ -67,8 +69,8 @@ class TestReply(SlixTest):
 
         msg = Message()
         msg["body"] = "Great"
-        msg["feature_fallback"].add_quoted_fallback(body)
-        body2 = msg["feature_fallback"].get_fallback_body()
+        msg["reply"].add_quoted_fallback(body)
+        body2 = msg["reply"].get_fallback_body()
         self.assertTrue(body2 == quoted, body2)
 
 

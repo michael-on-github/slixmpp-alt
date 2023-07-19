@@ -13,7 +13,7 @@ class XEP_0461(BasePlugin):
     name = "xep_0461"
     description = "XEP-0461: Message Replies"
 
-    dependencies = {"xep_0030"}
+    dependencies = {"xep_0030", "xep_0428"}
     stanza = stanza
     namespace = stanza.NS
 
