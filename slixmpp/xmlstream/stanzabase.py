@@ -1243,7 +1243,7 @@ class ElementBase(object):
                 self.init_plugin(item.__class__.plugin_multi_attrib)
         else:
             self.iterables.append(item)
-
+        item.parent = weakref.ref(self)
         return self
 
     def appendxml(self, xml: ET.Element) -> ElementBase:
