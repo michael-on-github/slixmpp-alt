@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 import unittest
 from slixmpp.test import SlixTest
 from slixmpp import JID, InvalidJID
-from slixmpp.jid import nodeprep
 
 
 class TestJIDClass(SlixTest):
@@ -278,10 +277,6 @@ class TestJIDClass(SlixTest):
         # according to RFC 6122, but is not according to XEP-0106.
         #self.assertRaises(InvalidJID, JID, '%s@example.com' % '\\20foo2')
         #self.assertRaises(InvalidJID, JID, '%s@example.com' % 'bar2\\20')
-
-    def testNodePrepIdemptotent(self):
-        node = 'ᴹᴵᴷᴬᴱᴸ'
-        self.assertEqual(nodeprep(node), nodeprep(nodeprep(node)))
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestJIDClass)

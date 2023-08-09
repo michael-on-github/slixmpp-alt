@@ -1,0 +1,278 @@
+use pyo3::exceptions::{PyNotImplementedError, PyValueError};
+use pyo3::prelude::*;
+
+pyo3::create_exception!(py_jid, InvalidJID, PyValueError, "Raised when attempting to create a JID that does not pass validation.\n\nIt can also be raised if modifying an existing JID in such a way as\nto make it invalid, such trying to remove the domain from an existing\nfull JID while the local and resource portions still exist.");
+
+fn to_exc(err: jid::Error) -> PyErr {
+    InvalidJID::new_err(err.to_string())
+}
+
+/// A representation of a Jabber ID, or JID.
+///
+/// Each JID may have three components: a user, a domain, and an optional resource. For example:
+/// user@domain/resource
+///
+/// When a resource is not used, the JID is called a bare JID. The JID is a full JID otherwise.
+///
+/// Raises InvalidJID if the parser rejects it.
+#[pyclass(name = "JID", module = "slixmpp.jid")]
+struct PyJid {
+    jid: Option<jid::Jid>,
+}
+
+#[pymethods]
+impl PyJid {
+    #[new]
+    #[pyo3(signature = (jid=None, bare=false))]
+    fn new(jid: Option<&Bound<'_, PyAny>>, bare: bool) -> PyResult<Self> {
+        if let Some(jid) = jid {
+            if let Ok(py_jid) = jid.extract::<PyRef<PyJid>>() {
+                if bare {
+                    if let Some(py_jid) = &(*py_jid).jid {
+                        Ok(PyJid {
+                            jid: Some(jid::Jid::Bare(py_jid.to_bare())),
+                        })
+                    } else {
+                        Ok(PyJid { jid: None })
+                    }
+                } else {
+                    Ok(PyJid {
+                        jid: (*py_jid).jid.clone(),
+                    })
+                }
+            } else {
+                let jid: &str = jid.extract()?;
+                if jid.is_empty() {
+                    Ok(PyJid { jid: None })
+                } else {
+                    let mut jid = jid::Jid::new(jid).map_err(to_exc)?;
+                    if bare {
+                        jid = jid::Jid::Bare(jid.into_bare())
+                    }
+                    Ok(PyJid { jid: Some(jid) })
+                }
+            }
+        } else {
+            Ok(PyJid { jid: None })
+        }
+    }
+
+    /*
+    // TODO: implement or remove from the API
+    fn unescape() {
+    }
+    */
+
+    #[getter]
+    fn get_bare(&self) -> String {
+        match &self.jid {
+            None => String::new(),
+            Some(jid) => jid.to_bare().to_string(),
+        }
+    }
+
+    #[setter]
+    fn set_bare(&mut self, bare: &str) -> PyResult<()> {
+        let bare = jid::BareJid::new(bare).map_err(to_exc)?;
+        self.jid = Some(match &self.jid {
+            Some(jid::Jid::Bare(_)) | None => jid::Jid::Bare(bare),
+            Some(jid::Jid::Full(jid)) => jid::Jid::Full(bare.with_resource(&jid.resource())),
+        });
+        Ok(())
+    }
+
+    #[getter]
+    fn get_full(&self) -> String {
+        match &self.jid {
+            None => String::new(),
+            Some(jid) => jid.to_string(),
+        }
+    }
+
+    #[setter]
+    fn set_full(&mut self, full: &str) -> PyResult<()> {
+        // JID.full = 'domain' is acceptable in slixmpp.
+        self.jid = Some(jid::Jid::new(full).map_err(to_exc)?);
+        Ok(())
+    }
+
+    #[getter]
+    fn get_node(&self) -> String {
+        match &self.jid {
+            None => String::new(),
+            Some(jid) => jid
+                .node_str()
+                .map(ToString::to_string)
+                .unwrap_or_else(String::new),
+        }
+    }
+
+    #[setter]
+    fn set_node(&mut self, node: &str) -> PyResult<()> {
+        let node = jid::NodePart::new(node).map_err(to_exc)?;
+        self.jid = Some(match &self.jid {
+            Some(jid::Jid::Bare(jid)) => {
+                jid::Jid::Bare(jid::BareJid::from_parts(Some(&node), &jid.domain()))
+            }
+            Some(jid::Jid::Full(jid)) => jid::Jid::Full(jid::FullJid::from_parts(
+                Some(&node),
+                &jid.domain(),
+                &jid.resource(),
+            )),
+            None => Err(InvalidJID::new_err("JID.node must apply to a proper JID"))?,
+        });
+        Ok(())
+    }
+
+    #[getter]
+    fn get_domain(&self) -> String {
+        match &self.jid {
+            None => String::new(),
+            Some(jid) => jid.domain_str().to_string(),
+        }
+    }
+
+    #[setter]
+    fn set_domain(&mut self, domain: &str) -> PyResult<()> {
+        let domain = jid::DomainPart::new(domain).map_err(to_exc)?;
+        self.jid = Some(match &self.jid {
+            Some(jid::Jid::Bare(jid)) => {
+                jid::Jid::Bare(jid::BareJid::from_parts(jid.node().as_ref(), &domain))
+            }
+            Some(jid::Jid::Full(jid)) => jid::Jid::Full(jid::FullJid::from_parts(
+                jid.node().as_ref(),
+                &domain,
+                &jid.resource(),
+            )),
+            None => jid::Jid::Bare(jid::BareJid::from_parts(None, &domain)),
+        });
+        Ok(())
+    }
+
+    #[getter]
+    fn get_resource(&self) -> String {
+        match &self.jid {
+            None => String::new(),
+            Some(jid) => jid
+                .resource_str()
+                .map(ToString::to_string)
+                .unwrap_or_else(String::new),
+        }
+    }
+
+    #[setter]
+    fn set_resource(&mut self, resource: &str) -> PyResult<()> {
+        let resource = jid::ResourcePart::new(resource).map_err(to_exc)?;
+        self.jid = Some(match &self.jid {
+            Some(jid::Jid::Bare(jid)) => jid::Jid::Full(jid.with_resource(&resource)),
+            Some(jid::Jid::Full(jid)) => jid::Jid::Full(jid::FullJid::from_parts(
+                jid.node().as_ref(),
+                &jid.domain(),
+                &resource,
+            )),
+            None => Err(InvalidJID::new_err(
+                "JID.resource must apply to a proper JID",
+            ))?,
+        });
+        Ok(())
+    }
+
+    /// Use the full JID as the string value.
+    fn __str__(&self) -> String {
+        match &self.jid {
+            None => String::new(),
+            Some(jid) => jid.to_string(),
+        }
+    }
+
+    /// Use the full JID as the representation.
+    fn __repr__(&self) -> String {
+        match &self.jid {
+            None => String::new(),
+            Some(jid) => jid.to_string(),
+        }
+    }
+
+    /// Two JIDs are equal if they have the same full JID value.
+    fn __richcmp__(&self, other: &Bound<'_, PyAny>, op: pyo3::basic::CompareOp) -> PyResult<bool> {
+        let other = if let Ok(other) = other.extract::<PyRef<PyJid>>() {
+            other
+        } else if other.is_none() {
+            Bound::new(other.py(), PyJid::new(None, false)?)?.borrow()
+        } else {
+            Bound::new(other.py(), PyJid::new(Some(other), false)?)?.borrow()
+        };
+        match (&self.jid, &other.jid) {
+            (None, None) => Ok(true),
+            (Some(jid), Some(other)) => match op {
+                pyo3::basic::CompareOp::Eq => Ok(jid == other),
+                pyo3::basic::CompareOp::Ne => Ok(jid != other),
+                _ => Err(PyNotImplementedError::new_err(
+                    "Only == and != are implemented",
+                )),
+            },
+            _ => Ok(false),
+        }
+    }
+
+    /// Hash a JID based on the string version of its full JID.
+    fn __hash__(&self) -> isize {
+        if let Some(jid) = &self.jid {
+            // Use the same algorithm as the Python JID.
+            let string = jid.to_string();
+            unsafe { pyo3::ffi::_Py_HashBytes(string.as_ptr() as *const _, string.len() as isize) }
+        } else {
+            0
+        }
+    }
+
+    // Aliases
+
+    #[getter]
+    fn get_user(&self) -> String {
+        self.get_node()
+    }
+
+    #[setter]
+    fn set_user(&mut self, user: &str) -> PyResult<()> {
+        self.set_node(user)
+    }
+
+    #[getter]
+    fn get_server(&self) -> String {
+        self.get_domain()
+    }
+
+    #[setter]
+    fn set_server(&mut self, server: &str) -> PyResult<()> {
+        self.set_domain(server)
+    }
+
+    #[getter]
+    fn get_host(&self) -> String {
+        self.get_domain()
+    }
+
+    #[setter]
+    fn set_host(&mut self, host: &str) -> PyResult<()> {
+        self.set_domain(host)
+    }
+
+    #[getter]
+    fn get_jid(&self) -> String {
+        self.get_full()
+    }
+
+    #[setter]
+    fn set_jid(&mut self, jid: &str) -> PyResult<()> {
+        self.set_full(jid)
+    }
+}
+
+#[pymodule]
+#[pyo3(name = "libslixmpp")]
+fn py_jid(py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
+    m.add_class::<PyJid>()?;
+    m.add("InvalidJID", py.get_type_bound::<InvalidJID>())?;
+    Ok(())
+}
