@@ -31,18 +31,6 @@ JID_PATTERN = re.compile(
 JID_ESCAPE_SEQUENCES = {'\\20', '\\22', '\\26', '\\27', '\\2f',
                         '\\3a', '\\3c', '\\3e', '\\40', '\\5c'}
 
-#: The reverse mapping of escape sequences to their original forms.
-JID_UNESCAPE_TRANSFORMATIONS = {'\\20': ' ',
-                                '\\22': '"',
-                                '\\26': '&',
-                                '\\27': "'",
-                                '\\2f': '/',
-                                '\\3a': ':',
-                                '\\3c': '<',
-                                '\\3e': '>',
-                                '\\40': '@',
-                                '\\5c': '\\'}
-
 
 # TODO: Find the best cache size for a standard usage.
 @lru_cache(maxsize=1024)
@@ -173,31 +161,6 @@ def _validate_resource(resource: Optional[str]):
     return resource
 
 
-def _unescape_node(node: str):
-    """Unescape a local portion of a JID.
-
-    .. note::
-        The unescaped local portion is meant ONLY for presentation,
-        and should not be used for other purposes.
-    """
-    unescaped = []
-    seq = ''
-    for i, char in enumerate(node):
-        if char == '\\':
-            seq = node[i:i+3]
-            if seq not in JID_ESCAPE_SEQUENCES:
-                seq = ''
-        if seq:
-            if len(seq) == 3:
-                unescaped.append(JID_UNESCAPE_TRANSFORMATIONS.get(seq, char))
-
-            # Pop character off the escape sequence, and ignore it
-            seq = seq[1:]
-        else:
-            unescaped.append(char)
-    return ''.join(unescaped)
-
-
 def _format_jid(
         local: Optional[str] = None,
         domain: Optional[str] = None,
@@ -230,51 +193,6 @@ class InvalidJID(ValueError):
     to make it invalid, such trying to remove the domain from an existing
     full JID while the local and resource portions still exist.
     """
-
-# pylint: disable=R0903
-class UnescapedJID:
-
-    """
-    .. versionadded:: 1.1.10
-    """
-
-    __slots__ = ('_node', '_domain', '_resource')
-
-    def __init__(
-            self,
-            node: Optional[str],
-            domain: Optional[str],
-            resource: Optional[str],
-        ):
-        self._node = node
-        self._domain = domain
-        self._resource = resource
-
-    def __getattribute__(self, name: str):
-        """Retrieve the given JID component.
-
-        :param name: one of: user, server, domain, resource,
-                     full, or bare.
-        """
-        if name == 'resource':
-            return self._resource or ''
-        if name in ('user', 'username', 'local', 'node'):
-            return self._node or ''
-        if name in ('server', 'domain', 'host'):
-            return self._domain or ''
-        if name in ('full', 'jid'):
-            return _format_jid(self._node, self._domain, self._resource)
-        if name == 'bare':
-            return _format_jid(self._node, self._domain)
-        return object.__getattribute__(self, name)
-
-    def __str__(self):
-        """Use the full JID as the string value."""
-        return _format_jid(self._node, self._domain, self._resource)
-
-    def __repr__(self):
-        """Use the full JID as the representation."""
-        return _format_jid(self._node, self._domain, self._resource)
 
 
 class JID:
@@ -329,21 +247,6 @@ class JID:
             self._domain = jid._domain
             self._resource = jid._resource if not bare else ''
         self._update_bare_full()
-
-    def unescape(self):
-        """Return an unescaped JID object.
-
-        Using an unescaped JID is preferred for displaying JIDs
-        to humans, and they should NOT be used for any other
-        purposes than for presentation.
-
-        :return: :class:`UnescapedJID`
-
-        .. versionadded:: 1.1.10
-        """
-        return UnescapedJID(_unescape_node(self._node),
-                            self._domain,
-                            self._resource)
 
     def _update_bare_full(self):
         """Format the given JID into a bare and a full JID.
@@ -424,8 +327,6 @@ class JID:
     # pylint: disable=W0212
     def __eq__(self, other):
         """Two JIDs are equal if they have the same full JID value."""
-        if isinstance(other, UnescapedJID):
-            return False
         if not isinstance(other, JID):
             try:
                 other = JID(other)

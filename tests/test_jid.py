@@ -267,15 +267,6 @@ class TestJIDClass(SlixTest):
 
         self.assertEqual(jid.domain.encode('utf-8'), b'b\xc3\xbccher.ch')
 
-    def testJIDUnescape(self):
-        jid = JID('here\\27s_a_wild_\\26_\\2fcr%zy\\2f_\\40ddress\\20for\\3a\\3cwv\\3e(\\22IMPS\\22)\\5c@example.com')
-        ujid = jid.unescape()
-        self.assertEqual(ujid.local, 'here\'s_a_wild_&_/cr%zy/_@ddress for:<wv>("imps")\\')
-
-        jid = JID('blah\\5cfoo\\5c20bar@example.com')
-        ujid = jid.unescape()
-        self.assertEqual(ujid.local, 'blah\\foo\\20bar')
-
     def testStartOrEndWithEscapedSpaces(self):
         local = ' foo'
         self.assertRaises(InvalidJID, JID, '%s@example.com' % local)
