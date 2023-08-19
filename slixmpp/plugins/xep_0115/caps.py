@@ -7,7 +7,8 @@ import logging
 import hashlib
 import base64
 
-from asyncio import Future
+from asyncio import Future, Lock
+from collections import defaultdict
 from typing import Optional
 
 from slixmpp import __version__
@@ -94,6 +95,9 @@ class XEP_0115(BasePlugin):
         disco.assign_verstring = self.assign_verstring
         disco.get_verstring = self.get_verstring
 
+        # prevent concurrent fetches for the same hash
+        self._locks = defaultdict(Lock)
+
     def plugin_end(self):
         self.xmpp['xep_0030'].del_feature(feature=stanza.Capabilities.namespace)
         self.xmpp.del_filter('out', self._filter_add_caps)
@@ -137,7 +141,7 @@ class XEP_0115(BasePlugin):
 
         self.xmpp.event('entity_caps', p)
 
-    async def _process_caps(self, pres):
+    async def _process_caps(self, pres: Presence):
         if not pres['caps']['hash']:
             log.debug("Received unsupported legacy caps: %s, %s, %s",
                     pres['caps']['node'],
@@ -147,7 +151,11 @@ class XEP_0115(BasePlugin):
             return
 
         ver = pres['caps']['ver']
+        async with self._locks[ver]:
+            await self._process_caps_wrapped(pres, ver)
+        self._locks.pop(ver, None)
 
+    async def _process_caps_wrapped(self, pres: Presence, ver: str):
         existing_verstring = await self.get_verstring(pres['from'].full)
         if str(existing_verstring) == str(ver):
             return
