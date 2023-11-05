@@ -15,6 +15,32 @@ log = logging.getLogger(__name__)
 
 
 class XEP_0221(BasePlugin):
+    """
+    XEP-0221: Data Forms Media Element
+
+    In certain implementations of Data Forms (XEP-0004), it can be
+    helpful to include media data such as small images. One example is
+    CAPTCHA Forms (XEP-0158). This plugin implements a method for
+    including media data in a data form.
+
+    Typical use pattern:
+
+    .. code-block:: python
+
+        self.register_plugin('xep_0221')
+        self['xep_0050'].add_command(node="showimage",
+                                        name="Show my image",
+                                        handler=self.form_handler)
+
+        def form_handler(self,iq,session):
+            image_url="https://xmpp.org/images/logos/xmpp-logo.svg"
+            form=self['xep_0004'].make_form('result','My Image')
+            form.addField(var='myimage', ftype='text-single', label='My Image', value=image_url)
+            form.field['myimage']['media'].add_uri(value=image_url, itype="image/svg")
+            session['payload']=form
+            return session
+    """
+
 
     name = 'xep_0221'
     description = 'XEP-0221: Data Forms Media Element'
