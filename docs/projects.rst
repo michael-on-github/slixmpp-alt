@@ -1,6 +1,17 @@
 Projects Using Slixmpp
 ======================
 
+Applications
+------------
+
+sendxmpp-py
+~~~~~~~~~~~
+sendxmpp is a command line program and is the XMPP equivalent of sendmail. It is a Python version of the original sendxmpp which is written in Perl.
+
+- Source_
+
+.. _Source: https://github.com/moparisthebest/sendxmpp-py
+
 Bots
 ----
 
@@ -33,7 +44,7 @@ Llama-bot enables engaging communication with the LLM (large language model) of 
 
 Morbot
 ~~~~~~
-Morbo is a simple Slixmpp bot that will take new articles from listed RSS feeds and send them to assigned XMPP MUCs.
+Morbot is a simple Slixmpp bot that will take new articles from listed RSS feeds and send them to assigned XMPP MUCs.
 
 - Groupchat_
 - Source_
