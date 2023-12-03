@@ -12,9 +12,16 @@ XMPP bot which logs groupchat messages. Logs are in text format, with one file p
 
 .. _Source: https://git.khaganat.net/khaganat/BotLogMauve
 
+LinkBot
+~~~~~~~
+This bot reveals the title of any shared link in a groupchat for quick content insight.
+
+- Source_
+.. _Source: https://git.xmpp-it.net/mario/XMPPBot
+
 llama-bot
 ~~~~~~~~~
-llama-bot lets you converse with llama.cpp LLM.
+Llama-bot enables engaging communication with the LLM (large language model) of llama.cpp, providing seamless and dynamic conversation with it.
 
 - Groupchat_
 - Source_
