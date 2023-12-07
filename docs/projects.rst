@@ -74,6 +74,14 @@ sms4you forwards messages from and to SMS and connects either with sms4you-xmpp 
 .. _Homepage: https://sms4you-team.pages.debian.net/sms4you/
 .. _Source: https://salsa.debian.org/sms4you-team/sms4you
 
+Stable Diffusion
+~~~~~~~~~~~~~~~~
+XMPP bot that generates digital images from textual descriptions.
+
+- Source_
+
+.. _Source: https://www.nicoco.fr/blog/2022/08/31/xmpp-bot-stable-diffusion/
+
 WhisperBot
 ~~~~~~~~~~
 XMPP bot that transliterates audio messages using OpenAI's Whisper libraries.
