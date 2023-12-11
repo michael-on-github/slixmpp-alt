@@ -40,8 +40,8 @@ Morbot is a simple Slixmpp bot that will take new articles from listed RSS feeds
 - `Groupchat <xmpp:slixmpp@muc.poez.io?join>`_
 - `Source <https://codeberg.org/TheCoffeMaker/Morbot>`_
 
-Slixmpp
-~~~~~~~
+Slixfeed
+~~~~~~~~
 Slixfeed aims to be an easy to use and fully-featured news aggregator bot for XMPP. It provides a convenient access to Blogs, Fediverse and News websites along with filtering functionality.
 
 - `Groupchat <xmpp:slixfeed@chat.woodpeckersnest.space?join>`_
@@ -59,6 +59,7 @@ Stable Diffusion
 ~~~~~~~~~~~~~~~~
 XMPP bot that generates digital images from textual descriptions.
 
+- `Groupchat <xmpp:slidge@conference.nicoco.fr?join>`_
 - `Source <https://www.nicoco.fr/blog/2022/08/31/xmpp-bot-stable-diffusion/>`_
 
 WhisperBot
