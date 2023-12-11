@@ -65,7 +65,7 @@ WhisperBot
 ~~~~~~~~~~
 XMPP bot that transliterates audio messages using OpenAI's Whisper libraries.
 
-- `Groupchat <xmpp:slixfeed@chat.woodpeckersnest.space?join>`_
+- `Groupchat <xmpp:slixmpp@muc.poez.io?join>`_
 - `Source <https://codeberg.org/TheCoffeMaker/WhisperBot>`_
 
 XMPP MUC Message Gateway
