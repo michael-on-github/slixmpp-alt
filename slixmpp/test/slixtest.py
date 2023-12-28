@@ -3,6 +3,7 @@
 # Copyright (C) 2010 Nathanael C. Fritz, Lance J.T. Stout
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
+import atexit
 import unittest
 from queue import Queue
 from xml.parsers.expat import ExpatError
@@ -750,3 +751,9 @@ class SlixTest(unittest.TestCase):
             Error.namespace = 'jabber:client'
             for st in Message, Iq, Presence:
                 register_stanza_plugin(st, Error)
+
+
+@atexit.register
+def cleanup():
+    loop = asyncio.get_event_loop()
+    loop.close()
