@@ -95,7 +95,7 @@ class ComponentXMPP(BaseXMPP):
         for st in Message, Iq, Presence:
             register_stanza_plugin(st, Error)
 
-    def connect(self, host: str = '', port: int = 0, use_ssl: Optional[bool] = None) -> None:
+    def connect(self, host: str = None, port: int = 0, use_ssl: Optional[bool] = None) -> None:
         """Connect to the server.
 
 
