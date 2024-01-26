@@ -181,7 +181,7 @@ class SCRAM(Mech):
     channel_binding = True
     required_credentials = {'username', 'password'}
     optional_credentials = {'authzid', 'channel_binding'}
-    security = {'encrypted', 'unencrypted_scram'}
+    security = {'tls_version', 'encrypted', 'unencrypted_scram', 'binding_proposed'}
 
     def setup(self, name):
         self.use_channel_binding = False
@@ -244,11 +244,15 @@ class SCRAM(Mech):
         self.cnonce = bytes(('%s' % random.random())[2:])
 
         gs2_cbind_flag = b'n'
-        if self.credentials['channel_binding']:
-            if self.use_channel_binding:
-                gs2_cbind_flag = b'p=tls-unique'
-            else:
-                gs2_cbind_flag = b'y'
+        if self.security_settings['binding_proposed']:
+            if self.credentials['channel_binding'] and \
+                    self.use_channel_binding:
+                if self.security_settings['tls_version'] != 'TLSv1.3':
+                    gs2_cbind_flag = b'p=tls-unique'
+                else:
+                    gs2_cbind_flag = b'p=tls-exporter'
+        else:
+            gs2_cbind_flag = b'y'
 
         authzid = b''
         if self.credentials['authzid']:
@@ -280,7 +284,7 @@ class SCRAM(Mech):
             raise SASLCancelled('Invalid nonce')
 
         cbind_data = b''
-        if self.use_channel_binding:
+        if self.use_channel_binding and self.credentials['channel_binding']:
             cbind_data = self.credentials['channel_binding']
         cbind_input = self.gs2_header + cbind_data
         channel_binding = b'c=' + b64encode(cbind_input).replace(b'\n', b'')

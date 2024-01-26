@@ -37,7 +37,8 @@ class FeatureMechanisms(BasePlugin):
         'unencrypted_digest': False,
         'unencrypted_cram': False,
         'unencrypted_scram': True,
-        'order': 100
+        'order': 100,
+        'tls_version': None,
     }
 
     def plugin_init(self):
@@ -96,7 +97,20 @@ class FeatureMechanisms(BasePlugin):
                 result[value] = creds.get('email', jid)
             elif value == 'channel_binding':
                 if isinstance(self.xmpp.socket, (ssl.SSLSocket, ssl.SSLObject)):
-                    result[value] = self.xmpp.socket.get_channel_binding()
+                    version = self.xmpp.socket.version()
+                    # As of now, python does not implement anything else
+                    # than tls-unique, which is forbidden on TLSv1.3
+                    # see https://github.com/python/cpython/issues/95341
+                    if version != 'TLSv1.3':
+                        result[value] = self.xmpp.socket.get_channel_binding(
+                            cb_type="tls-unique"
+                        )
+                    elif 'tls-exporter' in ssl.CHANNEL_BINDING_TYPES:
+                        result[value] = self.xmpp.socket.get_channel_binding(
+                            cb_type="tls-exporter"
+                        )
+                    else:
+                        result[value] = None
                 else:
                     result[value] = None
             elif value == 'host':
@@ -121,6 +135,11 @@ class FeatureMechanisms(BasePlugin):
                     result[value] = True
                 else:
                     result[value] = False
+            elif value == 'tls_version':
+                if isinstance(self.xmpp.socket, (ssl.SSLSocket, ssl.SSLObject)):
+                    result[value] = self.xmpp.socket.version()
+            elif value == 'binding_proposed':
+                result[value] = any(x for x in self.mech_list if x.endswith('-PLUS'))
             else:
                 result[value] = self.config.get(value, False)
         return result
