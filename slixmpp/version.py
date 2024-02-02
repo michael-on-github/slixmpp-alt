@@ -5,5 +5,5 @@
 # We don't want to have to import the entire library
 # just to get the version info for setup.py
 
-__version__ = '1.8.4'
-__version_info__ = (1, 8, 4)
+__version__ = '1.8.5'
+__version_info__ = (1, 8, 5)
