@@ -85,6 +85,7 @@ PLUGINS = [
 #   'xep_0302',  # XMPP Compliance Suites 2012. Don’t automatically load
     'xep_0308',  # Last Message Correction
     'xep_0313',  # Message Archive Management
+    'xep_0317',  # Hats
     'xep_0319',  # Last User Interaction in Presence
 #   'xep_0323',  # IoT Systems Sensor Data. Don’t automatically load
 #   'xep_0325',  # IoT Systems Control. Don’t automatically load
