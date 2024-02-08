@@ -82,7 +82,7 @@ class MAM(ElementBase):
     def get_start(self) -> Optional[datetime]:
         fields = self.get_fields()
         field = fields.get('start')
-        if field:
+        if field and field["value"]:
             return xep_0082.parse(field['value'])
         return None
 
@@ -95,7 +95,7 @@ class MAM(ElementBase):
     def get_end(self) -> Optional[datetime]:
         fields = self.get_fields()
         field = fields.get('end')
-        if field:
+        if field and field["value"]:
             return xep_0082.parse(field['value'])
         return None
 
