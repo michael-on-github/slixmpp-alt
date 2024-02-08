@@ -76,6 +76,7 @@ PLUGINS = [
     'xep_0256',  # Last Activity in Presence
     'xep_0257',  # Client Certificate Management for SASL EXTERNAL
     'xep_0258',  # Security Labels in XMPP
+    'xep_0264',  # Jingle Content Thumbnails
 #   'xep_0270',  # XMPP Compliance Suites 2010. Don’t automatically load
     'xep_0279',  # Server IP Check
     'xep_0280',  # Message Carbons
