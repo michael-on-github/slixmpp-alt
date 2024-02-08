@@ -52,9 +52,10 @@ class MAM(ElementBase):
     #:   fetch, not relevant for the stanza itself.
     interfaces = {
         'queryid', 'start', 'end', 'with', 'results',
-        'before_id', 'after_id', 'ids',
+        'before_id', 'after_id', 'ids', 'flip_page',
     }
-    sub_interfaces = {'start', 'end', 'with', 'before_id', 'after_id', 'ids'}
+    sub_interfaces = {'start', 'end', 'with', 'before_id', 'after_id', 'ids',
+                      'flip_page'}
 
     def setup(self, xml=None):
         ElementBase.setup(self, xml)
@@ -168,6 +169,8 @@ class MAM(ElementBase):
     def del_results(self):
         self._results = []
 
+    def get_flip_page(self):
+        return self.xml.find(f'{{{self.namespace}}}flip-page') is not None
 
 class Fin(ElementBase):
     """A MAM fin element (end of query).
