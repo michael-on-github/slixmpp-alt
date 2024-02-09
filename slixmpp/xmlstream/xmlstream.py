@@ -524,7 +524,7 @@ class XMLStream(asyncio.BaseProtocol):
             else:
                 self.loop.run_until_complete(self.disconnected)
         else:
-            tasks: List[Awaitable] = [asyncio.Task(asyncio.sleep(timeout))]
+            tasks: List[asyncio.Task] = [asyncio.Task(asyncio.sleep(timeout))]
             if not forever:
                 tasks.append(self.disconnected)
             self.loop.run_until_complete(asyncio.wait(tasks))
@@ -850,6 +850,8 @@ class XMLStream(asyncio.BaseProtocol):
             log.debug("Connection error:", exc_info=True)
             self.disconnect()
             return False
+        if transp is None:
+            raise Exception("Transport should not be none")
         der_cert = transp.get_extra_info("ssl_object").getpeercert(True)
         pem_cert = ssl.DER_cert_to_PEM_cert(der_cert)
         self.event('ssl_cert', pem_cert)

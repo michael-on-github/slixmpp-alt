@@ -95,7 +95,9 @@ class ComponentXMPP(BaseXMPP):
         for st in Message, Iq, Presence:
             register_stanza_plugin(st, Error)
 
-    def connect(self, host: str = None, port: int = 0, use_ssl: Optional[bool] = None) -> None:
+    def connect(self, host: Optional[str] = None, port: int = 0, use_ssl: Optional[bool] = None,
+                force_starttls: Optional[bool] = None,
+                disable_starttls: Optional[bool] = None) -> None:
         """Connect to the server.
 
 
@@ -105,6 +107,8 @@ class ComponentXMPP(BaseXMPP):
                      Defauts to :attr:`server_port`.
         :param use_ssl: Flag indicating if SSL should be used by connecting
                         directly to a port using SSL.
+        :param force_starttls: UNUSED
+        :param disable_starttls: UNUSED
         """
         if host is not None:
             self.server_host = host
