@@ -10,7 +10,7 @@ UNIQUE = uuid4().hex
 class TestMUC(SlixIntegration):
 
     async def asyncSetUp(self):
-        self.mucserver = self.envjid('CI_MUC_SERVER', 'chat.jabberfr.org')
+        self.mucserver = self.envjid('CI_MUC_SERVER', default='chat.jabberfr.org')
         self.muc = JID('%s@%s' % (UNIQUE, self.mucserver))
         self.add_client(
             self.envjid('CI_ACCOUNT1'),
