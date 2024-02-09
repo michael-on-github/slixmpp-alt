@@ -1,5 +1,6 @@
 from slixmpp import Presence
 from slixmpp.xmlstream import ElementBase, register_stanza_plugin
+from typing import List, Tuple
 
 NS = 'urn:xmpp:hats:0'
 
@@ -26,7 +27,7 @@ class Hats(ElementBase):
     namespace = NS
     plugin_attrib = 'hats'
 
-    def add_hats(self, data: list[tuple[str, str]]) -> None:
+    def add_hats(self, data: List[Tuple[str, str]]) -> None:
         for uri, title in data:
             hat = Hat()
             hat["uri"] = uri
