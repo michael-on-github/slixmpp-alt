@@ -29,9 +29,9 @@ class SlixIntegration(IsolatedAsyncioTestCase):
         self.clients = []
         self.addAsyncCleanup(self._destroy)
 
-    def envjid(self, name):
+    def envjid(self, name: str, *, default: Optional[str] = None) -> JID:
         """Get a JID from an env var"""
-        value = os.getenv(name)
+        value = os.getenv(name, default=default)
         return JID(value)
 
     def envstr(self, name):
