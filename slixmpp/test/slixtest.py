@@ -755,5 +755,8 @@ class SlixTest(unittest.TestCase):
 
 @atexit.register
 def cleanup():
-    loop = asyncio.get_event_loop()
-    loop.close()
+    try:
+        loop = asyncio.get_event_loop()
+        loop.close()
+    except:
+        pass
