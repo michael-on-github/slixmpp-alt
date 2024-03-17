@@ -8,28 +8,27 @@ from slixmpp.xmlstream import (
     ElementBase,
     register_stanza_plugin,
 )
-from slixmpp.plugins.xep_0422.stanza import ApplyTo
-from slixmpp.plugins.xep_0359 import OriginID
 
 
-NS = 'urn:xmpp:message-retract:0'
+NS = 'urn:xmpp:message-retract:1'
 
 
 class Retract(ElementBase):
     namespace = NS
     name = 'retract'
     plugin_attrib = 'retract'
+    interfaces = {'reason', 'id'}
+    sub_interfaces = {'reason'}
 
 
 class Retracted(ElementBase):
     namespace = NS
     name = 'retracted'
     plugin_attrib = 'retracted'
-    interfaces = {'stamp'}
+    interfaces = {'stamp', 'id', 'reason'}
+    sub_interfaces = {'reason'}
 
 
 def register_plugins():
-    register_stanza_plugin(ApplyTo, Retract)
+    register_stanza_plugin(Message, Retract)
     register_stanza_plugin(Message, Retracted)
-
-    register_stanza_plugin(Retracted, OriginID)

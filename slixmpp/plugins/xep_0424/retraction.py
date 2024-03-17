@@ -31,7 +31,7 @@ class XEP_0424(BasePlugin):
         stanza.register_plugins()
         self.xmpp.register_handler(Callback(
             "Message Retracted",
-            StanzaPath("message/apply_to/retract"),
+            StanzaPath("message/retract"),
             self._handle_retract_message,
         ))
 
@@ -64,7 +64,6 @@ class XEP_0424(BasePlugin):
         if include_fallback:
             msg['body'] = fallback_text
             msg.enable('fallback')
-        msg['apply_to']['id'] = id
-        msg['apply_to'].enable('retract')
+        msg['retract']['id'] = id
         msg.enable('store')
         msg.send()
