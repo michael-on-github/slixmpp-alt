@@ -8,12 +8,11 @@ from slixmpp.xmlstream import (
     ElementBase,
     register_stanza_plugin,
 )
-from slixmpp.plugins.xep_0422.stanza import ApplyTo
 from slixmpp.plugins.xep_0421.stanza import OccupantId
 from slixmpp.plugins.xep_0424.stanza import Retract, Retracted
 
 
-NS = 'urn:xmpp:message-moderate:0'
+NS = 'urn:xmpp:message-moderate:1'
 
 
 class Moderate(ElementBase):
@@ -28,17 +27,17 @@ class Moderated(ElementBase):
     namespace = NS
     name = 'moderated'
     plugin_attrib = 'moderated'
-    interfaces = {'reason', 'by'}
-    sub_interfaces = {'reason'}
+    interfaces = {'by'}
 
 
 def register_plugins():
-    register_stanza_plugin(Iq, ApplyTo)
-    register_stanza_plugin(ApplyTo, Moderate)
+    # for moderation requests
+    register_stanza_plugin(Iq, Moderate)
     register_stanza_plugin(Moderate, Retract)
 
-    register_stanza_plugin(Message, Moderated)
-    register_stanza_plugin(ApplyTo, Moderated)
-    register_stanza_plugin(Moderated, Retract)
-    register_stanza_plugin(Moderated, Retracted)
+    # for moderation events
+    register_stanza_plugin(Retract, Moderated)
     register_stanza_plugin(Moderated, OccupantId)
+
+    # for tombstones
+    register_stanza_plugin(Retracted, Moderated)

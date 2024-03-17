@@ -1,45 +1,48 @@
 import unittest
 from slixmpp import Message, Iq, JID
 from slixmpp.test import SlixTest
+from slixmpp.plugins.xep_0424 import stanza as stanza424
 from slixmpp.plugins.xep_0425 import stanza
 
 
 class TestModeration(SlixTest):
 
     def setUp(self):
+        stanza424.register_plugins()
         stanza.register_plugins()
 
     def testModerate(self):
         iq = Iq()
         iq['type'] = 'set'
         iq['id'] = 'a'
-        iq['apply_to']['id'] = 'some-id'
-        iq['apply_to']['moderate'].enable('retract')
-        iq['apply_to']['moderate']['reason'] = 'R'
+        iq['moderate']['id'] = 'some-id'
+        iq['moderate'].enable('retract')
+        iq['moderate']['reason'] = 'R'
 
         self.check(iq, """
 <iq type='set' id='a'>
-  <apply-to id="some-id" xmlns="urn:xmpp:fasten:0">
-    <moderate xmlns='urn:xmpp:message-moderate:0'>
-      <retract xmlns='urn:xmpp:message-retract:0'/>
-      <reason>R</reason>
-    </moderate>
-  </apply-to>
+  <moderate xmlns='urn:xmpp:message-moderate:1'>
+    <retract xmlns='urn:xmpp:message-retract:1'/>
+    <reason>R</reason>
+  </moderate>
 </iq>
         """, use_values=False)
 
     def testModerated(self):
         message = Message()
-        message['moderated']['by'] = JID('toto@titi')
-        message['moderated']['retracted']['stamp'] = '2019-09-20T23:09:32Z'
-        message['moderated']['reason'] = 'R'
+        message['retract']['id'] = 'some-id'
+        message['retract']['moderated']['by'] = JID('toto@titi')
+        message['retract']['moderated']['occupant-id']['id'] = 'oc-id'
+        message['retract']['reason'] = 'R'
 
         self.check(message, """
 <message>
-  <moderated xmlns="urn:xmpp:message-moderate:0" by="toto@titi">
-    <retracted stamp="2019-09-20T23:09:32Z" xmlns="urn:xmpp:message-retract:0" />
+  <retract id='some-id' xmlns='urn:xmpp:message-retract:1'>
+    <moderated by='toto@titi' xmlns='urn:xmpp:message-moderate:1'>
+      <occupant-id xmlns="urn:xmpp:occupant-id:0" id="oc-id" />
+    </moderated>
     <reason>R</reason>
-  </moderated>
+  </retract>
 </message>
         """)
 
