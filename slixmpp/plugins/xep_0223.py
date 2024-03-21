@@ -20,6 +20,18 @@ class XEP_0223(BasePlugin):
 
     """
     XEP-0223: Persistent Storage of Private Data via PubSub
+
+    If a specific pubsub node requires additional publish options, edit the
+    :attr:`.node_profile` attribute of this plugin:
+
+    .. code-block:: python
+
+        self.xmpp.plugin["xep_0223"].node_profiles["urn:some:node"] = {
+            "pubsub#max_items" = "max"
+        }
+
+    This makes :meth:`.store` add these publish options whenever it is called
+    for the ``urn:some:node`` node.
     """
 
     name = 'xep_0223'
@@ -28,6 +40,7 @@ class XEP_0223(BasePlugin):
 
     profile = {'pubsub#persist_items': True,
                'pubsub#access_model': 'whitelist'}
+    node_profiles = dict[str, dict[str, str]]()
 
     def configure(self, node: str, **iqkwargs) -> Future:
         """
@@ -70,7 +83,8 @@ class XEP_0223(BasePlugin):
                 value='http://jabber.org/protocol/pubsub#publish-options')
 
         fields = options['fields']
-        for field, value in self.profile.items():
+        profile = self.profile | self.node_profiles.get(node, {})
+        for field, value in profile.items():
             if field not in fields:
                 options.add_field(var=field)
             options.get_fields()[field]['value'] = value

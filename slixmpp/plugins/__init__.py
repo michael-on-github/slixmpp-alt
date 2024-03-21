@@ -121,6 +121,7 @@ PLUGINS = [
     'xep_0447',  # Stateless file sharing
     'xep_0461',  # Message Replies
     'xep_0469',  # Bookmarks Pinning
+    'xep_0490',  # Message Displayed Synchronization
     # Meant to be imported by plugins
 ]
 
