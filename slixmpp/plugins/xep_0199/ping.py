@@ -137,7 +137,14 @@ class XEP_0199(BasePlugin):
     async def _keepalive(self, event=None):
         log.debug("Keepalive ping...")
         try:
-            rtt = await self.ping(self.xmpp.boundjid.host, timeout=self.timeout)
+            ifrom = None
+            if self.xmpp.is_component:
+                ifrom = self.xmpp.boundjid
+            rtt = await self.ping(
+                self.xmpp.boundjid.host,
+                timeout=self.timeout,
+                ifrom=ifrom
+            )
         except IqTimeout:
             log.debug("Did not receive ping back in time. " + \
                       "Requesting Reconnect.")
