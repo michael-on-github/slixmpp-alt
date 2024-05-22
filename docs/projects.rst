@@ -1,6 +1,8 @@
 Projects Using Slixmpp
 ======================
 
+This page enumerates software in the form of applications, bots and gateways utilizing the XMPP protocols with slixmpp.
+
 Applications
 ------------
 
@@ -8,7 +10,8 @@ sendxmpp-py
 ~~~~~~~~~~~
 sendxmpp is a command line program and is the XMPP equivalent of sendmail. It is a Python version of the original sendxmpp which is written in Perl.
 
-- `Source <https://github.com/moparisthebest/sendxmpp-py>`_
+- `Source <https://code.moparisthebest.com/moparisthebest/sendxmpp-py>`_
+- `Groupchat <xmpp:xmpp-ircd@chatrooms.hackerposse.com?join>`_
 
 Bots
 ----
