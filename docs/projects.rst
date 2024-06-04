@@ -22,6 +22,12 @@ XMPP bot which logs groupchat messages. Logs are in text format, with one file p
 
 - `Source <https://git.khaganat.net/khaganat/BotLogMauve>`_
 
+BukuBot
+~~~~~~~
+BukuBot makes it possible to manage and search your bookmarks from your chat.
+
+- `Source <https://codeberg.org/sch/BukuBot>`_
+
 LinkBot
 ~~~~~~~
 This bot reveals the title of any shared link in a groupchat for quick content insight.
