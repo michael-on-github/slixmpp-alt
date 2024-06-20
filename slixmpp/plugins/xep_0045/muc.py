@@ -493,7 +493,7 @@ class XEP_0045(BasePlugin):
         if affiliation not in AFFILIATIONS:
             raise ValueError('%s is not a valid affiliation' % affiliation)
         if affiliation == 'outcast' and not jid:
-            raise ValueError('Outcast affiliation requires a using a jid')
+            raise ValueError('Outcast affiliation requires using a jid')
         if not any((jid, nick)):
             raise ValueError('One of jid or nick must be set')
         iq = self.xmpp.make_iq_set(ito=room, ifrom=ifrom)
