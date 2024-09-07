@@ -49,11 +49,13 @@ from slixmpp.plugins.xep_0045.stanza import (
     MUCUserItem,
 )
 from slixmpp.types import (
+    JidStr,
     MucRole,
     MucAffiliation,
     MucRoomItem,
     MucRoomItemKeys,
     PresenceArgs,
+    PresenceShows,
 )
 
 JoinResult = Tuple[Presence, Message, List[Presence], List[Message]]
@@ -187,7 +189,7 @@ class XEP_0045(BasePlugin):
     def _handle_config_change(self, msg: Message):
         """Handle a MUC configuration change (with status code)."""
         self.xmpp.event('groupchat_config_status', msg)
-        self.xmpp.event('muc::%s::config_status' % msg['from'].bare , msg)
+        self.xmpp.event('muc::%s::config_status' % msg['from'].bare, msg)
 
     def _client_handle_presence(self, pr: Presence):
         """As a client, handle a presence stanza"""
@@ -358,7 +360,7 @@ class XEP_0045(BasePlugin):
         return (pres, subject, occupant_buffer, history_buffer)
 
     def join_muc(self, room: JID, nick: str, maxhistory="0", password='',
-                 pstatus='', pshow='', pfrom='') -> asyncio.Future:
+                 pstatus='', pshow: PresenceShows='chat', pfrom: JidStr='') -> asyncio.Future:
         """ Join the specified room, requesting 'maxhistory' lines of history.
 
         .. deprecated:: 1.8.0
@@ -646,13 +648,13 @@ class XEP_0045(BasePlugin):
         """Check if a JID is present in a room.
 
         :param room: Room to check.
-        :param jid: JID to check.
+        :param jid: FULL JID to check.
         """
         for nick in self.rooms[room]:
             entry = self.rooms[room][nick]
             if not entry.get('jid'):
                 continue
-            if entry is not None and entry['jid'].full == jid:
+            if entry is not None and entry['jid'] == jid.full:
                 return True
         return False
 
@@ -660,13 +662,13 @@ class XEP_0045(BasePlugin):
         """Get the nickname of a specific JID in a room.
 
         :param room: Room to inspect.
-        :param jid: JID whose nick to return.
+        :param jid: FULL JID whose nick to return.
         """
         for nick in self.rooms[room]:
             entry = self.rooms[room][nick]
             if not entry.get('jid'):
                 continue
-            if entry is not None and entry['jid'].full == jid:
+            if entry is not None and entry['jid'] == jid.full:
                 return nick
         return None
 

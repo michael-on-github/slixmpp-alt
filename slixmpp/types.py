@@ -53,17 +53,20 @@ MucAffiliation = Literal[
     'outcast', 'member', 'admin', 'owner', 'none'
 ]
 
+OptJid = Optional[JID]
+JidStr = Union[str, JID]
+OptJidStr = Optional[Union[str, JID]]
 
 class PresenceArgs(TypedDict, total=False):
-    pfrom: JID
-    pto: JID
+    pfrom: JidStr
+    pto: JidStr
     pshow: PresenceShows
     ptype: PresenceTypes
     pstatus: str
 
 
 class MucRoomItem(TypedDict, total=False):
-    jid: JID
+    jid: str
     role: MucRole
     affiliation: MucAffiliation
     show: Optional[PresenceShows]
@@ -74,10 +77,6 @@ class MucRoomItem(TypedDict, total=False):
 MucRoomItemKeys = Literal[
     'jid', 'role', 'affiliation', 'show', 'status',  'alt_nick',
 ]
-
-OptJid = Optional[JID]
-JidStr = Union[str, JID]
-OptJidStr = Optional[Union[str, JID]]
 
 MAMDefault = Literal['always', 'never', 'roster']
 

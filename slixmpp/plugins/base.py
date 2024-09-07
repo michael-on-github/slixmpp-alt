@@ -12,6 +12,8 @@ import copy
 import logging
 import threading
 
+from slixmpp.clientxmpp import ClientXMPP
+
 from typing import Any, Dict, Set, ClassVar
 
 
@@ -272,7 +274,7 @@ class BasePlugin(object):
     #: `plugin.config['foo']`.
     default_config: ClassVar[Dict[str, Any]] = {}
 
-    def __init__(self, xmpp, config=None):
+    def __init__(self, xmpp: ClientXMPP, config=None):
         self.xmpp = xmpp
         if self.xmpp:
             self.api = self.xmpp.api.wrap(self.name)
