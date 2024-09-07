@@ -5,7 +5,6 @@
 # See the file LICENSE for copying permissio
 import logging
 
-import slixmpp
 from slixmpp.stanza import Message
 from slixmpp.xmlstream.handler import Callback
 from slixmpp.xmlstream.matcher import StanzaPath
@@ -45,5 +44,8 @@ class XEP_0308(BasePlugin):
     def session_bind(self, jid):
         self.xmpp.plugin['xep_0030'].add_feature(Replace.namespace)
 
-    def _handle_correction(self, msg):
+    def is_correction(self, msg: Message):
+        return msg.xml.find('{%s}replace' % Replace.namespace) is not None
+
+    def _handle_correction(self, msg: Message):
         self.xmpp.event('message_correction', msg)
