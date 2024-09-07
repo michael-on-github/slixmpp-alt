@@ -266,7 +266,7 @@ class XEP_0045(BasePlugin):
                             seconds: Optional[int] = None,
                             since: Optional[datetime] = None,
                             presence_options: Optional[PresenceArgs] = None,
-                            timeout: Optional[int] = None) -> JoinResult:
+                            timeout: int = 30) -> JoinResult:
         """
         Try to join a MUC and block until we are joined or get an error.
 
@@ -312,7 +312,7 @@ class XEP_0045(BasePlugin):
         stanza.send()
         return await self._await_join(room, timeout)
 
-    async def _await_join(self, room: JID, timeout: Optional[int] = None) -> JoinResult:
+    async def _await_join(self, room: JID, timeout: int = 30) -> JoinResult:
         """Do the heavy lifting for awaiting a MUC join
 
         A muc join, once the join stanza is sent, is:
