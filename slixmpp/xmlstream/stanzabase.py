@@ -1230,7 +1230,7 @@ class ElementBase(object):
             if type(item) == XML_TYPE:
                 return self.appendxml(item)
             else:
-                raise TypeError
+                raise TypeError(f"Cannot append {item!r} to a stanza")
         self.xml.append(item.xml)
         if item.__class__ == self.plugin_tag_map.get(item.tag_name(), None):
             self.init_plugin(item.plugin_attrib,
