@@ -10,6 +10,7 @@ from asyncio import Future
 from typing import Optional
 
 from slixmpp import JID
+from slixmpp.exceptions import XMPPError
 from slixmpp.stanza import Iq, Message, Presence
 from slixmpp.xmlstream.handler import CoroutineCallback
 from slixmpp.xmlstream.matcher import StanzaPath
@@ -139,6 +140,13 @@ class XEP_0231(BasePlugin):
             self.xmpp.event('bob', iq)
         elif iq['type'] == 'get':
             data = await self.api['get_bob'](iq['to'], None, iq['from'], args=cid)
+
+            if data is None:
+                raise XMPPError(
+                    "item-not-found",
+                    f"Bits of binary '{cid}' is not available",
+                )
+
             if isinstance(data, Iq):
                 data['id'] = iq['id']
                 data.send()
