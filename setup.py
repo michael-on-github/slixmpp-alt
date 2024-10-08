@@ -33,11 +33,16 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
     'Topic :: Internet :: XMPP',
     'Topic :: Software Development :: Libraries :: Python Modules',
 ]
 
 packages = [str(mod.parent) for mod in Path('slixmpp').rglob('__init__.py')]
+
 
 def check_include(library_name, header):
     command = [os.environ.get('PKG_CONFIG', 'pkg-config'), '--cflags', library_name]
@@ -58,6 +63,7 @@ def check_include(library_name, header):
         except FileNotFoundError:
             print('%s headers not found.' % library_name)
             return False
+
 
 HAS_PYTHON_HEADERS = check_include('python3', 'Python.h')
 HAS_STRINGPREP_HEADERS = check_include('libidn', 'stringprep.h')
