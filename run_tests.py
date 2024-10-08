@@ -5,7 +5,7 @@ import logging
 import unittest
 
 from argparse import ArgumentParser
-from distutils.core import Command
+from setuptools import Command
 from importlib import import_module
 from pathlib import Path
 
