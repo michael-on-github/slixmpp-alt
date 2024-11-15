@@ -28,7 +28,7 @@ class MUCBase(ElementBase):
     plugin_attrib = 'muc'
     interfaces = {'affiliation', 'role', 'jid', 'nick', 'room', 'status_codes'}
 
-    def get_status_codes(self) -> Set[str]:
+    def get_status_codes(self) -> Set[int]:
         status = self.xml.findall(f'{{{NS_USER}}}status')
         return {int(status.attrib['code']) for status in status}
 
@@ -275,7 +275,8 @@ class MUCUserItem(ElementBase):
         jid = self.xml.attrib.get('jid', None)
         if jid:
             return JID(jid)
-        return jid
+        else:
+            return None
 
 
 class MUCActor(ElementBase):
@@ -288,7 +289,8 @@ class MUCActor(ElementBase):
         jid = self.xml.attrib.get('jid', None)
         if jid:
             return JID(jid)
-        return jid
+        else:
+            return None
 
 
 class MUCDestroy(ElementBase):

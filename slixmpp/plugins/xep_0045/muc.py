@@ -650,13 +650,23 @@ class XEP_0045(BasePlugin):
         :param room: Room to check.
         :param jid: FULL JID to check.
         """
+        bare_match = False
         for nick in self.rooms[room]:
             entry = self.rooms[room][nick]
             if not entry.get('jid'):
                 continue
-            if entry is not None and entry['jid'] == jid.full:
+
+            if entry['jid'] == jid.full:
                 return True
-        return False
+            elif JID(entry['jid']) == jid.bare:
+                bare_match = True
+        
+        if bare_match:
+            logging.info(
+                "Could not retrieve full JID, falling back to bare JID for %s in %s",
+                jid, room
+            )
+        return bare_match
 
     def get_nick(self, room: JID, jid: JID) -> Optional[str]:
         """Get the nickname of a specific JID in a room.
@@ -664,13 +674,23 @@ class XEP_0045(BasePlugin):
         :param room: Room to inspect.
         :param jid: FULL JID whose nick to return.
         """
+        bare_match = None
         for nick in self.rooms[room]:
             entry = self.rooms[room][nick]
             if not entry.get('jid'):
                 continue
-            if entry is not None and entry['jid'] == jid.full:
+
+            if entry['jid'] == jid.full:
                 return nick
-        return None
+            elif JID(entry['jid']) == jid.bare:
+                bare_match = nick
+        
+        if bare_match:
+            logging.info(
+                "Could not retrieve full JID, falling back to bare JID for %s in %s",
+                jid, room
+            )
+        return bare_match
 
     def get_joined_rooms(self) -> List[JID]:
         """Get the list of rooms we sent a join presence to

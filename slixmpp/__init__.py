@@ -27,3 +27,9 @@ from slixmpp.clientxmpp import ClientXMPP
 from slixmpp.componentxmpp import ComponentXMPP
 
 from slixmpp.version import __version__, __version_info__
+
+__all__ = [
+    'Message', 'Presence', 'Iq', 'JID', 'InvalidJID', 'ET', 'ElementBase',
+    'register_stanza_plugin', 'XMLStream', 'BaseXMPP', 'ClientXMPP', 'ComponentXMPP',
+    '__version__', '__version_info__'
+]
