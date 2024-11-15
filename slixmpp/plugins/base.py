@@ -6,6 +6,7 @@
 # Part of Slixmpp: The Slick XMPP Library
 # :copyright: (c) 2012 Nathanael C. Fritz
 # :license: MIT, see LICENSE for more details
+from __future__ import annotations
 
 import sys
 import copy
