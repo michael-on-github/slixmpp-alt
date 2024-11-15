@@ -658,7 +658,7 @@ class XEP_0045(BasePlugin):
 
             if entry['jid'] == jid.full:
                 return True
-            elif JID(entry['jid']) == jid.bare:
+            elif JID(entry['jid']).bare == jid.bare:
                 bare_match = True
         
         if bare_match:
@@ -682,7 +682,7 @@ class XEP_0045(BasePlugin):
 
             if entry['jid'] == jid.full:
                 return nick
-            elif JID(entry['jid']) == jid.bare:
+            elif JID(entry['jid']).bare == jid.bare:
                 bare_match = nick
         
         if bare_match:
