@@ -167,8 +167,9 @@ processing the same stanza twice.
         - **Data:** :py:class:`~.Message`
         - **Source:** :py:class:`BaseXMPP <.BaseXMPP>`
 
-        Makes the contents of message stanzas available whenever one is received. Be
-        sure to check the message type in order to handle error messages.
+        Makes the contents of message stanzas that include <body> tags available
+        whenever one is received.
+        Be sure to check the message type to handle error messages appropriately.
 
     message_error
         - **Data:** :py:class:`~.Message`

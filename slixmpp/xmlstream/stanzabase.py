@@ -732,6 +732,9 @@ class ElementBase(object):
                 return plugin[full_attrib]
             return plugin
         else:
+            # XXX: This is legacy from SleekXMPP
+            #      We've probably missed the opportunity to fix it
+            logging.warning("Unknown stanza interface: %s" % full_attrib)
             return ''
 
     def __setitem__(self, attrib: str, value: Any) -> Any:

@@ -414,7 +414,7 @@ class XEP_0045(BasePlugin):
             )
         del self.rooms[room]
 
-    def set_subject(self, room: JID, subject: str, *, mfrom: Optional[JID] = None):
+    def set_subject(self, room: JidStr, subject: str, *, mfrom: Optional[JID] = None):
         """Set a room’s subject.
 
         :param room: JID of the room.
@@ -425,7 +425,7 @@ class XEP_0045(BasePlugin):
         msg['subject'] = subject
         msg.send()
 
-    async def get_room_config(self, room: JID, ifrom: Optional[JID] = None,
+    async def get_room_config(self, room: JidStr, ifrom: Optional[JID] = None,
                               **iqkwargs) -> Form:
         """Get the room config form in 0004 plugin format.
 
@@ -440,7 +440,7 @@ class XEP_0045(BasePlugin):
             raise ValueError("Configuration form not found")
         return form
 
-    async def set_room_config(self, room: JID, config: Form, *,
+    async def set_room_config(self, room: JidStr, config: Form, *,
                               ifrom: Optional[JID] = None, **iqkwargs):
         """Send a room config form.
 
@@ -453,8 +453,8 @@ class XEP_0045(BasePlugin):
         iq = self.xmpp.make_iq_set(query, ito=room, ifrom=ifrom)
         await iq.send(**iqkwargs)
 
-    async def cancel_config(self, room: JID, *,
-                            ifrom: Optional[JID] = None, **iqkwargs):
+    async def cancel_config(self, room: JidStr, *,
+                            ifrom: Optional[JidStr] = None, **iqkwargs):
         """Cancel a requested config form.
 
         :param room: Room to cancel the form for.
@@ -464,8 +464,8 @@ class XEP_0045(BasePlugin):
         iq = self.xmpp.make_iq_set(query, ito=room, ifrom=ifrom)
         await iq.send(**iqkwargs)
 
-    async def destroy(self, room: JID, reason: str = '', altroom: Optional[JID] = None, *,
-                      ifrom: Optional[JID] = None, **iqkwargs):
+    async def destroy(self, room: JidStr, reason: str = '', altroom: Optional[JidStr] = None, *,
+                      ifrom: Optional[JidStr] = None, **iqkwargs):
         """Destroy a room.
 
         :param room: Room JID to destroy.
@@ -481,10 +481,10 @@ class XEP_0045(BasePlugin):
             iq['mucowner_query']['destroy']['reason'] = reason
         await iq.send(**iqkwargs)
 
-    async def set_affiliation(self, room: JID, affiliation: MucAffiliation, *,
-                              jid: Optional[JID] = None,
+    async def set_affiliation(self, room: JidStr, affiliation: MucAffiliation, *,
+                              jid: Optional[JidStr] = None,
                               nick: Optional[str] = None, reason: str = '',
-                              ifrom: Optional[JID] = None, **iqkwargs):
+                              ifrom: Optional[JidStr] = None, **iqkwargs):
         """ Change room affiliation for a JID or nickname.
 
         :param room: Room to modify.
@@ -508,8 +508,8 @@ class XEP_0045(BasePlugin):
             iq['mucadmin_query']['item']['reason'] = reason
         await iq.send(**iqkwargs)
 
-    async def get_affiliation_list(self, room: JID, affiliation: MucAffiliation, *,
-                                   ifrom: Optional[JID] = None, **iqkwargs) -> List[JID]:
+    async def get_affiliation_list(self, room: JidStr, affiliation: MucAffiliation, *,
+                                   ifrom: Optional[JidStr] = None, **iqkwargs) -> List[JID]:
         """Get a list of JIDs with the specified affiliation
 
         :param room: Room to get affiliations from.
@@ -520,9 +520,9 @@ class XEP_0045(BasePlugin):
         result = await iq.send(**iqkwargs)
         return [item['jid'] for item in result['mucadmin_query']]
 
-    async def send_affiliation_list(self, room: JID,
-                                    affiliations: List[Tuple[JID, MucAffiliation]], *,
-                                    ifrom: Optional[JID] = None, **iqkwargs):
+    async def send_affiliation_list(self, room: JidStr,
+                                    affiliations: List[Tuple[JidStr, MucAffiliation]], *,
+                                    ifrom: Optional[JidStr] = None, **iqkwargs):
         """Send an affiliation delta list.
 
         :param room: Room to send the affiliations to.
@@ -536,8 +536,8 @@ class XEP_0045(BasePlugin):
             iq['mucadmin_query'].append(item)
         await iq.send(**iqkwargs)
 
-    async def set_role(self, room: JID, nick: str, role: MucRole, *,
-                       reason: str = '', ifrom: Optional[JID] = None, **iqkwargs):
+    async def set_role(self, room: JidStr, nick: str, role: MucRole, *,
+                       reason: str = '', ifrom: Optional[JidStr] = None, **iqkwargs):
         """ Change role property of a nick in a room.
             Typically, roles are temporary (they last only as long as you are in the
             room), whereas affiliations are permanent (they last across groupchat
@@ -557,8 +557,8 @@ class XEP_0045(BasePlugin):
             iq['mucadmin_query']['item']['reason'] = reason
         await iq.send(**iqkwargs)
 
-    async def get_roles_list(self, room: JID, role: MucRole, *,
-                             ifrom: Optional[JID] = None, **iqkwargs) -> List[str]:
+    async def get_roles_list(self, room: JidStr, role: MucRole, *,
+                             ifrom: Optional[JidStr] = None, **iqkwargs) -> List[str]:
         """"Get a list of JIDs with the specified role
 
         :param room: Room to get roles from.
@@ -569,8 +569,8 @@ class XEP_0045(BasePlugin):
         result = await iq.send(**iqkwargs)
         return [item['nick'] for item in result['mucadmin_query']]
 
-    async def send_role_list(self, room: JID, roles: List[Tuple[str, MucRole]], *,
-                             ifrom: Optional[JID] = None, **iqkwargs):
+    async def send_role_list(self, room: JidStr, roles: List[Tuple[str, MucRole]], *,
+                             ifrom: Optional[JidStr] = None, **iqkwargs):
         """Send a role delta list.
 
         :param room: Room to send the roles to.
@@ -584,8 +584,8 @@ class XEP_0045(BasePlugin):
             iq['mucadmin_query'].append(item)
         await iq.send(**iqkwargs)
 
-    def invite(self, room: JID, jid: JID, reason: str = '', *,
-               mfrom: Optional[JID] = None):
+    def invite(self, room: JidStr, jid: JidStr, reason: str = '', *,
+               mfrom: Optional[JidStr] = None):
         """ Invite a jid to a room (mediated invitation).
 
         :param room: Room to invite the user in.
@@ -598,8 +598,8 @@ class XEP_0045(BasePlugin):
             msg['muc']['invite']['reason'] = reason
         self.xmpp.send(msg)
 
-    def invite_server(self, room: JID, jid: JID,
-                         invite_from: JID, reason: str = ''):
+    def invite_server(self, room: JidStr, jid: JidStr,
+                         invite_from: JidStr, reason: str = ''):
         """Send a mediated invite to a user, as a MUC service.
 
         .. versionadded:: 1.8.0
@@ -617,8 +617,8 @@ class XEP_0045(BasePlugin):
             msg['muc']['invite']['reason'] = reason
         msg.send()
 
-    def decline(self, room: JID, jid: JID, reason: str = '', *,
-                mfrom: Optional[JID] = None):
+    def decline(self, room: JidStr, jid: JidStr, reason: str = '', *,
+                mfrom: Optional[JidStr] = None):
         """Decline a mediated invitation.
 
         :param room: Room the invitation came from.
@@ -631,7 +631,7 @@ class XEP_0045(BasePlugin):
             msg['muc']['decline']['reason'] = reason
         self.xmpp.send(msg)
 
-    def request_voice(self, room: JID, role: str, *, mfrom: Optional[JID] = None):
+    def request_voice(self, room: JidStr, role: str, *, mfrom: Optional[JidStr] = None):
         """Request voice in a moderated room.
 
         :param room: Room to request voice from.
@@ -726,7 +726,7 @@ class XEP_0045(BasePlugin):
             raise ValueError("Room %s is not joined" % room)
         return list(self.rooms[room].keys())
 
-    def get_users_by_affiliation(self, room: JID, affiliation='member', *, ifrom: Optional[JID] = None):
+    def get_users_by_affiliation(self, room: JidStr, affiliation='member', *, ifrom: Optional[JidStr] = None):
         # Preserve old API
         if affiliation not in AFFILIATIONS:
             raise ValueError("Affiliation %s does not exist" % affiliation)
