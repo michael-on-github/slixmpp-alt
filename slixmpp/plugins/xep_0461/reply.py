@@ -47,10 +47,11 @@ class XEP_0461(BasePlugin):
         :param reply_id: ID of the message to reply to
         :param fallback: Body of the quoted message
         :param quoted_nick: nickname of the quoted participant
-        :param msg_kwargs: Additional message parameters
+        :param msg_kwargs: Parameters are consistent with the make_message method,
+            required parameters are ``mto`` and ``mbody``
         """
 
-        msg = self.xmpp.make_message(mto=reply_to, **msg_kwargs)
+        msg = self.xmpp.make_message(**msg_kwargs)
         msg["reply"]["to"] = reply_to
         msg["reply"]["id"] = reply_id
         if fallback:
