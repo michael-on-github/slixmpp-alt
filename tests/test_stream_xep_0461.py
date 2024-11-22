@@ -8,12 +8,14 @@ class TestReply(SlixTest):
         self.stream_start(plugins=["xep_0461"])
 
     def testFallBackBody(self):
-        async def on_reply(msg):
+        def on_reply(msg):
             start = msg["fallback"]["body"]["start"]
             end = msg["fallback"]["body"]["end"]
             self.xmpp["xep_0461"].send_reply(
                 reply_to=msg.get_from(),
                 reply_id=msg.get_id(),
+                fallback=msg["reply"].strip_fallback_content(),
+                quoted_nick="res",
                 mto="test@test.com",
                 mbody=f"{start} to {end}",
             )
@@ -26,7 +28,7 @@ class TestReply(SlixTest):
               <reply xmlns="urn:xmpp:reply:0" id="some-id" />
               <body>&gt; quoted\nsome-body</body>
                 <fallback xmlns='urn:xmpp:fallback:0' for='urn:xmpp:reply:0'>
-                   <body start="0" end="8" />
+                   <body start="0" end="9" />
                 </fallback>
             </message>
             """
@@ -34,8 +36,11 @@ class TestReply(SlixTest):
         self.send(
             """
             <message xmlns="jabber:client" to="test@test.com" type="normal">
+              <body>&gt; res:\n&gt; some-body\n0 to 9</body>
               <reply xmlns="urn:xmpp:reply:0" id="other-id" to="from@from.com/res" />
-              <body>0 to 8</body>
+              <fallback xmlns='urn:xmpp:fallback:0' for='urn:xmpp:reply:0'>
+                <body start="0" end="19" />
+              </fallback>
             </message>
             """
         )

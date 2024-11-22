@@ -30,11 +30,11 @@ class Reply(ElementBase):
         if nickname:
             quoted = "> " + nickname + ":\n" + quoted
         msg["body"] = quoted + msg["body"]
-        fallback = Fallback()
-        fallback["for"] = NS
-        fallback["body"]["start"] = 0
-        fallback["body"]["end"] = len(quoted)
-        msg.append(fallback)
+        fallback_elem = Fallback()
+        fallback_elem["for"] = NS
+        fallback_elem["body"]["start"] = 0
+        fallback_elem["body"]["end"] = len(quoted)
+        msg.append(fallback_elem)
 
     def get_fallback_body(self) -> str:
         msg = self.parent()
@@ -50,6 +50,23 @@ class Reply(ElementBase):
             return body[start:end]
         else:
             return ""
+        
+    def strip_fallback_content(self) -> str:
+        msg = self.parent() 
+        for fallback in msg["fallbacks"]:
+            if fallback["for"] == NS:
+                break
+        else:
+            return msg["body"]
+
+        start = fallback["body"]["start"]
+        end = fallback["body"]["end"]
+        body = msg["body"]
+
+        if 0 <= start < end <= len(body):
+            return body[:start] + body[end:]
+        else:
+            return body
 
 
 def register_plugins():
