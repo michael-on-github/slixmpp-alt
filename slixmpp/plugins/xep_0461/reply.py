@@ -50,7 +50,7 @@ class XEP_0461(BasePlugin):
         :param msg_kwargs: Additional message parameters
         """
 
-        msg = self.xmpp.make_message(**msg_kwargs)
+        msg = self.xmpp.make_message(mto=reply_to, **msg_kwargs)
         msg["reply"]["to"] = reply_to
         msg["reply"]["id"] = reply_id
         if fallback:
