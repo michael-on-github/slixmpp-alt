@@ -1350,6 +1350,7 @@ class XMLStream(asyncio.BaseProtocol):
             if isinstance(data, (RootStanza, str)) and not passthrough:
                 self.__queued_stanzas.append((data, use_filters))
                 log.debug('NOT SENT: %s %s', type(data), data)
+                self.event('stanza_not_sent', data)
                 return
         self.waiting_queue.put_nowait((data, use_filters))
 
