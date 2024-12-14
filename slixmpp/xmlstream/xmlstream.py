@@ -1414,7 +1414,11 @@ class XMLStream(asyncio.BaseProtocol):
 
         # Convert the raw XML object into a stanza object. If no registered
         # stanza type applies, a generic StanzaBase stanza will be used.
-        stanza: Optional[StanzaBase] = self._build_stanza(xml)
+        try:
+            stanza: Optional[StanzaBase] = self._build_stanza(xml)
+        except Exception as exc:
+            log.exception("Unable to parse stanza: %s,\n%s", exc, xml)
+            stanza = None
         for filter in self.__filters['in']:
             if stanza is not None:
                 filter = cast(SyncFilter, filter)
