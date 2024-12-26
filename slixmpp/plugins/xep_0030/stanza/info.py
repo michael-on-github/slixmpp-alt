@@ -165,9 +165,9 @@ class DiscoInfo(ElementBase):
             identities = []
         for id_xml in self.xml.findall('{%s}identity' % self.namespace):
             xml_lang = id_xml.attrib.get('{%s}lang' % self.xml_ns, None)
-            category = id_xml.attrib.get('category', '')
-            type_ = id_xml.attrib.get('type', '')
-            name = id_xml.attrib.get('name', '')
+            category = id_xml.attrib.get('category', None)
+            type_ = id_xml.attrib.get('type', None)
+            name = id_xml.attrib.get('name', None)
             if lang is None or xml_lang == lang:
                 id = (category, type_, xml_lang, name)
                 if isinstance(identities, set):
@@ -253,7 +253,7 @@ class DiscoInfo(ElementBase):
         else:
             features = []
         for feature_xml in self.xml.findall('{%s}feature' % self.namespace):
-            feature = feature_xml.attrib.get('var', '')
+            feature = feature_xml.attrib.get('var', None)
             if feature:
                 if isinstance(features, set):
                     features.add(feature)
