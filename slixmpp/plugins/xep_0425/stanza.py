@@ -19,7 +19,7 @@ class Moderate(ElementBase):
     namespace = NS
     name = 'moderate'
     plugin_attrib = 'moderate'
-    interfaces = {'reason'}
+    interfaces = {'id', 'reason'}
     sub_interfaces = {'reason'}
 
 

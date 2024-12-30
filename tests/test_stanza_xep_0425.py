@@ -21,12 +21,12 @@ class TestModeration(SlixTest):
 
         self.check(iq, """
 <iq type='set' id='a'>
-  <moderate xmlns='urn:xmpp:message-moderate:1'>
+  <moderate xmlns='urn:xmpp:message-moderate:1' id='some-id'>
     <retract xmlns='urn:xmpp:message-retract:1'/>
     <reason>R</reason>
   </moderate>
 </iq>
-        """, use_values=False)
+        """)
 
     def testModerated(self):
         message = Message()
