@@ -1,1 +1,1 @@
-from libslixmpp import JID, InvalidJID
+from .libslixmpp import JID, InvalidJID

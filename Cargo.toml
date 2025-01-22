@@ -7,7 +7,8 @@ edition = "2021"
 
 [dependencies]
 jid = "0.10"
-pyo3 = "0.21"
+pyo3 = { version = "0.21.2", features = ["extension-module"] }
 
 [lib]
 crate-type = ["cdylib"]
+path = "slixmpp/lib.rs"

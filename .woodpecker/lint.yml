@@ -2,8 +2,12 @@ when:
   event: [ push, pull_request ]
 
 steps:
-  mypy:
-    image: python:3
+  setup_venv:
+    image: codeberg.org/poezio/woodpecker-slixmpp
+    pull: true
     commands:
-      - pip3 install mypy types-setuptools
-      - mypy slixmpp
+    - uv sync --frozen --only-group dev
+  mypy:
+    image: codeberg.org/poezio/woodpecker-slixmpp
+    commands:
+    - mypy slixmpp

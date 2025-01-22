@@ -15,6 +15,9 @@ slixmpp.egg-info/
 .idea/
 .vscode/
 venv/
+.venv
+.python-version
+slixmpp/*.so
 
 # Added by cargo
 

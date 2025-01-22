@@ -2,12 +2,15 @@ when:
   event: [ push, pull_request ]
 
 steps:
-  unit_tests:
-    image: "python:${TAG}"
+  setup_venv:
+    image: codeberg.org/poezio/woodpecker-slixmpp  
+    pull: true
     commands:
-    - apt-get update
-    - apt-get install -y python3 python3-pip cython3 gpg
-    - pip3 install emoji aiohttp cryptography setuptools
+    - uv python pin ${TAG}
+    - uv sync --frozen --all-groups
+  unit_tests:
+    image: codeberg.org/poezio/woodpecker-slixmpp
+    commands:
     - ./run_tests.py
 
 matrix:

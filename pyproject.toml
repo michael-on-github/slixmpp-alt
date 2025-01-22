@@ -1,0 +1,57 @@
+[project]
+name = "slixmpp"
+version = "1.8.6"
+description = "Slixmpp is an elegant Python library for XMPP (aka Jabber)."
+readme = "README.rst"
+authors = [
+    { name = "Florent Le Coz", email = "louiz@louiz.org" }
+]
+requires-python = ">=3.9"
+dependencies = [
+    "aiodns>=3.2.0",
+    "pyasn1>=0.6.1",
+    "pyasn1-modules>=0.4.1",
+]
+classifiers = [
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: MIT License',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12',
+    'Programming Language :: Python :: 3.13',
+    'Topic :: Internet :: XMPP',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+]
+
+[project.scripts]
+slixmpp = "slixmpp:main"
+
+[tool.maturin]
+module-name = "slixmpp.libslixmpp"
+python-packages = ["slixmpp"]
+python-source = "."
+
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[dependency-groups]
+xep-0363 = [
+    "aiohttp",
+]
+xep-0444-compliance = [
+    "emoji",
+]
+xep-0454 = [
+    "cryptography",
+]
+safer-xml-parsing = [
+    "defusedxml",
+]
+dev = [
+    "mypy>=1.14.1",
+]

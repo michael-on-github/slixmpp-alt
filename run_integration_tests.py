@@ -5,7 +5,6 @@ import logging
 import unittest
 
 from argparse import ArgumentParser
-from setuptools import Command
 from importlib import import_module
 from pathlib import Path
 
@@ -42,22 +41,6 @@ def run_tests(filenames=None, debug=False):
 
     result = runner.run(tests)
     return result
-
-
-# Add a 'test' command for setup.py
-
-class TestCommand(Command):
-
-    user_options = []
-
-    def initialize_options(self):
-        pass
-
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        run_tests()
 
 
 if __name__ == '__main__':
