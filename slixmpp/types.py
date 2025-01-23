@@ -109,8 +109,21 @@ ErrorConditions = Literal[
     "unexpected-request",
 ]
 
+# https://xmpp.org/registrar/disco-categories.html#client
+ClientTypes = Literal[
+    "bot",
+    "console",
+    "game",
+    "handheld",
+    "pc",
+    "phone",
+    "sms",
+    "tablet",
+    "web",
+]
+
 __all__ = [
     'Protocol', 'TypedDict', 'Literal', 'OptJid', 'OptJidStr', 'JidStr', 'MAMDefault',
     'PresenceTypes', 'PresenceShows', 'MessageTypes', 'IqTypes', 'MucRole',
-    'MucAffiliation', 'FilterString', 'ErrorConditions', 'ErrorTypes'
+    'MucAffiliation', 'FilterString', 'ErrorConditions', 'ErrorTypes', 'ClientTypes'
 ]

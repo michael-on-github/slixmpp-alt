@@ -122,6 +122,7 @@ PLUGINS = [
     'xep_0461',  # Message Replies
     'xep_0469',  # Bookmarks Pinning
     'xep_0490',  # Message Displayed Synchronization
+    'xep_0492',  # Chat Notification Settings
     # Meant to be imported by plugins
 ]
 
