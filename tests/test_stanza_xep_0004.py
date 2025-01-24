@@ -95,6 +95,21 @@ class TestDataForms(SlixTest):
           </message>
         """)
 
+    def testMultiLineField(self):
+        msg = self.Message()
+        form = msg['form']
+        form.addField(var='f1',
+                      value='Some text\non several\n\nlines')
+        self.check(msg, """
+          <message>
+            <x xmlns="jabber:x:data" type="form">
+              <field var="f1">
+                <value>Some text\non several\n\nlines</value>
+              </field>
+            </x>
+          </message>
+        """)
+
     def testSetValues(self):
         """Testing setting form values"""
 
@@ -117,7 +132,7 @@ class TestDataForms(SlixTest):
                 <value>b</value>
               </field>
             </x>
-          </message>""")
+          </message>""", use_values=False)
 
     def testSubmitType(self):
         """Test that setting type to 'submit' clears extra details"""

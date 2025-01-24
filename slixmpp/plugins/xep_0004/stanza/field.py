@@ -1,8 +1,9 @@
-
 # Slixmpp: The Slick XMPP Library
 # Copyright (C) 2011 Nathanael C. Fritz, Lance J.T. Stout
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
+import logging
+
 from slixmpp.xmlstream import ElementBase, ET
 
 
@@ -78,7 +79,14 @@ class FormField(ElementBase):
         reqXML = self.xml.find('{%s}required' % self.namespace)
         return reqXML is not None
 
-    def get_value(self, convert=True):
+    def get_value(self, convert=True, convert_list=False):
+        """
+        Gets the value for this field
+
+        :param convert: Convert truthy values to boolean
+        :param convert_list: Convert text-multi fields to a string with
+            \n as separator for values
+        """
         valsXML = self.xml.findall('{%s}value' % self.namespace)
         if len(valsXML) == 0:
             return None
@@ -92,7 +100,7 @@ class FormField(ElementBase):
                 if valXML.text is None:
                     valXML.text = ''
                 values.append(valXML.text)
-            if self._type == 'text-multi' and convert:
+            if self._type == 'text-multi' and convert_list:
                 values = "\n".join(values)
             return values
         else:
@@ -126,6 +134,17 @@ class FormField(ElementBase):
     def set_value(self, value):
         del self['value']
         valXMLName = '{%s}value' % self.namespace
+
+        if not self._type:
+            if isinstance(value, bool):
+                log.debug("Passed a 'boolean' as value of an untyped field, assuming it is a 'boolean'")
+                self._type = "boolean"
+            elif isinstance(value, str):
+                log.debug("Passed a 'str' as value of an untyped field, assuming it is a 'text-single'")
+                self._type = "text-single"
+            elif isinstance(value, (list, tuple)):
+                log.debug("Passed a %s as value of an untyped field, assuming it is a 'text-multi'")
+                self._type = "text-multi"
 
         if self._type == 'boolean':
             if value in self.true_values:
@@ -180,3 +199,6 @@ FormField.setOptions = FormField.set_options
 FormField.setRequired = FormField.set_required
 FormField.setTrue = FormField.set_true
 FormField.setValue = FormField.set_value
+
+
+log = logging.getLogger(__name__)
