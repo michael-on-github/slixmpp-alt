@@ -135,6 +135,7 @@ _DEFAULT_ERROR_TYPES: Dict[ErrorConditions, ErrorTypes] = {
     "not-allowed": "cancel",
     "not-authorized": "auth",
     "payment-required": "auth",
+    "policy-violation": "modify",
     "recipient-unavailable": "wait",
     "redirect": "modify",
     "registration-required": "auth",
