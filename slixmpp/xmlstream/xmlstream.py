@@ -281,7 +281,8 @@ class XMLStream(asyncio.BaseProtocol):
     __slow_tasks: List[Task]
     __queued_stanzas: List[Tuple[Union[StanzaBase, str], bool]]
 
-    def __init__(self, host: str = '', port: int = 0):
+    def __init__(self, host: str = '', port: int = 0,
+                 ssl_context: Optional[ssl.SSLContext] = None):
         self.transport = None
         self.socket = None
         self._connect_loop_wait = 0
@@ -298,9 +299,12 @@ class XMLStream(asyncio.BaseProtocol):
         # A dict of {name: handle}
         self.scheduled_events = {}
 
-        self.ssl_context = ssl.create_default_context()
-        self.ssl_context.check_hostname = True
-        self.ssl_context.verify_mode = ssl.CERT_REQUIRED
+        if ssl_context is None:
+            self.ssl_context = ssl.create_default_context()
+            self.ssl_context.check_hostname = True
+            self.ssl_context.verify_mode = ssl.CERT_REQUIRED
+        else:
+            self.ssl_context = ssl_context
 
         self.event_when_connected = "connected"
 
