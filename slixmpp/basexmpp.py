@@ -315,13 +315,12 @@ class BaseXMPP(XMLStream):
         pres['lang'] = self.default_lang
         return pres
 
-    def make_iq(self, id: str = "0", ifrom: OptJidStr = None,
+    def make_iq(self, id: Optional[str] = None, ifrom: OptJidStr = None,
                 ito: OptJidStr = None, itype: Optional[IqTypes] = None,
                 iquery: Optional[str] = None) -> stanza.Iq:
         """Create a new :class:`~.Iq` stanza with a given Id and from JID.
 
         :param id: An ideally unique ID value for this stanza thread.
-                   Defaults to 0.
         :param ifrom: The from :class:`~.JID`
                       to use for this stanza.
         :param ito: The destination :class:`~.JID`
@@ -332,7 +331,8 @@ class BaseXMPP(XMLStream):
         :param iquery: Optional namespace for adding a query element.
         """
         iq = self.Iq()
-        iq['id'] = str(id)
+        if id is not None:
+            iq['id'] = str(id)
         iq['to'] = ito
         iq['from'] = ifrom
         iq['type'] = itype
