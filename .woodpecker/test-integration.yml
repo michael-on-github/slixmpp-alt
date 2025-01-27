@@ -1,7 +1,20 @@
+when:
+  event: [ push, pull_request ]
+
 steps:
   test_integration:
     image: "python:3.11"
-    secrets: [ci_account1, ci_account1_password, ci_account2, ci_account2_password, ci_muc_server]
+    environment:
+      CI_ACCOUNT1:
+        from_secret: ci_account1
+      CI_ACCOUNT1_PASSWORD:
+        from_secret: ci_account1_password
+      CI_ACCOUNT2:
+        from_secret: ci_account2
+      CI_ACCOUNT2_PASSWORD:
+        from_secret: ci_account2_password
+      CI_MUC_SERVER:
+        from_secret: ci_muc_server
     commands:
       - apt-get update
       - apt-get install -y python3-pip cython3 gpg idn libidn-dev
