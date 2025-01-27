@@ -96,6 +96,7 @@ ErrorConditions = Literal[
     "not-acceptable",
     "not-allowed",
     "not-authorized",
+    "payment-required",
     "policy-violation",
     "recipient-unavailable",
     "redirect",
