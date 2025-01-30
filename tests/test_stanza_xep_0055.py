@@ -34,6 +34,7 @@ class TestJabberSearch(SlixTest):
             ifrom="juliet@capulet.com/balcony", ito="characters.shakespeare.lit"
         )
         iq["search"]["form"].add_field(var="x-gender", value="male")
+        iq["id"] = "0"
         self.check(
             iq,
             """
