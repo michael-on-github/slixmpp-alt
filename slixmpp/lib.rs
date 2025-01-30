@@ -28,9 +28,9 @@ impl PyJid {
         if let Some(jid) = jid {
             if let Ok(py_jid) = jid.extract::<PyRef<PyJid>>() {
                 if bare {
-                    if let Some(py_jid) = &(*py_jid).jid {
+                    if let Some(jid) = &(*py_jid).jid {
                         Ok(PyJid {
-                            jid: Some(jid::Jid::Bare(py_jid.to_bare())),
+                            jid: Some(jid.to_bare().into()),
                         })
                     } else {
                         Ok(PyJid { jid: None })
@@ -47,7 +47,7 @@ impl PyJid {
                 } else {
                     let mut jid = jid::Jid::new(jid).map_err(to_exc)?;
                     if bare {
-                        jid = jid::Jid::Bare(jid.into_bare())
+                        jid = jid.into_bare().into()
                     }
                     Ok(PyJid { jid: Some(jid) })
                 }
@@ -74,9 +74,9 @@ impl PyJid {
     #[setter]
     fn set_bare(&mut self, bare: &str) -> PyResult<()> {
         let bare = jid::BareJid::new(bare).map_err(to_exc)?;
-        self.jid = Some(match &self.jid {
-            Some(jid::Jid::Bare(_)) | None => jid::Jid::Bare(bare),
-            Some(jid::Jid::Full(jid)) => jid::Jid::Full(bare.with_resource(&jid.resource())),
+        self.jid = Some(match self.jid.as_ref().map(jid::Jid::try_as_full) {
+            Some(Ok(full)) => bare.with_resource(full.resource()).into(),
+            Some(Err(_)) | None => bare.into(),
         });
         Ok(())
     }
@@ -101,7 +101,7 @@ impl PyJid {
         match &self.jid {
             None => String::new(),
             Some(jid) => jid
-                .node_str()
+                .node()
                 .map(ToString::to_string)
                 .unwrap_or_else(String::new),
         }
@@ -110,15 +110,15 @@ impl PyJid {
     #[setter]
     fn set_node(&mut self, node: &str) -> PyResult<()> {
         let node = jid::NodePart::new(node).map_err(to_exc)?;
-        self.jid = Some(match &self.jid {
-            Some(jid::Jid::Bare(jid)) => {
-                jid::Jid::Bare(jid::BareJid::from_parts(Some(&node), &jid.domain()))
-            }
-            Some(jid::Jid::Full(jid)) => jid::Jid::Full(jid::FullJid::from_parts(
+        self.jid = Some(match self.jid.as_ref().map(jid::Jid::try_as_full) {
+            Some(Ok(full)) => jid::FullJid::from_parts(
                 Some(&node),
-                &jid.domain(),
-                &jid.resource(),
-            )),
+                full.domain(),
+                full.resource(),
+            ).into(),
+            Some(Err(bare)) => {
+                jid::BareJid::from_parts(Some(&node), bare.domain()).into()
+            }
             None => Err(InvalidJID::new_err("JID.node must apply to a proper JID"))?,
         });
         Ok(())
@@ -128,23 +128,23 @@ impl PyJid {
     fn get_domain(&self) -> String {
         match &self.jid {
             None => String::new(),
-            Some(jid) => jid.domain_str().to_string(),
+            Some(jid) => jid.domain().to_string(),
         }
     }
 
     #[setter]
     fn set_domain(&mut self, domain: &str) -> PyResult<()> {
         let domain = jid::DomainPart::new(domain).map_err(to_exc)?;
-        self.jid = Some(match &self.jid {
-            Some(jid::Jid::Bare(jid)) => {
-                jid::Jid::Bare(jid::BareJid::from_parts(jid.node().as_ref(), &domain))
-            }
-            Some(jid::Jid::Full(jid)) => jid::Jid::Full(jid::FullJid::from_parts(
-                jid.node().as_ref(),
+        self.jid = Some(match self.jid.as_ref().map(jid::Jid::try_as_full) {
+            Some(Ok(full)) => jid::FullJid::from_parts(
+                full.node(),
                 &domain,
-                &jid.resource(),
-            )),
-            None => jid::Jid::Bare(jid::BareJid::from_parts(None, &domain)),
+                full.resource(),
+            ).into(),
+            Some(Err(bare)) => {
+                jid::BareJid::from_parts(bare.node(), &domain).into()
+            }
+            None => jid::BareJid::from_parts(None, &domain).into(),
         });
         Ok(())
     }
@@ -154,7 +154,7 @@ impl PyJid {
         match &self.jid {
             None => String::new(),
             Some(jid) => jid
-                .resource_str()
+                .resource()
                 .map(ToString::to_string)
                 .unwrap_or_else(String::new),
         }
@@ -163,13 +163,15 @@ impl PyJid {
     #[setter]
     fn set_resource(&mut self, resource: &str) -> PyResult<()> {
         let resource = jid::ResourcePart::new(resource).map_err(to_exc)?;
-        self.jid = Some(match &self.jid {
-            Some(jid::Jid::Bare(jid)) => jid::Jid::Full(jid.with_resource(&resource)),
-            Some(jid::Jid::Full(jid)) => jid::Jid::Full(jid::FullJid::from_parts(
-                jid.node().as_ref(),
-                &jid.domain(),
+        self.jid = Some(match self.jid.as_ref().map(jid::Jid::try_as_full) {
+            Some(Ok(full)) => jid::FullJid::from_parts(
+                full.node(),
+                full.domain(),
                 &resource,
-            )),
+            ).into(),
+            Some(Err(bare)) => {
+                bare.with_resource(&resource).into()
+            }
             None => Err(InvalidJID::new_err(
                 "JID.resource must apply to a proper JID",
             ))?,
@@ -273,6 +275,6 @@ impl PyJid {
 #[pyo3(name = "libslixmpp")]
 fn py_jid(py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyJid>()?;
-    m.add("InvalidJID", py.get_type_bound::<InvalidJID>())?;
+    m.add("InvalidJID", py.get_type::<InvalidJID>())?;
     Ok(())
 }
