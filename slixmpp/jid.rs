@@ -272,7 +272,7 @@ impl PyJid {
 }
 
 #[pymodule]
-#[pyo3(name = "libslixmpp")]
+#[pyo3(name = "jid")]
 fn py_jid(py: Python<'_>, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyJid>()?;
     m.add("InvalidJID", py.get_type::<InvalidJID>())?;

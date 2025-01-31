@@ -10,5 +10,6 @@ jid = "0.11"
 pyo3 = { version = "0.23", features = ["extension-module"] }
 
 [lib]
+name = "jid"
 crate-type = ["cdylib"]
-path = "slixmpp/lib.rs"
+path = "slixmpp/jid.rs"

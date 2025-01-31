@@ -31,7 +31,7 @@ classifiers = [
 slixmpp = "slixmpp:main"
 
 [tool.maturin]
-module-name = "slixmpp.libslixmpp"
+module-name = "slixmpp.jid"
 python-packages = ["slixmpp"]
 python-source = "."
 
