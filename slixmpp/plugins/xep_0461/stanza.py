@@ -14,11 +14,12 @@ class Reply(ElementBase):
     interfaces = {"id", "to"}
 
     def add_quoted_fallback(self, fallback: str, nickname: Optional[str] = None):
-        """
+        r"""
         Add plain text fallback for clients not implementing XEP-0461.
 
+
         ``msg["reply"].add_quoted_fallback("Some text", "Bob")`` will
-        prepend "> Bob:\n> Some text\n" to the body of the message, and set the
+        prepend ``> Bob:\n> Some text\n`` to the body of the message, and set the
         fallback_body attributes accordingly, so that clients implementing
         XEP-0461 can hide the fallback text.
 

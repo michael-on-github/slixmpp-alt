@@ -1,6 +1,6 @@
 
 XEP-0492: Chat Notification Settings
-===========================
+====================================
 
 .. module:: slixmpp.plugins.xep_0492
 

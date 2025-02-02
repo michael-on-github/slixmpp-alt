@@ -138,10 +138,10 @@ class XEP_0356(BasePlugin):
 
         Raises ValueError if the server did not advertise the corresponding privileges
 
-        :param jid: user we want to add or modify roster items
-        :param roster_items: a dict containing the roster items' JIDs as keys and
-            nested dicts containing names, subscriptions and groups.
-            Example:
+        Here is an example of a roster_items value:
+
+        .. code-block:: json
+
             {
                 "friend1@example.com": {
                     "name": "Friend 1",
@@ -152,8 +152,13 @@ class XEP_0356(BasePlugin):
                     "name": "Friend 2",
                     "subscription": "from",
                     "groups": ["group3"],
-            },
-        }
+                },
+            }
+
+        :param jid: user we want to add or modify roster items
+        :param roster_items: a dict containing the roster items' JIDs as keys and
+                             nested dicts containing names, subscriptions and groups.
+
         """
         if isinstance(jid, str):
             jid = JID(jid)

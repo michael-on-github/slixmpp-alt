@@ -17,6 +17,7 @@ Plugin index
     xep_0049
     xep_0050
     xep_0054
+    xep_0055
     xep_0059
     xep_0060
     xep_0065
@@ -31,6 +32,7 @@ Plugin index
     xep_0085
     xep_0086
     xep_0092
+    xep_0100
     xep_0106
     xep_0107
     xep_0108
@@ -62,12 +64,15 @@ Plugin index
     xep_0256
     xep_0257
     xep_0258
+    xep_0264
     xep_0279
     xep_0280
+    xep_0292
     xep_0297
     xep_0300
     xep_0308
     xep_0313
+    xep_0317
     xep_0319
     xep_0332
     xep_0333
@@ -79,9 +84,13 @@ Plugin index
     xep_0359
     xep_0363
     xep_0369
+    xep_0372
     xep_0377
     xep_0380
+    xep_0382
+    xep_0385
     xep_0394
+    xep_0402
     xep_0403
     xep_0404
     xep_0405
@@ -94,4 +103,9 @@ Plugin index
     xep_0439
     xep_0441
     xep_0444
+    xep_0446
+    xep_0447
+    xep_0461
+    xep_0469
+    xep_0490
     xep_0492

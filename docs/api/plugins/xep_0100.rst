@@ -1,5 +1,5 @@
 
-XEP-0106: Gateway interaction
+XEP-0100: Gateway interaction
 =============================
 
 .. module:: slixmpp.plugins.xep_0100
