@@ -118,6 +118,7 @@ PLUGINS = [
     'xep_0439',  # Quick Response
     'xep_0441',  # Message Archive Management Preferences
     'xep_0444',  # Message Reactions
+    'xep_0446',  # File metadata element
     'xep_0447',  # Stateless file sharing
     'xep_0461',  # Message Replies
     'xep_0469',  # Bookmarks Pinning

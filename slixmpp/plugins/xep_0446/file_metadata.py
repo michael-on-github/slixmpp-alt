@@ -18,3 +18,7 @@ class XEP_0446(BasePlugin):
     name = "xep_0446"
     description = "XEP-0446: File metadata element"
     stanza = stanza
+    dependencies = {'xep_0300', 'xep_0264'}
+
+    def plugin_init(self):
+        stanza.register_plugins()
