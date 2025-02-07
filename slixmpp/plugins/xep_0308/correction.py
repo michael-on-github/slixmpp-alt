@@ -1,11 +1,12 @@
-
 # Slixmpp: The Slick XMPP Library
 # Copyright (C) 2012 Nathanael C. Fritz, Lance J.T. Stout
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permissio
 import logging
+from typing import Optional
 
 from slixmpp.stanza import Message
+from slixmpp.jid import JID
 from slixmpp.xmlstream.handler import Callback
 from slixmpp.xmlstream.matcher import StanzaPath
 from slixmpp.xmlstream import register_stanza_plugin
@@ -49,3 +50,54 @@ class XEP_0308(BasePlugin):
 
     def _handle_correction(self, msg: Message):
         self.xmpp.event('message_correction', msg)
+
+    def build_correction(self, id_to_replace: str, mto: JID,
+                         mfrom: Optional[JID] = None, mtype: str = 'chat',
+                         mbody: str = '') -> Message:
+        """
+        Build a corrected message.
+
+        :param id_to_replace: The id of the original message.
+        :param mto: Recipient of the message, must be the same as the original
+                    message.
+        :param mfrom: Sender of the message, must be the same as the original
+                      message.
+        :param mtype: Type of the message, must be the send as the original
+                      message.
+        :param mbody: The corrected message body.
+        """
+        msg = self.xmpp.make_message(
+            mto=mto,
+            mfrom=mfrom,
+            mbody=mbody,
+            mtype=mtype
+        )
+        msg['replace']['id'] = id_to_replace
+        return msg
+
+    def correct_message(self, msg: Message, body: str) -> Message:
+        """
+        Send a correction to an existing message.
+
+        :param msg: The message that must be replaced.
+        :param body: The body to set in the correcting message.
+        :returns: The message that was sent.
+        """
+        to_replace = msg['id']
+        mto = msg['to']
+        mfrom = msg['from']
+        mtype = msg['type']
+        if not to_replace:
+            raise ValueError('No available ID for replacing the message')
+        if not mto:
+            raise ValueError('No available recipient JID')
+
+        new = self.build_correction(
+            id_to_replace=to_replace,
+            mto=mto,
+            mfrom=mfrom,
+            mtype=mtype,
+            mbody=body,
+        )
+        new.send()
+        return new
