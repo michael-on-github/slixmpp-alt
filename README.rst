@@ -11,11 +11,13 @@ threads.
 Building
 --------
 
-Slixmpp can make use of cython to improve performance on critical modules.
-To do that, **cython3** is necessary along with **libidn** headers.
-Otherwise, no compilation is needed. Building is done by running setup.py::
-
-    python3 setup.py build_ext --inplace
+Slixmpp uses rust to improve performance on critical modules.
+Binaries may already be available for your platform in the form of
+`wheels <https://peps.python.org/pep-0491/>`_ provided on PyPI or packages
+for your linux distribution. If that is not the case,
+`cargo <https://doc.rust-lang.org/cargo>`_
+must be available in your path to build the
+`extension module <https://docs.python.org/3/extending/extending.html>`_.
 
 Documentation and Testing
 -------------------------

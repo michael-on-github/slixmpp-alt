@@ -112,4 +112,4 @@ def punycode(domain):
     return b'.'.join(domain_parts)
 
 logging.getLogger(__name__).warning('Using slower stringprep, consider '
-                                    'compiling the faster cython/libidn one.')
+                                    'using cargo to build the faster version in rust.')
