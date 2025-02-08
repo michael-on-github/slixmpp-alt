@@ -48,8 +48,12 @@ class XEP_0223(BasePlugin):
 
         :param node: Node to set the configuration at.
         """
-        config = self.xmpp['xep_0004'].Form()
+        config = self.xmpp['xep_0004'].stanza.Form()
         config['type'] = 'submit'
+        config.add_field(
+            var='FORM_TYPE',
+            ftype='hidden',
+            value='http://jabber.org/protocol/pubsub#node_config')
 
         for field, value in self.profile.items():
             config.add_field(var=field, value=value)
