@@ -50,8 +50,37 @@ Running the event loop
 only run for this amount of time, and if ``forever`` is False it will
 run until disconnection).
 
+This wrapper should be removed in slixmpp 1.9.0.
+
 Therefore you can handle the event loop in any way you like
 instead of using ``process()``.
+
+
+Using connect()
+~~~~~~~~~~~~~~~
+
+:meth:`.XMLStream.connect` schedules a lot of things in the background, but that
+only holds true if the event loop is running!
+
+That is why in all examples we usually call connect() right before calling
+a `loop.run_…` function, or the deprecated `process()` function.
+
+Using a different event loop
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Immediately upon XMPP object creation (`ClientXMPP` / `ComponentXMPP`) you
+should sets its `loop` attribute to whatever you want, and ideally this
+should work. This path is less tested, so it may break, if that is the case
+please report a bug.
+
+Any access to the `loop` attribute if not user-initialized will set it
+to the default asyncio event loop by default.
+
+.. warning::
+
+    If the loop attribute is modified at runtime, the application will probably
+    end up in an hybrid state and asyncio may complain loudly that things bound
+    to an event loop are being ran in another. Try to avoid that situation.
 
 
 Examples
@@ -73,10 +102,11 @@ callbacks while everything is not ready.
     callback = lambda _: client.connected_event.set()
     client.add_event_handler('session_start', callback)
     client.connect()
+    loop = asyncio.get_event_loop()
     loop.run_until_complete(event.wait())
     # do some other stuff before running the event loop, e.g.
     # loop.run_until_complete(httpserver.init())
-    client.process()
+    loop.run_forever()
 
 
 Use with other asyncio-based libraries
@@ -106,7 +136,7 @@ a simple <message>.
     client.add_event_handler('session_start', get_pythonorg)
     client.add_event_handler('session_start', get_asyncioorg)
     client.connect()
-    client.process()
+    client.loop.run_until_complete(client.disconnected)
 
 
 Blocking Iq
@@ -136,6 +166,6 @@ JID indicating its findings.
 
     client = ExampleClient('jid@example', 'password')
     client.connect()
-    client.process()
+    client.loop.run_until_complete(client.disconnected)
 
 
