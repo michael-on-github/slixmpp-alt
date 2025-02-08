@@ -464,10 +464,10 @@ class XEP_0060(BasePlugin):
         """
         Retrieve the ItemIDs hosted by a given node, using disco.
         """
-        self.xmpp['xep_0030'].get_items(jid, node, ifrom=ifrom,
-                                        callback=callback, timeout=timeout,
-                                        iterator=iterator,
-                                        timeout_callback=timeout_callback)
+        return self.xmpp['xep_0030'].get_items(jid, node, ifrom=ifrom,
+                                               callback=callback, timeout=timeout,
+                                               iterator=iterator,
+                                               timeout_callback=timeout_callback)
 
     def modify_affiliations(self, jid, node, affiliations=None, ifrom=None,
                             timeout_callback=None, callback=None,
