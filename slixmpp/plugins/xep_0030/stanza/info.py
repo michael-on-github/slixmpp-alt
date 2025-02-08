@@ -9,6 +9,7 @@ from typing import (
     Set,
     Tuple,
     Union,
+    Dict,
 )
 from slixmpp.xmlstream import ElementBase, ET
 
@@ -143,6 +144,25 @@ class DiscoInfo(ElementBase):
                     self.xml.remove(id_xml)
                     return True
         return False
+
+    def dict_identities(self, lang: Optional[str] = None) -> Set[Dict[str, str]]:
+        """
+        Return the set of all identities, each one as a dict with
+        category, type, xml_lang, and name keys.
+
+        :param lang: If there is a need to filter identities by lang.
+        """
+        ids = self.get_identities(lang=lang, dedupe=True)
+        dict_ids = set()
+        for identity in ids:
+            dict_ids.add({
+                'category': identity[0],
+                'type': identity[1],
+                'xml_lang': identity[2],
+                'name': identity[3],
+            })
+        return dict_ids
+
 
     def get_identities(self, lang: Optional[str] = None, dedupe: bool = True
                        ) -> Iterable[IdentityType]:
