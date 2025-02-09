@@ -57,6 +57,9 @@ class XEP_0030(BasePlugin):
     Given   Given   A single node
     ====== ======= ============================
 
+    Adding information for a given node without specifying the JID will
+    use the bound JID and therefore must be done after the bind happens.
+
     Stream Handlers:
 
     ::
