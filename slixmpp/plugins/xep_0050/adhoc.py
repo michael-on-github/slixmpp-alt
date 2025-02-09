@@ -326,7 +326,10 @@ class XEP_0050(BasePlugin):
             iq['command']['actions'] = actions
             iq['command']['status'] = 'executing'
         else:
-            iq['command']['actions'] = ['complete']
+            actions = ['complete']
+            if session['allow_prev']:
+                actions.append('prev')
+            iq['command']['actions'] = actions
             iq['command']['status'] = 'executing'
 
         iq['command']['notes'] = session['notes']
