@@ -511,7 +511,7 @@ class XMLStream(asyncio.BaseProtocol):
             ssl_context = None
 
         if self._current_connection_attempt is None:
-            return
+            return None
         try:
             server_hostname = self.default_domain if self.use_ssl else None
             await self.loop.create_connection(lambda: self,
@@ -528,6 +528,7 @@ class XMLStream(asyncio.BaseProtocol):
             log.debug('Connection failed: %s', e)
             self.event("connection_failed", e)
             return self.reschedule_connection_attempt()
+        return None
 
     def process(self, *, forever: bool = True, timeout: Optional[int] = None) -> None:
         """Process all the available XMPP events (receiving or sending data on the
@@ -672,7 +673,7 @@ class XMLStream(asyncio.BaseProtocol):
         """
         # abort if there is no ongoing connection attempt
         if self._current_connection_attempt is None:
-            return
+            return None
         self._connect_loop_wait = min(300, self._connect_loop_wait * 2 + 1)
         self._current_connection_attempt = asyncio.ensure_future(
             self._connect_routine(),

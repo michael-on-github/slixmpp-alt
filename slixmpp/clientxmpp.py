@@ -139,7 +139,7 @@ class ClientXMPP(BaseXMPP):
 
     def connect(self, address: Optional[Tuple[str, int]] = None,  # type: ignore
                 use_ssl: Optional[bool] = None, force_starttls: Optional[bool] = None,
-                disable_starttls: Optional[bool] = None) -> None:
+                disable_starttls: Optional[bool] = None) -> asyncio.Future:
         """Connect to the XMPP server.
 
         When no address is given, a SRV lookup for the server will
@@ -166,8 +166,9 @@ class ClientXMPP(BaseXMPP):
             host, port = (self.boundjid.host, 5222)
             self.dns_service = 'xmpp-client'
 
-        XMLStream.connect(self, host, port, use_ssl=use_ssl,
-                          force_starttls=force_starttls, disable_starttls=disable_starttls)
+        return XMLStream.connect(self, host, port, use_ssl=use_ssl,
+                                 force_starttls=force_starttls,
+                                 disable_starttls=disable_starttls)
 
     def register_feature(self, name: str, handler: Callable, restart: bool = False, order: int = 5000) -> None:
         """Register a stream feature handler.

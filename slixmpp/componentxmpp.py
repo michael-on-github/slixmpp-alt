@@ -9,6 +9,7 @@
 import logging
 import hashlib
 
+from asyncio import Future
 from typing import Optional
 
 from slixmpp import Message, Iq, Presence
@@ -97,7 +98,7 @@ class ComponentXMPP(BaseXMPP):
 
     def connect(self, host: Optional[str] = None, port: int = 0, use_ssl: Optional[bool] = None,
                 force_starttls: Optional[bool] = None,
-                disable_starttls: Optional[bool] = None) -> None:
+                disable_starttls: Optional[bool] = None) -> Future:
         """Connect to the server.
 
 
@@ -118,7 +119,7 @@ class ComponentXMPP(BaseXMPP):
         self.server_name = self.boundjid.host
 
         log.debug("Connecting to %s:%s", host, port)
-        XMLStream.connect(self, host=self.server_host, port=self.server_port, use_ssl=use_ssl)
+        return XMLStream.connect(self, host=self.server_host, port=self.server_port, use_ssl=use_ssl)
 
     def incoming_filter(self, xml):
         """
