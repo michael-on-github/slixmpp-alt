@@ -375,7 +375,23 @@ class XMLStream(asyncio.BaseProtocol):
     @property
     def loop(self) -> AbstractEventLoop:
         if self._loop is None:
-            self._loop = asyncio.get_event_loop()
+            try:
+                with warnings.catch_warnings(category=DeprecationWarning):
+                    warnings.simplefilter("ignore")
+                    self._loop = asyncio.get_event_loop()
+            # We do not know what exception will be raised in the future
+            # instead of the warning
+            except Exception:
+                try:
+                    current = asyncio.get_running_loop()
+                except RuntimeError:
+                    current = None
+                if current is not None:
+                    self._loop = current
+                else:
+                    loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(loop)
+                    self._loop = loop
         return self._loop
 
     @loop.setter
