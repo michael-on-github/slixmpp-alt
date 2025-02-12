@@ -33,6 +33,24 @@ class TestJIDClass(SlixTest):
                        'user@someserver/some/resource',
                        'user@someserver/some/resource')
 
+        j.node = None
+        self.check_jid(j,
+                       None,
+                       'someserver',
+                       'some/resource',
+                       'someserver',
+                       'someserver/some/resource',
+                       'someserver/some/resource')
+
+        j.resource = None
+        self.check_jid(j,
+                       None,
+                       'someserver',
+                       None,
+                       'someserver',
+                       'someserver',
+                       'someserver')
+
     def testJIDaliases(self):
         """Test changing JID using aliases for domain."""
         j = JID('user@someserver/resource')
@@ -267,6 +285,11 @@ class TestJIDClass(SlixTest):
         # according to RFC 6122, but is not according to XEP-0106.
         #self.assertRaises(InvalidJID, JID, '%s@example.com' % '\\20foo2')
         #self.assertRaises(InvalidJID, JID, '%s@example.com' % 'bar2\\20')
+
+    def testJapaneseLocalpart(self):
+        jid = JID('あいうえお@example.com')
+        self.assertEqual(jid.node, 'あいうえお')
+        self.assertEqual(jid.domain, 'example.com')
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestJIDClass)

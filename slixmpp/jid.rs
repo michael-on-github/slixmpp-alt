@@ -108,19 +108,27 @@ impl PyJid {
     }
 
     #[setter]
-    fn set_node(&mut self, node: &str) -> PyResult<()> {
-        let node = jid::NodePart::new(node).map_err(to_exc)?;
-        self.jid = Some(match self.jid.as_ref().map(jid::Jid::try_as_full) {
-            Some(Ok(full)) => jid::FullJid::from_parts(
-                Some(&node),
-                full.domain(),
-                full.resource(),
-            ).into(),
-            Some(Err(bare)) => {
-                jid::BareJid::from_parts(Some(&node), bare.domain()).into()
+    fn set_node(&mut self, node: Option<&str>) -> PyResult<()> {
+        if let Some(node) = node {
+            let node = jid::NodePart::new(node).map_err(to_exc)?;
+            self.jid = Some(match self.jid.as_ref().map(jid::Jid::try_as_full) {
+                Some(Ok(full)) => jid::FullJid::from_parts(
+                    Some(&node),
+                    full.domain(),
+                    full.resource(),
+                ).into(),
+                Some(Err(bare)) => {
+                    jid::BareJid::from_parts(Some(&node), bare.domain()).into()
+                }
+                None => Err(InvalidJID::new_err("JID.node must apply to a proper JID"))?,
+            });
+        } else {
+            if let Some(jid) = self.jid.take() {
+                if jid.node().is_some() {
+                    self.jid = Some(jid::Jid::from_parts(None, jid.domain(), jid.resource()));
+                }
             }
-            None => Err(InvalidJID::new_err("JID.node must apply to a proper JID"))?,
-        });
+        }
         Ok(())
     }
 
@@ -161,21 +169,27 @@ impl PyJid {
     }
 
     #[setter]
-    fn set_resource(&mut self, resource: &str) -> PyResult<()> {
-        let resource = jid::ResourcePart::new(resource).map_err(to_exc)?;
-        self.jid = Some(match self.jid.as_ref().map(jid::Jid::try_as_full) {
-            Some(Ok(full)) => jid::FullJid::from_parts(
-                full.node(),
-                full.domain(),
-                &resource,
-            ).into(),
-            Some(Err(bare)) => {
-                bare.with_resource(&resource).into()
+    fn set_resource(&mut self, resource: Option<&str>) -> PyResult<()> {
+        if let Some(resource) = resource {
+            let resource = jid::ResourcePart::new(resource).map_err(to_exc)?;
+            self.jid = Some(match self.jid.as_ref().map(jid::Jid::try_as_full) {
+                Some(Ok(full)) => jid::FullJid::from_parts(
+                    full.node(),
+                    full.domain(),
+                    &resource,
+                ).into(),
+                Some(Err(bare)) => {
+                    bare.with_resource(&resource).into()
+                }
+                None => Err(InvalidJID::new_err(
+                    "JID.resource must apply to a proper JID",
+                ))?,
+            });
+        } else {
+            if let Some(jid) = self.jid.take() {
+                self.jid = Some(jid.into_bare().into());
             }
-            None => Err(InvalidJID::new_err(
-                "JID.resource must apply to a proper JID",
-            ))?,
-        });
+        }
         Ok(())
     }
 
@@ -236,7 +250,7 @@ impl PyJid {
     }
 
     #[setter]
-    fn set_user(&mut self, user: &str) -> PyResult<()> {
+    fn set_user(&mut self, user: Option<&str>) -> PyResult<()> {
         self.set_node(user)
     }
 
