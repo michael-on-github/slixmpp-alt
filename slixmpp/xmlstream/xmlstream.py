@@ -376,12 +376,11 @@ class XMLStream(asyncio.BaseProtocol):
     def loop(self) -> AbstractEventLoop:
         if self._loop is None:
             try:
+                # Python < 3.14
                 with warnings.catch_warnings():
                     warnings.simplefilter("ignore")
                     self._loop = asyncio.get_event_loop()
-            # We do not know what exception will be raised in the future
-            # instead of the warning
-            except Exception:
+            except RuntimeError:
                 try:
                     current = asyncio.get_running_loop()
                 except RuntimeError:
