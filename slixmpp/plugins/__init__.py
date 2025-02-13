@@ -109,6 +109,7 @@ PLUGINS = [
     'xep_0403',  # MIX-Presence
     'xep_0404',  # MIX-Anon
     'xep_0405',  # MIX-PAM
+    'xep_0410',  # MUC Self-ping
     'xep_0421',  # Anonymous unique occupant identifiers for MUCs
     'xep_0422',  # Message Fastening
     'xep_0424',  # Message Retraction
