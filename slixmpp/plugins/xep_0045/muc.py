@@ -314,10 +314,9 @@ class XEP_0045(BasePlugin):
             stanza['muc_join']['history']['since'] = fmt
         self.rooms[room] = {}
         self.our_nicks[room] = nick
-        stanza.send()
-        return await self._await_join(room, timeout)
+        return await self._await_join(room, stanza, timeout)
 
-    async def _await_join(self, room: JID, timeout: int = 300) -> JoinResult:
+    async def _await_join(self, room: JID, stanza: Presence, timeout: int = 300) -> JoinResult:
         """Do the heavy lifting for awaiting a MUC join
 
         A muc join, once the join stanza is sent, is:
@@ -344,6 +343,7 @@ class XEP_0045(BasePlugin):
 
         with subject_handler, catch_history, catch_occupants:
             with self_presence, presence_error:
+                stanza.send()
                 done, pending = await asyncio.wait(
                     [presence_done],
                     timeout=timeout,
