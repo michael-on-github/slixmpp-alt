@@ -269,43 +269,34 @@ class XEP_0045(BasePlugin):
         self.xmpp.event('groupchat_subject', msg)
         self.xmpp.event('muc::%s::groupchat_subject' % msg['from'].bare, msg)
 
-    async def join_muc_wait(self, room: JID, nick: str, *,
-                            password: Optional[str] = None,
-                            maxchars: Optional[int] = None,
-                            maxstanzas: Optional[int] = None,
-                            seconds: Optional[int] = None,
-                            since: Optional[datetime] = None,
-                            presence_options: Optional[PresenceArgs] = None,
-                            timeout: int = 300) -> JoinResult:
+    def make_join_stanza(self, room: JID, nick: str, *,
+                         password: Optional[str] = None,
+                         maxchars: Optional[int] = None,
+                         maxstanzas: Optional[int] = None,
+                         seconds: Optional[int] = None,
+                         since: Optional[datetime] = None,
+                         presence_options: Optional[PresenceArgs] = None) -> Presence:
         """
-        Try to join a MUC and block until we are joined or get an error.
+        Build the stanza for the MUC join, without sending it.
 
         Only one of {maxchars, maxstanzas, seconds, since} will be used, in
         that order.
 
-        .. versionadded:: 1.8.0
+        .. versionadded:: 1.9.0
 
+        :param room: Room JID
+        :param nick: User nickname in the room
         :param password: The optional room password.
         :param maxchars: Max number of characters to return from history.
         :param maxstanzas: Max number of stanzas to return from history.
         :param seconds: Fetch history until that many seconds in the past.
         :param since: Fetch history since that timestamp.
-        :param timeout: Timeout after which a TimeoutError is raised.
-                        None means no timeout.
-        :raises: A slixmpp.exceptions.PresenceError if the MUC returns a
-                 presence error.
-        :raises: An asyncio.TimeoutError if there is neither success nor
-                presence error when the timeout is reached.
-        :return: A tuple containing our own presence, the subject, a list
-                 of occupants and a list of history messages.
+        :return: The presence stanza to send
         """
         if presence_options is None:
             presence_options = {}
         elif presence_options.get('type') == 'unavailable':
             del presence_options['type']
-        if self.xmpp.is_component and not presence_options.get('pfrom'):
-            raise ValueError('Components must always set the pfrom= attribute.')
-
         pto = JID(room)
         pto.resource = nick
         stanza = self.xmpp.make_presence(
@@ -324,6 +315,53 @@ class XEP_0045(BasePlugin):
         elif since is not None:
             fmt = self.xmpp.plugin['xep_0082'].format_datetime(since)
             stanza['muc_join']['history']['since'] = fmt
+        return stanza
+
+    async def join_muc_wait(self, room: JID, nick: str, *,
+                            password: Optional[str] = None,
+                            maxchars: Optional[int] = None,
+                            maxstanzas: Optional[int] = None,
+                            seconds: Optional[int] = None,
+                            since: Optional[datetime] = None,
+                            presence_options: Optional[PresenceArgs] = None,
+                            timeout: int = 300) -> JoinResult:
+        """
+        Try to join a MUC and block until we are joined or get an error.
+
+        Only one of {maxchars, maxstanzas, seconds, since} will be used, in
+        that order.
+
+        .. versionadded:: 1.8.0
+
+        :param room: Room JID
+        :param nick: User nickname in the room
+        :param password: The optional room password.
+        :param maxchars: Max number of characters to return from history.
+        :param maxstanzas: Max number of stanzas to return from history.
+        :param seconds: Fetch history until that many seconds in the past.
+        :param since: Fetch history since that timestamp.
+        :param timeout: Timeout after which a TimeoutError is raised.
+                        None means no timeout.
+        :raises: A slixmpp.exceptions.PresenceError if the MUC returns a
+                 presence error.
+        :raises: An asyncio.TimeoutError if there is neither success nor
+                presence error when the timeout is reached.
+        :return: A tuple containing our own presence, the subject, a list
+                 of occupants and a list of history messages.
+        """
+        if self.xmpp.is_component and not presence_options.get('pfrom'):
+            raise ValueError('Components must always set the pfrom= attribute.')
+
+        stanza = self.make_join_stanza(
+            room=room,
+            nick=nick,
+            password=password,
+            maxchars=maxchars,
+            maxstanzas=maxstanzas,
+            seconds=seconds,
+            since=since,
+            presence_options=presence_options,
+        )
         if self.multi_from:
             pfrom = presence_options['pfrom']
         else:
