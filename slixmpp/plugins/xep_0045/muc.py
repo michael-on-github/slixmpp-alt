@@ -327,19 +327,36 @@ class XEP_0045(BasePlugin):
         history_buffer: List[Message] = []
         occupant_buffer: List[Presence] = []
 
+        pfrom = stanza['from'] or None
+
         def add_message(msg: Message):
+            if pfrom and pfrom != msg['to']:
+                return
             delay = msg.get_plugin('delay', check=True)
             if delay is not None and delay['from'] == room:
                 history_buffer.append(msg)
 
         def add_occupant(pres: Presence):
+            if pfrom and pfrom != pres['to']:
+                return
             occupant_buffer.append(pres)
+
+        def set_topic(msg: Message):
+            if pfrom and pfrom != msg['to']:
+                return
+            topic_received.set_result(msg)
+
+        def set_self_presence(pres: Presence):
+            if pfrom and pfrom != pres['to']:
+                return
+            presence_done.set_result(pres)
+
 
         catch_occupants = self.xmpp.event_handler("muc::%s::got_online" % room, add_occupant)
         catch_history = self.xmpp.event_handler("muc::%s::message" % room, add_message)
-        subject_handler = self.xmpp.event_handler("muc::%s::groupchat_subject" % room, topic_received.set_result)
-        self_presence = self.xmpp.event_handler("muc::%s::self-presence" % room, presence_done.set_result)
-        presence_error = self.xmpp.event_handler("muc::%s::presence-error" % room, presence_done.set_result)
+        subject_handler = self.xmpp.event_handler("muc::%s::groupchat_subject" % room, set_topic)
+        self_presence = self.xmpp.event_handler("muc::%s::self-presence" % room, set_self_presence)
+        presence_error = self.xmpp.event_handler("muc::%s::presence-error" % room, set_self_presence)
 
         with subject_handler, catch_history, catch_occupants:
             with self_presence, presence_error:
@@ -665,7 +682,7 @@ class XEP_0045(BasePlugin):
                 return True
             elif JID(entry['jid']).bare == jid.bare:
                 bare_match = True
-        
+
         if bare_match:
             logging.info(
                 "Could not retrieve full JID, falling back to bare JID for %s in %s",
@@ -689,7 +706,7 @@ class XEP_0045(BasePlugin):
                 return nick
             elif JID(entry['jid']).bare == jid.bare:
                 bare_match = nick
-        
+
         if bare_match:
             logging.info(
                 "Could not retrieve full JID, falling back to bare JID for %s in %s",
