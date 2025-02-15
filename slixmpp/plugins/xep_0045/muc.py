@@ -291,6 +291,9 @@ class XEP_0045(BasePlugin):
         """
         if presence_options is None:
             presence_options = {}
+        elif presence_options.get('type') == 'unavailable':
+            del presence_options['type']
+
         stanza = self.xmpp.make_presence(
             pto="%s/%s" % (room, nick),
             **presence_options
