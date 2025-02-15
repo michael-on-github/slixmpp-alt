@@ -294,8 +294,10 @@ class XEP_0045(BasePlugin):
         elif presence_options.get('type') == 'unavailable':
             del presence_options['type']
 
+        pto = JID(room)
+        pto.resource = nick
         stanza = self.xmpp.make_presence(
-            pto="%s/%s" % (room, nick),
+            pto=pto,
             **presence_options
         )
         stanza.enable('muc_join')
