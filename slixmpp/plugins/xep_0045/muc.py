@@ -7,6 +7,7 @@ from __future__ import with_statement
 
 import asyncio
 import logging
+from collections import defaultdict
 from datetime import datetime
 from typing import (
     Any,
@@ -76,13 +77,16 @@ class XEP_0045(BasePlugin):
     description = 'XEP-0045: Multi-User Chat'
     dependencies = {'xep_0030', 'xep_0004', 'xep_0203'}
     stanza = stanza
+    default_config = {
+        'multi_from': False,
+    }
 
-    rooms: Dict[JID, Dict[str, MucRoomItem]]
-    our_nicks: Dict[JID, str]
+    rooms: Dict[Optional[JID], Dict[JID, Dict[str, MucRoomItem]]]
+    our_nicks: Dict[Optional[JID], Dict[JID, str]]
 
     def plugin_init(self):
-        self.rooms = {}
-        self.our_nicks = {}
+        self.rooms = defaultdict(lambda: defaultdict())
+        self.our_nicks = defaultdict(lambda: defaultdict())
         # load MUC support in presence stanzas
         register_stanza_plugin(MUCMessage, MUCUserItem)
         register_stanza_plugin(MUCPresence, MUCUserItem)
@@ -163,6 +167,8 @@ class XEP_0045(BasePlugin):
                 StanzaPath('message/muc/decline'),
                 self._handle_groupchat_decline
         ))
+        if not self.xmpp.is_component:
+            self.multi_from = False
 
     def plugin_end(self):
         self.xmpp.plugin['xep_0030'].del_feature(feature=stanza.NS)
@@ -175,7 +181,7 @@ class XEP_0045(BasePlugin):
         if self.xmpp.is_component:
             self.xmpp.event('groupchat_invite', inv)
         else:
-            if inv['from'] not in self.rooms.keys():
+            if inv['from'] not in self.rooms[None].keys():
                 self.xmpp.event("groupchat_invite", inv)
 
     def _handle_groupchat_decline(self, decl: Message):
@@ -195,7 +201,11 @@ class XEP_0045(BasePlugin):
         """As a client, handle a presence stanza"""
         got_offline = False
         got_online = False
-        if pr['muc']['room'] not in self.rooms.keys():
+        if self.multi_from:
+            rooms = self.rooms[pr['to']]
+        else:
+            rooms = self.rooms[None]
+        if pr['muc']['room'] not in rooms.keys():
             return
         self.xmpp.roster[pr['from']].ignore_updates = True
         entry = pr['muc'].get_stanza_values()
@@ -203,13 +213,13 @@ class XEP_0045(BasePlugin):
         entry['status'] = pr['status']
         entry['alt_nick'] = pr['nick']
         if pr['type'] == 'unavailable':
-            if entry['nick'] in self.rooms[entry['room']]:
-                del self.rooms[entry['room']][entry['nick']]
+            if entry['nick'] in rooms[entry['room']]:
+                del rooms[entry['room']][entry['nick']]
             got_offline = True
         else:
-            if entry['nick'] not in self.rooms[entry['room']]:
+            if entry['nick'] not in rooms[entry['room']]:
                 got_online = True
-            self.rooms[entry['room']][entry['nick']] = entry
+            rooms[entry['room']][entry['nick']] = entry
         log.debug("MUC presence from %s/%s : %s", entry['room'],entry['nick'], entry)
         self.xmpp.event("groupchat_presence", pr)
         if 110 in pr['muc']['status_codes']:
@@ -293,6 +303,8 @@ class XEP_0045(BasePlugin):
             presence_options = {}
         elif presence_options.get('type') == 'unavailable':
             del presence_options['type']
+        if self.xmpp.is_component and not presence_options.get('pfrom'):
+            raise ValueError('Components must always set the pfrom= attribute.')
 
         pto = JID(room)
         pto.resource = nick
@@ -312,8 +324,12 @@ class XEP_0045(BasePlugin):
         elif since is not None:
             fmt = self.xmpp.plugin['xep_0082'].format_datetime(since)
             stanza['muc_join']['history']['since'] = fmt
-        self.rooms[room] = {}
-        self.our_nicks[room] = nick
+        if self.multi_from:
+            pfrom = presence_options['pfrom']
+        else:
+            pfrom = None
+        self.rooms[pfrom][room] = {}
+        self.our_nicks[pfrom][room] = nick
         return await self._await_join(room, stanza, timeout)
 
     async def _await_join(self, room: JID, stanza: Presence, timeout: int = 300) -> JoinResult:
@@ -378,7 +394,7 @@ class XEP_0045(BasePlugin):
                 raise asyncio.TimeoutError()
         subject: Message = topic_received.result()
         # update known nick in case it has changed
-        self.our_nicks[room] = pres['from'].resource
+        self.our_nicks[pfrom][room] = pres['from'].resource
         return (pres, subject, occupant_buffer, history_buffer)
 
     def join_muc(self, room: JID, nick: str, maxhistory="0", password='',
@@ -420,6 +436,8 @@ class XEP_0045(BasePlugin):
         :param room: Room to leave.
         :param nick: Your nickname.
         :param msg: Presence status to use.
+
+        :raises: KeyError if the room is not in our room list.
         """
         if msg:
             self.xmpp.send_presence(
@@ -434,7 +452,14 @@ class XEP_0045(BasePlugin):
                 pto="%s/%s" % (room, nick),
                 pfrom=pfrom
             )
-        del self.rooms[room]
+        if pfrom in self.rooms and room in self.rooms[pfrom]:
+            del self.rooms[pfrom][room]
+        else:
+            raise KeyError(
+                f'Unable to find the room {room} in the currently joined rooms'
+                + (f' for {pfrom}' if pfrom else '')
+            )
+
 
     def set_subject(self, room: JidStr, subject: str, *, mfrom: Optional[JID] = None):
         """Set a room’s subject.
@@ -666,15 +691,17 @@ class XEP_0045(BasePlugin):
         form.add_field(var='muc#role', ftype='list-single', label='Requested role', value=role)
         self.xmpp.send(msg)
 
-    def jid_in_room(self, room: JID, jid: JID) -> bool:
+    def jid_in_room(self, room: JID, jid: JID, pfrom: Optional[JID] = None) -> bool:
         """Check if a JID is present in a room.
 
         :param room: Room to check.
-        :param jid: FULL JID to check.
+        :param jid: full JID to check.
         """
         bare_match = False
-        for nick in self.rooms[room]:
-            entry = self.rooms[room][nick]
+        rooms = self.rooms.get(pfrom, {})
+        room = rooms.get(room, {})
+        for nick in room:
+            entry = room[nick]
             if not entry.get('jid'):
                 continue
 
@@ -690,15 +717,17 @@ class XEP_0045(BasePlugin):
             )
         return bare_match
 
-    def get_nick(self, room: JID, jid: JID) -> Optional[str]:
+    def get_nick(self, room: JID, jid: JID, pfrom: Optional[JID] = None) -> Optional[str]:
         """Get the nickname of a specific JID in a room.
 
         :param room: Room to inspect.
         :param jid: FULL JID whose nick to return.
         """
         bare_match = None
-        for nick in self.rooms[room]:
-            entry = self.rooms[room][nick]
+        rooms = self.rooms.get(pfrom, {})
+        room = rooms.get(room, {})
+        for nick in room:
+            entry = room[nick]
             if not entry.get('jid'):
                 continue
 
@@ -714,19 +743,20 @@ class XEP_0045(BasePlugin):
             )
         return bare_match
 
-    def get_joined_rooms(self) -> List[JID]:
+    def get_joined_rooms(self, pfrom: Optional[JID] = None) -> List[JID]:
         """Get the list of rooms we sent a join presence to
         and did not explicitly leave.
         """
-        return list(self.rooms.keys())
+        return list(self.rooms.get(pfrom, {}).keys())
 
-    def get_our_jid_in_room(self, room_jid: JID) -> str:
+    def get_our_jid_in_room(self, room_jid: JID, pfrom: Optional[JID] = None) -> str:
         """ Return the jid we're using in a room.
         """
-        return "%s/%s" % (room_jid, self.our_nicks[room_jid])
+        return "%s/%s" % (room_jid, self.our_nicks[pfrom][room_jid])
 
     def get_jid_property(self, room: JID, nick: str,
-                         jid_property: MucRoomItemKeys) -> Any:
+                         jid_property: MucRoomItemKeys,
+                         pfrom: Optional[JID] = None) -> Any:
         """ Get the property of a nick in a room, such as its 'jid' or 'affiliation'
             If not found, return None.
 
@@ -734,19 +764,21 @@ class XEP_0045(BasePlugin):
         :param nick: Which nickname information to get.
         :param jid_property: Property to fetch.
         """
-        if room in self.rooms and nick in self.rooms[room] and jid_property in self.rooms[room][nick]:
-            return self.rooms[room][nick][jid_property]
-        else:
-            return None
+        rooms = self.rooms.get(pfrom, {})
+        room_dict = rooms.get(room, {})
+        nick_dict = room_dict.get(nick, {})
+        prop = nick_dict.get(jid_property)
+        return prop or None
 
-    def get_roster(self, room: JID) -> List[str]:
+    def get_roster(self, room: JID, pfrom: Optional[JID] = None) -> List[str]:
         """ Get the list of nicks in a room.
 
         :param room: Room to list nicks from.
         """
-        if room not in self.rooms.keys():
+        rooms = self.rooms.get(pfrom, {})
+        if room not in rooms:
             raise ValueError("Room %s is not joined" % room)
-        return list(self.rooms[room].keys())
+        return list(rooms[room].keys())
 
     def get_users_by_affiliation(self, room: JidStr, affiliation='member', *, ifrom: Optional[JidStr] = None):
         # Preserve old API
