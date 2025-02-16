@@ -197,7 +197,7 @@ class XEP_0045(BasePlugin):
         self.xmpp.event('groupchat_config_status', msg)
         self.xmpp.event('muc::%s::config_status' % msg['from'].bare, msg)
 
-    def _client_handle_presence(self, pr: Presence):
+    def _handle_presence(self, pr: Presence):
         """As a client, handle a presence stanza"""
         got_offline = False
         got_online = False
@@ -221,7 +221,6 @@ class XEP_0045(BasePlugin):
                 got_online = True
             rooms[entry['room']][entry['nick']] = entry
         log.debug("MUC presence from %s/%s : %s", entry['room'],entry['nick'], entry)
-        self.xmpp.event("groupchat_presence", pr)
         if 110 in pr['muc']['status_codes']:
             self.xmpp.event("muc::%s::self-presence" % entry['room'], pr)
         self.xmpp.event("muc::%s::presence" % entry['room'], pr)
@@ -236,10 +235,8 @@ class XEP_0045(BasePlugin):
 
     def _handle_groupchat_presence(self, pr: Presence):
         """ Handle a presence in a muc."""
-        if self.xmpp.is_component:
-            self.xmpp.event('groupchat_presence', pr)
-        else:
-            self._client_handle_presence(pr)
+        self.xmpp.event("groupchat_presence", pr)
+        self._handle_presence(pr)
 
     def _handle_groupchat_join(self, pr: Presence):
         """Received a join presence (as a component)"""
