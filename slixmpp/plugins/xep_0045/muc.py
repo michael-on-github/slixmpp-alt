@@ -823,3 +823,7 @@ class XEP_0045(BasePlugin):
         if affiliation not in AFFILIATIONS:
             raise ValueError("Affiliation %s does not exist" % affiliation)
         return self.get_affiliation_list(room, affiliation, ifrom=ifrom)
+
+    # Aliases muc→groupchat
+    join_groupchat = join_muc
+    join_groupchat_wait = join_muc_wait
