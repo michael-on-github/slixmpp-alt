@@ -75,7 +75,7 @@ class XEP_0045(BasePlugin):
 
     name = 'xep_0045'
     description = 'XEP-0045: Multi-User Chat'
-    dependencies = {'xep_0030', 'xep_0004', 'xep_0203'}
+    dependencies = {'xep_0004', 'xep_0030', 'xep_0172', 'xep_0203'}
     stanza = stanza
     default_config = {
         'multi_from': False,
