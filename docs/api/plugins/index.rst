@@ -108,5 +108,6 @@ Plugin index
     xep_0447
     xep_0461
     xep_0469
+    xep_0482
     xep_0490
     xep_0492

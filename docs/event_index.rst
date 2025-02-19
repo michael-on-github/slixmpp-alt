@@ -74,6 +74,7 @@ processing the same stanza twice.
     chatstate_paused
         - **Data:** :py:class:`~.Message`
         - **Source:** :py:class:`~.XEP_0085`
+
         When a message containing a ``<paused/>`` chatstate is received.
 
     disco_info
@@ -89,7 +90,7 @@ processing the same stanza twice.
         Triggered whenever a ``disco#items`` result stanza is received.
 
     disconnected
-        - **Data:** ``str``, the reason for the disconnect (if any)
+        - **Data:** ``Union[str, Exception]``, the reason for the disconnect (if any). If a textual reason is not provided and an exception is the cause, it will be given to the event handler.
         - **Source:** :py:class:`~.XMLstream`
 
         Signal that the connection with the XMPP server has been lost.
@@ -515,6 +516,58 @@ processing the same stanza twice.
         - **Source:** :py:class:`~.XEP_0060`
 
         When a pubsub event of type ``subscription`` is received.
+
+    call-invite
+        - **Data:** :py:class:`~.Message`
+        - **Source:** :py:class:`~.XEP_0482`
+
+    call-retract
+        - **Data:** :py:class:`~.Message`
+        - **Source:** :py:class:`~.XEP_0482`
+
+    call-reject
+        - **Data:** :py:class:`~.Message`
+        - **Source:** :py:class:`~.XEP_0482`
+
+    call-leave
+        - **Data:** :py:class:`~.Message`
+        - **Source:** :py:class:`~.XEP_0482`
+
+    call-left
+        - **Data:** :py:class:`~.Message`
+        - **Source:** :py:class:`~.XEP_0482`
+
+    muc_ping_changed
+        - **Data:** ``dict(key: Tuple[JID, JID], previous: PingStatus, result: PingStatus)``
+        - **Source:** :py:class:`~.XEP_0410`
+
+    legacy_login
+        - **Data:** :py:class:`~.Presence`
+        - **Source:** :py:class:`~.XEP_0100`
+
+    legacy_logout
+        - **Data:** :py:class:`~.Presence`
+        - **Source:** :py:class:`~.XEP_0100`
+
+    legacy_presence_unavailable
+        - **Data:** :py:class:`~.Presence`
+        - **Source:** :py:class:`~.XEP_0100`
+
+    legacy_message
+        - **Data:** :py:class:`~.Message`
+        - **Source:** :py:class:`~.XEP_0100`
+
+    gateway_message
+        - **Data:** :py:class:`~.Message`
+        - **Source:** :py:class:`~.XEP_0100`
+
+    moderated_message
+        - **Data:** :py:class:`~.Message`
+        - **Source:** :py:class:`~.XEP_0425`
+
+    retracted_message
+        - **Data:** :py:class:`~.Message`
+        - **Source:** :py:class:`~.XEP_0424`
 
 
 Dedicated PubSub Events
