@@ -255,6 +255,26 @@ impl PyJid {
     }
 
     #[getter]
+    fn get_local(&self) -> String {
+        self.get_node()
+    }
+
+    #[setter]
+    fn set_local(&mut self, local: Option<&str>) -> PyResult<()> {
+        self.set_node(local)
+    }
+
+    #[getter]
+    fn get_username(&self) -> String {
+        self.get_node()
+    }
+
+    #[setter]
+    fn set_username(&mut self, username: Option<&str>) -> PyResult<()> {
+        self.set_node(username)
+    }
+
+    #[getter]
     fn get_server(&self) -> String {
         self.get_domain()
     }
