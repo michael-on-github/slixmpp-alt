@@ -1,5 +1,6 @@
 use pyo3::exceptions::{PyNotImplementedError, PyValueError};
 use pyo3::prelude::*;
+use pyo3::types::PyString;
 
 pyo3::create_exception!(py_jid, InvalidJID, PyValueError, "Raised when attempting to create a JID that does not pass validation.\n\nIt can also be raised if modifying an existing JID in such a way as\nto make it invalid, such trying to remove the domain from an existing\nfull JID while the local and resource portions still exist.");
 
@@ -240,6 +241,23 @@ impl PyJid {
         } else {
             0
         }
+    }
+
+    fn __getstate__(&self, py: Python) -> PyResult<Option<PyObject>> {
+        match &self.jid {
+            Some(jid) => Ok(Some(PyString::new(py, jid.as_str()).into())),
+            None => Ok(None)
+        }
+    }
+
+    fn __setstate__(&mut self, py: Python, state: PyObject) -> PyResult<()> {
+        if state.is_none(py) {
+            self.jid = None;
+        } else {
+            let string = state.extract(py)?;
+            self.jid = Some(jid::Jid::new(string).unwrap());
+        }
+        Ok(())
     }
 
     // Aliases
