@@ -24,12 +24,11 @@ from slixmpp import (
     JID,
 )
 from slixmpp.plugins import BasePlugin
-from slixmpp.xmlstream import register_stanza_plugin, ET
+from slixmpp.xmlstream import register_stanza_plugin
 from slixmpp.xmlstream.handler.callback import Callback
-from slixmpp.xmlstream.matcher.xpath import MatchXPath
 from slixmpp.xmlstream.matcher.stanzapath import StanzaPath
 from slixmpp.xmlstream.matcher.xmlmask import MatchXMLMask
-from slixmpp.exceptions import IqError, IqTimeout, PresenceError
+from slixmpp.exceptions import PresenceError
 
 from slixmpp.plugins.xep_0004 import Form
 from slixmpp.plugins.xep_0045 import stanza
@@ -70,7 +69,17 @@ ROLES = ('moderator', 'participant', 'visitor', 'none')
 class XEP_0045(BasePlugin):
 
     """
-    XEP-0045 Multi-User Chat
+    XEP-0045 Multi-User Chat.
+
+
+    This XEP is made for use by *clients* or components acting as clients.
+    If a component is made to act as MUC service, it should only care about
+    the events and the stanza plugins.
+
+    A single component may want to simulate joins as multiple entities, in
+    which case it should enable the multi_from config option.
+
+
     """
 
     name = 'xep_0045'
@@ -222,7 +231,7 @@ class XEP_0045(BasePlugin):
             if entry['nick'] not in rooms[entry['room']]:
                 got_online = True
             rooms[entry['room']][entry['nick']] = entry
-        log.debug("MUC presence from %s/%s : %s", entry['room'],entry['nick'], entry)
+        log.debug("MUC presence from %s/%s : %s", entry['room'], entry['nick'], entry)
         if 110 in pr['muc']['status_codes']:
             self.xmpp.event("muc::%s::self-presence" % entry['room'], pr)
         self.xmpp.event("muc::%s::presence" % entry['room'], pr)
@@ -255,7 +264,6 @@ class XEP_0045(BasePlugin):
         """
         self.xmpp.event('groupchat_message_error', msg)
         self.xmpp.event("muc::%s::message_error" % msg['from'].bare, msg)
-
 
     def _handle_groupchat_subject(self, msg: Message):
         """ Handle a message coming from a muc indicating
@@ -404,12 +412,26 @@ class XEP_0045(BasePlugin):
                 return
             presence_done.set_result(pres)
 
-
-        catch_occupants = self.xmpp.event_handler("muc::%s::got_online" % room, add_occupant)
-        catch_history = self.xmpp.event_handler("muc::%s::message" % room, add_message)
-        subject_handler = self.xmpp.event_handler("muc::%s::groupchat_subject" % room, set_topic)
-        self_presence = self.xmpp.event_handler("muc::%s::self-presence" % room, set_self_presence)
-        presence_error = self.xmpp.event_handler("muc::%s::presence-error" % room, set_self_presence)
+        catch_occupants = self.xmpp.event_handler(
+            "muc::%s::got_online" % room,
+            add_occupant
+        )
+        catch_history = self.xmpp.event_handler(
+            "muc::%s::message" % room,
+            add_message
+        )
+        subject_handler = self.xmpp.event_handler(
+            "muc::%s::groupchat_subject" % room,
+            set_topic
+        )
+        self_presence = self.xmpp.event_handler(
+            "muc::%s::self-presence" % room,
+            set_self_presence
+        )
+        presence_error = self.xmpp.event_handler(
+            "muc::%s::presence-error" % room,
+            set_self_presence
+        )
 
         with subject_handler, catch_history, catch_occupants:
             with self_presence, presence_error:
@@ -434,8 +456,10 @@ class XEP_0045(BasePlugin):
         self.our_nicks[pfrom][room] = pres['from'].resource
         return (pres, subject, occupant_buffer, history_buffer)
 
-    def join_muc(self, room: JID, nick: str, maxhistory="0", password='',
-                 pstatus='', pshow: PresenceShows='chat', pfrom: JidStr='') -> asyncio.Future:
+    def join_muc(self, room: JID, nick: str, maxhistory: str = "0",
+                 password: str = '', pstatus: str = '',
+                 pshow: PresenceShows = 'chat', pfrom: JidStr = ''
+                 ) -> asyncio.Future:
         """ Join the specified room, requesting 'maxhistory' lines of history.
 
         .. deprecated:: 1.8.0
@@ -496,7 +520,6 @@ class XEP_0045(BasePlugin):
                 f'Unable to find the room {room} in the currently joined rooms'
                 + (f' for {pfrom}' if pfrom else '')
             )
-
 
     def set_subject(self, room: JidStr, subject: str, *, mfrom: Optional[JID] = None):
         """Set a room’s subject.
@@ -622,10 +645,11 @@ class XEP_0045(BasePlugin):
 
     async def set_role(self, room: JidStr, nick: str, role: MucRole, *,
                        reason: str = '', ifrom: Optional[JidStr] = None, **iqkwargs):
-        """ Change role property of a nick in a room.
-            Typically, roles are temporary (they last only as long as you are in the
-            room), whereas affiliations are permanent (they last across groupchat
-            sessions).
+        """
+        Change role property of a nick in a room.
+        Typically, roles are temporary (they last only as long as you are in
+        the room), whereas affiliations are permanent (they last across
+        groupchat sessions).
 
         :param room: Room to modify.
         :param nick: User nickname to use in the set operation.
@@ -720,12 +744,16 @@ class XEP_0045(BasePlugin):
 
         :param room: Room to request voice from.
         """
-        #form = self.xmpp['xep_0004'].make_form(ftype='submit')
         msg = self.xmpp.make_message(room, mfrom=mfrom)
         form = msg['form']
         form['type'] = 'submit'
-        form.add_field(var='FORM_TYPE', ftype='hidden', value='http://jabber.org/protocol/muc#request')
-        form.add_field(var='muc#role', ftype='list-single', label='Requested role', value=role)
+        form.add_field(
+            var='FORM_TYPE',
+            ftype='hidden',
+            value='http://jabber.org/protocol/muc#request',
+        )
+        form.add_field(var='muc#role', ftype='list-single',
+                       label='Requested role', value=role)
         self.xmpp.send(msg)
 
     def jid_in_room(self, room: JID, jid: JID, pfrom: Optional[JID] = None) -> bool:
