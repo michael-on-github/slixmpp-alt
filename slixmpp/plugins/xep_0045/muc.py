@@ -211,7 +211,9 @@ class XEP_0045(BasePlugin):
         entry = pr['muc'].get_stanza_values()
         entry['show'] = pr['show'] if pr['show'] in pr.showtypes else None
         entry['status'] = pr['status']
-        entry['alt_nick'] = pr['nick']
+
+        alt_nick_element = pr.get_plugin('nick', check=True)
+        entry['alt_nick'] = alt_nick_element['nick'] if alt_nick_element else ''
         if pr['type'] == 'unavailable':
             if entry['nick'] in rooms[entry['room']]:
                 del rooms[entry['room']][entry['nick']]
