@@ -7,7 +7,7 @@ steps:
     pull: true
     commands:
     - uv python pin ${TAG}
-    - uv sync --frozen --all-groups
+    - uv sync --frozen --all-groups --all-extras
   unit_tests:
     image: codeberg.org/poezio/woodpecker-slixmpp
     commands:

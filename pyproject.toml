@@ -27,6 +27,12 @@ classifiers = [
     'Topic :: Software Development :: Libraries :: Python Modules',
 ]
 
+[project.optional-dependencies]
+xep-0363 = ["aiohttp"]
+xep-0444-compliance = ["emoji"]
+xep-0454 = ["cryptography"]
+safer-xml-parsing = ["defusedxml"]
+
 [project.scripts]
 slixmpp = "slixmpp:main"
 
@@ -40,18 +46,4 @@ requires = ["maturin>=1.0,<2.0"]
 build-backend = "maturin"
 
 [dependency-groups]
-xep-0363 = [
-    "aiohttp",
-]
-xep-0444-compliance = [
-    "emoji",
-]
-xep-0454 = [
-    "cryptography",
-]
-safer-xml-parsing = [
-    "defusedxml",
-]
-dev = [
-    "mypy>=1.14.1",
-]
+dev = ["mypy>=1.14.1"]
