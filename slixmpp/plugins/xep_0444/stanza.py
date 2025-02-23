@@ -6,9 +6,10 @@
 from typing import Set, Iterable
 from slixmpp.xmlstream import ElementBase
 try:
-    from emoji import EMOJI_DATA as UNICODE_EMOJI
+    from emoji import is_emoji
 except ImportError:
-    UNICODE_EMOJI = None
+    def is_emoji(*args, **kwargs) -> bool:
+        return True
 
 
 NS = 'urn:xmpp:reactions:0'
@@ -24,10 +25,9 @@ class Reactions(ElementBase):
         reactions = set()
         for reaction in self:
             value = reaction['value']
-            if UNICODE_EMOJI and not all_chars:
-                if value in UNICODE_EMOJI:
-                    reactions.add(reaction['value'])
-            else:
+            if all_chars:
+                reactions.add(reaction['value'])
+            elif is_emoji(value):
                 reactions.add(reaction['value'])
         return reactions
 
@@ -50,8 +50,7 @@ class Reaction(ElementBase):
         return self.xml.text
 
     def set_value(self, value: str, *, all_chars=False):
-        if UNICODE_EMOJI and not all_chars:
-            if not value in UNICODE_EMOJI:
-                raise ValueError("%s is not a valid emoji" % value)
+        if not all_chars and not is_emoji(value):
+            raise ValueError("%s is not a valid emoji" % value)
         self.xml.text = value
 

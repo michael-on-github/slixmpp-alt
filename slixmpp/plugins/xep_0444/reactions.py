@@ -15,6 +15,14 @@ from slixmpp.plugins.xep_0444 import stanza
 
 
 class XEP_0444(BasePlugin):
+    """
+    XEP-0444: Message Reactions.
+
+    If the python-emoji library is present, setting emojis as reactions will
+    be checked against known emoji, and trying to set non-emoji characters
+    as reactions will raise a ``ValueError``. This behavior can be disabled
+    by passing ``all_chars=True`` to the ``Reaction.set_value()`` call.
+    """
     name = 'xep_0444'
     description = 'XEP-0444: Message Reactions'
     dependencies = {'xep_0030', 'xep_0334'}
