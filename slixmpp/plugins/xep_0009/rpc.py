@@ -11,7 +11,7 @@ from slixmpp.xmlstream.handler import Callback
 from slixmpp.xmlstream.matcher import MatchXPath
 from slixmpp.plugins import BasePlugin
 from slixmpp.plugins.xep_0009 import stanza
-from slixmpp.plugins.xep_0009.stanza.RPC import RPCQuery, MethodCall, MethodResponse
+from slixmpp.plugins.xep_0009.stanza import RPCQuery, MethodCall, MethodResponse
 
 
 log = logging.getLogger(__name__)
@@ -162,7 +162,7 @@ class XEP_0009(BasePlugin):
         if not forwarded and self.xmpp.event_handled('jabber_rpc_method_call') > 1:
             return
         # Reply with error by default
-        error = self.xmpp.plugin['xep_0009']._item_not_found(iq)
+        error = self._item_not_found(iq)
         error.send()
 
     def _on_jabber_rpc_method_response(self, iq, forwarded=False):
@@ -175,7 +175,7 @@ class XEP_0009(BasePlugin):
         """
         if not forwarded and self.xmpp.event_handled('jabber_rpc_method_response') > 1:
             return
-        error = self.xmpp.plugin['xep_0009']._recipient_unvailable(iq)
+        error = self._recipient_unvailable(iq)
         error.send()
 
     def _on_jabber_rpc_method_fault(self, iq, forwarded=False):
@@ -188,7 +188,7 @@ class XEP_0009(BasePlugin):
         """
         if not forwarded and self.xmpp.event_handled('jabber_rpc_method_fault') > 1:
             return
-        error = self.xmpp.plugin['xep_0009']._recipient_unvailable(iq)
+        error = self._recipient_unvailable(iq)
         error.send()
 
     def _on_jabber_rpc_error(self, iq, forwarded=False):
@@ -201,7 +201,7 @@ class XEP_0009(BasePlugin):
         """
         if not forwarded and self.xmpp.event_handled('jabber_rpc_error') > 1:
             return
-        error = self.xmpp.plugin['xep_0009']._recipient_unvailable(iq)
+        error = self._recipient_unvailable(iq)
         error.send()
 
     def _send_fault(self, iq, fault_xml): #

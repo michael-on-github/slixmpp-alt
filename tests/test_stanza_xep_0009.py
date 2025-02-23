@@ -13,7 +13,7 @@ from __future__ import unicode_literals
 import base64
 import sys
 
-from slixmpp.plugins.xep_0009.stanza.RPC import RPCQuery, MethodCall, \
+from slixmpp.plugins.xep_0009.stanza import RPCQuery, MethodCall, \
     MethodResponse
 from slixmpp.plugins.xep_0009.binding import py2xml, xml2py, rpcbase64, \
     rpctime

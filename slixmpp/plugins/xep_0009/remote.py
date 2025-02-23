@@ -19,34 +19,6 @@ def _isstr(obj):
     return isinstance(obj, str)
 
 
-# Class decorator to declare a metaclass to a class in a way compatible with Python 2 and 3.
-# This decorator is copied from 'six' (https://bitbucket.org/gutworth/six):
-#
-# Copyright (c) 2010-2015 Benjamin Peterson
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-def _add_metaclass(metaclass):
-    def wrapper(cls):
-        orig_vars = cls.__dict__.copy()
-        slots = orig_vars.get('__slots__')
-        if slots is not None:
-            if isinstance(slots, str):
-                slots = [slots]
-            for slots_var in slots:
-                orig_vars.pop(slots_var)
-        orig_vars.pop('__dict__', None)
-        orig_vars.pop('__weakref__', None)
-        return metaclass(cls.__name__, cls.__bases__, orig_vars)
-    return wrapper
-
 def _intercept(method, name, public):
     def _resolver(instance, *args, **kwargs):
         log.debug("Locally calling %s.%s with arguments %s.", instance.FQN(), method.__name__, args)
@@ -62,6 +34,7 @@ def _intercept(method, name, public):
     _resolver._rpc = public
     _resolver._rpc_name = method.__name__ if name is None else name
     return _resolver
+
 
 def remote(function_argument, public = True):
     '''
@@ -251,8 +224,7 @@ class TimeoutException(Exception):
     pass
 
 
-@_add_metaclass(abc.ABCMeta)
-class Callback(object):
+class Callback(metaclass=abc.ABCMeta):
     '''
     A base class for callback handlers.
     '''
@@ -319,8 +291,7 @@ class Future(Callback):
         self._event.set()
 
 
-@_add_metaclass(abc.ABCMeta)
-class Endpoint(object):
+class Endpoint(metaclass=abc.ABCMeta):
     '''
     The Endpoint class is an abstract base class for all objects
     participating in an RPC-enabled XMPP network.
@@ -454,7 +425,6 @@ class RemoteSession(object):
     '''
     A context object for a Jabber-RPC session.
     '''
-
 
     def __init__(self, client, session_close_callback):
         '''
@@ -699,7 +669,7 @@ class RemoteSession(object):
         callback.cancel_with_error(e)
 
 
-class Remote(object):
+class Remote:
     '''
     Bootstrap class for Jabber-RPC sessions. New sessions are openend
     with an existing XMPP client, or one is instantiated on demand.

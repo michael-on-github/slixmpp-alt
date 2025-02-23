@@ -128,8 +128,7 @@ def _xml2py(value):
     raise ValueError()
 
 
-
-class rpcbase64(object):
+class rpcbase64:
 
     def __init__(self, data):
         #base 64 encoded string
@@ -146,7 +145,7 @@ class rpcbase64(object):
 
 
 
-class rpctime(object):
+class rpctime:
 
     def __init__(self,data=None):
         #assume string data is in iso format YYYYMMDDTHH:MM:SS
