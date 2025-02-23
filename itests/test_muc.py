@@ -57,14 +57,16 @@ class TestMUC(SlixIntegration):
         self.clients[1]['xep_0045'].join_muc(self.muc, 'client2')
         await self.clients[1].wait_until('muc::%s::got_online' % self.muc)
 
-    async def test_leave(self):
-        """Check that we leave properly"""
+    async def test_nick_change_leave(self):
+        """Check that we change nicks and leave properly"""
         await self.test_join_after_config()
+        nick = 'coucoucou2'
+        new_nick = await self.clients[0]['xep_0045'].set_self_nick(self.muc, nick)
+        assert new_nick == nick
         self.clients[0]['xep_0045'].leave_muc(self.muc, 'client1', 'boooring')
         pres = await self.clients[1].wait_until('muc::%s::got_offline' % self.muc)
         self.assertEqual(pres['status'], 'boooring')
         self.assertEqual(pres['type'], 'unavailable')
-
 
     async def test_kick(self):
         """Test kicking a user"""

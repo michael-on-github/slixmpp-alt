@@ -756,6 +756,52 @@ class XEP_0045(BasePlugin):
                        label='Requested role', value=role)
         self.xmpp.send(msg)
 
+    async def set_self_nick(self, room: JID, new_nick: str,
+                            timeout: int = 60,
+                            presence_options: Optional[PresenceArgs] = None) -> str:
+        """
+        Set your nickname in a room.
+        The room can arbitrarily decide on another nickname, so this function
+        waits for the response and returns the final nickname.
+
+        .. versionadded:: 1.9.0
+
+        :param room: Room in which to change our nickname
+        :param new_nick: Our new nickname in the room
+        :param timeout: Time to wait for our new nickname response
+        :param pfrom: (for components) the JID to send our presence from
+        """
+        new_jid = JID(room)
+        new_jid.resource = new_nick
+        if presence_options is None:
+            presence_options = {}
+        pfrom = presence_options.get('pfrom', None)
+        future = asyncio.Future()
+
+        def nickname_set(presence):
+            codes = presence['muc']['status_codes']
+            if 110 in codes and 303 in codes:
+                future.set_result(presence)
+
+        handler = self.xmpp.event_handler(
+            f"muc::{room}::self-presence",
+            nickname_set,
+        )
+        with handler:
+            self.xmpp.make_presence(pto=new_jid, **presence_options).send()
+            done, pending = await asyncio.wait([future], timeout=timeout)
+        if pending:
+            raise TimeoutError("Timed out waiting for server answer")
+
+        presence = future.result()
+        # We don't care about the 210 status code, we return what the server
+        # answers anyway
+        new_nick = presence['muc']['item_nick']
+        rooms = self.our_nicks[pfrom]
+        if room in rooms:
+            self.our_nicks[pfrom][room] = new_nick
+        return new_nick
+
     def jid_in_room(self, room: JID, jid: JID, pfrom: Optional[JID] = None) -> bool:
         """Check if a JID is present in a room.
 

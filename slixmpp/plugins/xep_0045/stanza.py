@@ -26,7 +26,10 @@ class MUCBase(ElementBase):
     name = 'x'
     namespace = NS_USER
     plugin_attrib = 'muc'
-    interfaces = {'affiliation', 'role', 'jid', 'nick', 'room', 'status_codes'}
+    interfaces = {
+        'affiliation', 'role', 'jid', 'nick', 'room', 'status_codes',
+        'item_nick',
+    }
 
     def get_status_codes(self) -> Set[int]:
         status = self.xml.findall(f'{{{NS_USER}}}status')
@@ -46,6 +49,12 @@ class MUCBase(ElementBase):
         status = MUCStatus()
         status['code'] = code
         self.append(status)
+
+    def get_item_nick(self) -> str:
+        return self.get_item_attr('nick', '')
+
+    def set_item_nick(self, value: str) -> str:
+        return self.set_item_attr('nick', value)
 
     def get_item_attr(self, attr: str, default):
         item = self.xml.find(f'{{{NS_USER}}}item')
@@ -164,6 +173,7 @@ class MUCMessage(MUCBase):
         </message>
     '''
 
+
 class MUCJoin(ElementBase):
     name = 'x'
     namespace = NS
@@ -194,6 +204,7 @@ class MUCInvite(ElementBase):
         if not isinstance(value, JID):
             value = JID(value)
         self._set_attr('from', value)
+
 
 class MUCDecline(ElementBase):
     name = 'decline'
