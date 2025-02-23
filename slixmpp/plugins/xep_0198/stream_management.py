@@ -316,7 +316,9 @@ class XEP_0198(BasePlugin):
         from slixmpp.plugins.xep_0198 import stanza as st
         if isinstance(stanza, (st.Enable, st.Resume)):
             self.enabled_out = True
-            self.unacked_queue.clear()
+            # do not clear the queue on resume
+            if isinstance(stanza, st.Enable):
+                self.unacked_queue.clear()
             log.debug("enabling outgoing SM: %s" % stanza)
 
         if not self.enabled_out:
