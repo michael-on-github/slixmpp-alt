@@ -37,15 +37,6 @@ class XEP_0009(BasePlugin):
             Callback('RPC Call', MatchXPath('{%s}iq/{%s}query/{%s}methodResponse' % (self.xmpp.default_ns, RPCQuery.namespace, RPCQuery.namespace)),
             self._handle_method_response)
         )
-        self.xmpp.register_handler(
-            Callback('RPC Call', MatchXPath('{%s}iq/{%s}error' % (self.xmpp.default_ns, self.xmpp.default_ns)),
-            self._handle_error)
-        )
-        self.xmpp.add_event_handler('jabber_rpc_method_call', self._on_jabber_rpc_method_call)
-        self.xmpp.add_event_handler('jabber_rpc_method_response', self._on_jabber_rpc_method_response)
-        self.xmpp.add_event_handler('jabber_rpc_method_fault', self._on_jabber_rpc_method_fault)
-        self.xmpp.add_event_handler('jabber_rpc_error', self._on_jabber_rpc_error)
-        self.xmpp.add_event_handler('error', self._handle_error)
         #self.activeCalls = []
 
         self.xmpp['xep_0030'].add_feature('jabber:iq:rpc')
@@ -145,74 +136,9 @@ class XEP_0009(BasePlugin):
             log.debug("Incoming Jabber-RPC response from %s", iq['from'])
             self.xmpp.event('jabber_rpc_method_response', iq)
 
-    def _handle_error(self, iq):
-        print("['XEP-0009']._handle_error -> ERROR! Iq is '%s'" % iq)
-        print("#######################")
-        print("### NOT IMPLEMENTED ###")
-        print("#######################")
-
-    def _on_jabber_rpc_method_call(self, iq, forwarded=False):
-        """
-        A default handler for Jabber-RPC method call. If another
-        handler is registered, this one will defer and not run.
-
-        If this handler is called by your own custom handler with
-        forwarded set to True, then it will run as normal.
-        """
-        if not forwarded and self.xmpp.event_handled('jabber_rpc_method_call') > 1:
-            return
-        # Reply with error by default
-        error = self._item_not_found(iq)
-        error.send()
-
-    def _on_jabber_rpc_method_response(self, iq, forwarded=False):
-        """
-        A default handler for Jabber-RPC method response. If another
-        handler is registered, this one will defer and not run.
-
-        If this handler is called by your own custom handler with
-        forwarded set to True, then it will run as normal.
-        """
-        if not forwarded and self.xmpp.event_handled('jabber_rpc_method_response') > 1:
-            return
-        error = self._recipient_unvailable(iq)
-        error.send()
-
-    def _on_jabber_rpc_method_fault(self, iq, forwarded=False):
-        """
-        A default handler for Jabber-RPC fault response. If another
-        handler is registered, this one will defer and not run.
-
-        If this handler is called by your own custom handler with
-        forwarded set to True, then it will run as normal.
-        """
-        if not forwarded and self.xmpp.event_handled('jabber_rpc_method_fault') > 1:
-            return
-        error = self._recipient_unvailable(iq)
-        error.send()
-
-    def _on_jabber_rpc_error(self, iq, forwarded=False):
-        """
-        A default handler for Jabber-RPC error response. If another
-        handler is registered, this one will defer and not run.
-
-        If this handler is called by your own custom handler with
-        forwarded set to True, then it will run as normal.
-        """
-        if not forwarded and self.xmpp.event_handled('jabber_rpc_error') > 1:
-            return
-        error = self._recipient_unvailable(iq)
-        error.send()
-
     def _send_fault(self, iq, fault_xml): #
         fault = self.make_iq_method_response_fault(iq['id'], iq['from'], fault_xml)
         fault.send()
-
-    def _send_error(self, iq):
-        print("['XEP-0009']._send_error -> ERROR! Iq is '%s'" % iq)
-        print("#######################")
-        print("### NOT IMPLEMENTED ###")
-        print("#######################")
 
     def _extract_method(self, stanza):
         xml = ET.fromstring("%s" % stanza)
