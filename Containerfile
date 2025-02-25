@@ -1,7 +1,7 @@
 # A container for Woodpecker CI
 # This it NOT meant to be used in any other context
 
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 ENV UV_LINK_MODE=copy
 ENV PATH=.venv/bin:$PATH
