@@ -79,14 +79,17 @@ class _Base(ElementBase):
 
 class Never(_Base):
     name = "never"
+    plugin_attrib = name
 
 
 class Always(_Base):
     name = "always"
+    plugin_attrib = name
 
 
 class OnMention(_Base):
     name = "on-mention"
+    plugin_attrib = name
 
 
 class Advanced(ElementBase):
@@ -104,3 +107,6 @@ _CLASS_MAP = {
 def register_plugin():
     register_stanza_plugin(Extensions, Notify)
     register_stanza_plugin(Notify, Advanced)
+    register_stanza_plugin(Notify, Never, iterable=True)
+    register_stanza_plugin(Notify, Always, iterable=True)
+    register_stanza_plugin(Notify, OnMention, iterable=True)

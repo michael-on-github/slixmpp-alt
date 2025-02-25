@@ -4,6 +4,7 @@
 # See the file LICENSE for copying permission.
 
 import unittest
+from xml.etree import ElementTree as ET
 
 from slixmpp import register_stanza_plugin, ElementBase
 from slixmpp.test import SlixTest
@@ -164,6 +165,84 @@ class TestNotificationSetting(SlixTest):
             bookmark["extensions"]["notify"].get_config("mobile"), "on-mention"
         )
 
+    def test_get_config_2(self):
+        notify = stanza.Notify()
+        notify.configure("always")
+        self.assertEqual(notify.get_config(), "always")
+
+        notify = stanza.Notify(
+            xml=ET.fromstring(
+                "<notify xmlns='urn:xmpp:notification-settings:0'><always /></notify>"
+            )
+        )
+        self.assertEqual(notify.get_config(), "always")
+
+        notify = stanza.Notify(
+            xml=ET.fromstring(
+                "<notify xmlns='urn:xmpp:notification-settings:0'>"
+                "<always client-type='pc'/>"
+                "</notify>"
+            )
+        )
+        self.assertIsNone(notify.get_config())
+        self.assertEqual(notify.get_config("pc"), "always")
+
+    def test_add_config(self):
+        notify = stanza.Notify(
+            xml=ET.fromstring(
+                "<notify xmlns='urn:xmpp:notification-settings:0'>"
+                "<always client-type='pc'/>"
+                "</notify>"
+            )
+        )
+        notify.configure("never")
+        self.check(
+            notify,
+            """
+            <notify xmlns='urn:xmpp:notification-settings:0'>
+                <never/>
+                <always client-type='pc'/>
+            </notify>
+            """,
+            use_values=False
+        )
+
+    def test_update_config(self):
+        notify = stanza.Notify(
+            xml=ET.fromstring(
+                "<notify xmlns='urn:xmpp:notification-settings:0'>"
+                "<always />"
+                "</notify>"
+            )
+        )
+        notify.configure("never")
+        self.check(
+            notify,
+            """
+            <notify xmlns='urn:xmpp:notification-settings:0'>
+                <never/>
+            </notify>
+            """,
+            use_values=False
+        )
+
+        notify = stanza.Notify(
+            xml=ET.fromstring(
+                "<notify xmlns='urn:xmpp:notification-settings:0'>"
+                "<always client-type='pc'/>"
+                "</notify>"
+            )
+        )
+        notify.configure("never", client_type="pc")
+        self.check(
+            notify,
+            """
+            <notify xmlns='urn:xmpp:notification-settings:0'>
+                <never client-type='pc'/>
+            </notify>
+            """,
+            use_values=False
+        )
 
 class AdvancedExtension(ElementBase):
     namespace = "cool-ns"
