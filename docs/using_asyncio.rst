@@ -45,15 +45,10 @@ A :class:`.CoroutineCallback` class has been added as well for
 Running the event loop
 ~~~~~~~~~~~~~~~~~~~~~~
 
-:meth:`.XMLStream.process` is only a thin wrapper on top of
-``loop.run_forever()`` (if ``timeout`` is provided then it will
-only run for this amount of time, and if ``forever`` is False it will
-run until disconnection).
-
-This wrapper should be removed in slixmpp 1.9.0.
-
-Therefore you can handle the event loop in any way you like
-instead of using ``process()``.
+You can handle the event loop in any way you like, either forever, until an
+event, only for a specific duration, in conjonction with another asyncio user,
+anything goes.  But remember slixmpp will only process events and send messages
+when its event loop is running.
 
 
 Using connect()
@@ -63,7 +58,7 @@ Using connect()
 only holds true if the event loop is running!
 
 That is why in all examples we usually call connect() right before calling
-a `loop.run_…` function, or the deprecated `process()` function.
+a `loop.run_…` function.
 
 Using a different event loop
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -106,7 +101,7 @@ callbacks while everything is not ready.
     loop.run_until_complete(event.wait())
     # do some other stuff before running the event loop, e.g.
     # loop.run_until_complete(httpserver.init())
-    loop.run_forever()
+    asyncio.get_event_loop().run_forever()
 
 
 Use with other asyncio-based libraries
@@ -166,6 +161,6 @@ JID indicating its findings.
 
     client = ExampleClient('jid@example', 'password')
     client.connect()
-    client.loop.run_until_complete(client.disconnected)
+    asyncio.get_event_loop().run_forever()
 
 
