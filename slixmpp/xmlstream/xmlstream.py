@@ -529,34 +529,6 @@ class XMLStream(asyncio.BaseProtocol):
             return self.reschedule_connection_attempt()
         return None
 
-    def process(self, *, forever: bool = True, timeout: Optional[int] = None) -> None:
-        """Process all the available XMPP events (receiving or sending data on the
-        socket(s), calling various registered callbacks, calling expired
-        timers, handling signal events, etc).  If timeout is None, this
-        function will run forever. If timeout is a number, this function
-        will return after the given time in seconds.
-
-        Will be removed in slixmpp 1.9.0
-
-        :deprecated: 1.8.0
-        """
-        warnings.warn(
-            'This function will be removed in slixmpp 1.9 and above.'
-            ' Use the asyncio normal functions instead.',
-            category=DeprecationWarning,
-            stacklevel=2,
-        )
-        if timeout is None:
-            if forever:
-                self.loop.run_forever()
-            else:
-                self.loop.run_until_complete(self.disconnected)
-        else:
-            tasks: List[Union[asyncio.Task, asyncio.Future]] = [asyncio.Task(asyncio.sleep(timeout))]
-            if not forever:
-                tasks.append(self.disconnected)
-            self.loop.run_until_complete(asyncio.wait(tasks))
-
     def init_parser(self) -> None:
         """init the XML parser. The parser must always be reset for each new
         connexion

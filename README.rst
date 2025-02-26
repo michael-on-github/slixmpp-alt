@@ -56,6 +56,7 @@ connections and configuration. Here is the gist of the boilerplate needed for a 
 based project. See the documentation or examples directory for more detailed archetypes for
 Slixmpp projects::
 
+    import asyncio
     import logging
 
     from slixmpp import ClientXMPP
@@ -113,7 +114,7 @@ Slixmpp projects::
 
         xmpp = EchoBot('somejid@example.com', 'use_getpass')
         xmpp.connect()
-        xmpp.process(forever=True)
+        asyncio.get_event_loop().run_forever()
 
 
 Slixmpp Credits

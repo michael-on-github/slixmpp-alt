@@ -13,6 +13,7 @@ from pathlib import Path
 from getpass import getpass
 from argparse import ArgumentParser
 
+import asyncio
 import slixmpp
 from slixmpp import JID
 from slixmpp.exceptions import IqTimeout
@@ -153,4 +154,4 @@ if __name__ == '__main__':
 
     # Connect to the XMPP server and start processing XMPP stanzas.
     xmpp.connect()
-    xmpp.process(forever=False)
+    asyncio.get_event_loop().run_until_complete(xmpp.disconnected)
