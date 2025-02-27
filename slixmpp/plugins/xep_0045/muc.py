@@ -232,7 +232,14 @@ class XEP_0045(BasePlugin):
                 got_online = True
             rooms[entry['room']][entry['nick']] = entry
         log.debug("MUC presence from %s/%s : %s", entry['room'], entry['nick'], entry)
-        if 110 in pr['muc']['status_codes']:
+        status_codes = pr['muc']['status_codes']
+        if 110 in status_codes:
+            if 303 in status_codes:
+                if self.multi_from:
+                    pto = pr['to']
+                else:
+                    pto = None
+                self.our_nicks[pto][pr['from'].bare] = pr['muc']['item_nick']
             self.xmpp.event("muc::%s::self-presence" % entry['room'], pr)
         self.xmpp.event("muc::%s::presence" % entry['room'], pr)
         if got_offline:
@@ -775,7 +782,6 @@ class XEP_0045(BasePlugin):
         new_jid.resource = new_nick
         if presence_options is None:
             presence_options = {}
-        pfrom = presence_options.get('pfrom', None)
         future = asyncio.Future()
 
         def nickname_set(presence):
@@ -794,12 +800,7 @@ class XEP_0045(BasePlugin):
             raise TimeoutError("Timed out waiting for server answer")
 
         presence = future.result()
-        # We don't care about the 210 status code, we return what the server
-        # answers anyway
         new_nick = presence['muc']['item_nick']
-        rooms = self.our_nicks[pfrom]
-        if room in rooms:
-            self.our_nicks[pfrom][room] = new_nick
         return new_nick
 
     def jid_in_room(self, room: JID, jid: JID, pfrom: Optional[JID] = None) -> bool:
