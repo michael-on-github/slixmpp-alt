@@ -1142,5 +1142,12 @@
             <file-release rdf:resource="https://codeberg.org/poezio/slixmpp/archive/slix-1.8.6.tar.gz"/>
         </Version>
     </release>
+    <release>
+        <Version>
+            <revision>1.9.0</revision>
+            <created>2025-02-27</created>
+            <file-release rdf:resource="https://codeberg.org/poezio/slixmpp/archive/slix-1.9.0.tar.gz"/>
+        </Version>
+    </release>
 </Project>
 </rdf:RDF>

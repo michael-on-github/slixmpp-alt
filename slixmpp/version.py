@@ -3,5 +3,5 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 
-__version__ = '1.8.6'
-__version_info__ = (1, 8, 6)
+__version__ = '1.9.0'
+__version_info__ = (1, 9, 0)
