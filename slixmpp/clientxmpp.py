@@ -14,6 +14,7 @@ from slixmpp.jid import JID
 from slixmpp.stanza import StreamFeatures, Iq
 from slixmpp.basexmpp import BaseXMPP
 from slixmpp.exceptions import XMPPError
+from slixmpp.roster.single import RosterNode
 from slixmpp.types import JidStr
 from slixmpp.xmlstream import XMLStream
 from slixmpp.xmlstream.stanzabase import StanzaBase
@@ -46,6 +47,8 @@ class ClientXMPP(BaseXMPP):
                     :meth:`~slixmpp.basexmpp.BaseXMPP.register_plugins()`.
     :param escape_quotes: **Deprecated.**
     """
+
+    client_roster: RosterNode
 
     def __init__(self, jid: JidStr, password: str, plugin_config=None,
                  plugin_whitelist=None, escape_quotes=True, sasl_mech=None,
