@@ -2,6 +2,7 @@ import unittest
 
 from slixmpp import Message, JID, Iq
 from slixmpp.plugins.xep_0356 import permissions
+from slixmpp.plugins.xep_0356.permissions import RosterAccess
 from slixmpp.test import SlixTest
 
 
@@ -169,6 +170,63 @@ class TestPermissions(SlixTest):
             """,
             use_values=False
         )
+
+    def testGetRosterWithInvalidJIDItem(self):
+        roster_items = None
+
+        def cb(task):
+            nonlocal roster_items
+            iq = task.result()
+            roster_items = iq["roster"]["items"]
+
+        self.xmpp.plugin["xep_0356"].granted_privileges[
+            "toto.com"
+        ].roster = RosterAccess.GET
+        task = self.xmpp.loop.create_task(
+            self.xmpp.plugin["xep_0356"].get_roster("toto@toto.com")
+        )
+        task.add_done_callback(cb)
+
+        self.send(  # language=XML
+            """
+            <iq xmlns="jabber:component:accept"
+                id="1"
+                type="get"
+                to="toto@toto.com"
+                from="pubsub.capulet.lit">
+              <query xmlns="jabber:iq:roster" />
+            </iq>
+            """
+        )
+        self.recv(  # language=XML
+            """
+            <iq id="1"
+                to="pubsub.capulet.lit"
+                from="toto@toto.com"
+                type="result">
+              <query xmlns="jabber:iq:roster">
+                <item jid="xmpp:invalid"
+                      name="User"
+                      subscription="from"
+                      ask="subscribe"></item>
+                <item jid="valid@xmpp.love"
+                      name="User"
+                      subscription="from"
+                      ask="subscribe"></item>
+              </query>
+            </iq>
+            """
+        )
+        self.run_coro(task)
+        assert roster_items == {
+            "valid@xmpp.love": {
+                "ask": "subscribe",
+                "approved": "",
+                "subscription": "from",
+                "groups": [],
+                "name": "User",
+            }
+        }
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestPermissions)

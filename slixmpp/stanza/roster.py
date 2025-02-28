@@ -3,6 +3,9 @@
 # Copyright (C) 2010  Nathanael C. Fritz
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
+import logging
+
+from slixmpp import InvalidJID
 from slixmpp.stanza import Iq
 from slixmpp.xmlstream import JID
 from slixmpp.xmlstream import ET, ElementBase, register_stanza_plugin
@@ -95,7 +98,11 @@ class Roster(ElementBase):
         items = {}
         for item in self['substanzas']:
             if isinstance(item, RosterItem):
-                items[item['jid']] = item.values
+                try:
+                    items[item['jid']] = item.values
+                except InvalidJID:
+                    log.warning('Invalid JID in roster: %s', item)
+                    continue
                 # Remove extra JID reference to keep everything
                 # backward compatible
                 del items[item['jid']]['jid']
@@ -146,3 +153,5 @@ class RosterItem(ElementBase):
 
 register_stanza_plugin(Iq, Roster)
 register_stanza_plugin(Roster, RosterItem, iterable=True)
+
+log = logging.getLogger(__name__)
