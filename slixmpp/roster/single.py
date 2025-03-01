@@ -161,13 +161,14 @@ class RosterNode:
                      backend datastore. Defaults to True.
         """
         self.db = db
-        existing_entries = set(self._jids)
-        new_entries = set(self.db.entries(self.jid, {}))
+        if self.db:
+            existing_entries = set(self._jids)
+            new_entries = set(self.db.entries(self.jid, {}))
 
-        for jid in existing_entries:
-            self._jids[jid].set_backend(db, save)
-        for jid in new_entries - existing_entries:
-            self.add(jid)
+            for jid in existing_entries:
+                self._jids[jid].set_backend(db, save)
+            for jid in new_entries - existing_entries:
+                self.add(jid)
 
     def add(self, jid: JidStr, name: str = '', groups: Optional[List[str]] = None,
             afrom: bool = False, ato: bool = False, pending_in: bool = False,
