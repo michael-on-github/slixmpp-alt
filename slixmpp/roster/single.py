@@ -212,6 +212,7 @@ class RosterNode:
             'pending_out': pending_out,
             'whitelisted': whitelisted,
             'subscription': 'none',
+            'removed': False,
         })
         self._jids[key] = RosterItem(self.xmpp, jid, self.jid,
                                      state=state, db=self.db,

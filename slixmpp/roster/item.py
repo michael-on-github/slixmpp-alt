@@ -151,6 +151,7 @@ class RosterItem:
                 'subscription': 'none',
                 'name': '',
                 'groups': [],
+                'removed': False,
             })
 
         self._db_state = {}
