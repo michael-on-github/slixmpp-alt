@@ -4,7 +4,16 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 
-class RosterItem(object):
+from slixmpp.stanza import Presence
+from slixmpp.types import RosterState, ResourceDict, RosterDBProtocol, JidStr
+
+from typing import TYPE_CHECKING, Optional, Dict, Any, List, Union
+
+if TYPE_CHECKING:
+    from slixmpp import BaseXMPP
+
+
+class RosterItem:
 
     """
     A RosterItem is a single entry in a roster node, and tracks
@@ -101,19 +110,27 @@ class RosterItem(object):
         handle_probe        -- Handle a presence probe query.
     """
 
-    def __init__(self, xmpp, jid, owner=None,
-                 state=None, db=None, roster=None):
+    xmpp: 'BaseXMPP'
+    jid: JidStr
+    owner: JidStr
+    db: Optional[RosterDBProtocol]
+    _state: RosterState
+    resources: Dict[str, ResourceDict]
+    _db_state: Dict[str, Any]
+    last_status: Optional[Presence]
+
+    def __init__(self, xmpp: 'BaseXMPP', jid: JidStr, owner: Optional[JidStr] = None,
+                 state: Optional[RosterState] = None, db: Optional[RosterDBProtocol] = None, roster=None):
         """
         Create a new roster item.
 
-        Arguments:
-            xmpp   -- The main Slixmpp instance.
-            jid    -- The item's JID.
-            owner  -- The roster owner's JID. Defaults
+        :param xmpp: The main Slixmpp instance.
+        :param jid: The item's JID.
+        :param owner: The roster owner's JID. Defaults
                       so self.xmpp.boundjid.bare.
-            state  -- A dictionary of initial state values.
-            db     -- An optional interface to an external datastore.
-            roster -- The roster object containing this entry.
+        :param state: A dictionary of initial state values.
+        :param db: An optional interface to an external datastore.
+        :param roster: The roster object containing this entry.
         """
         self.xmpp = xmpp
         self.jid = jid
@@ -122,7 +139,10 @@ class RosterItem(object):
         self.resources = {}
         self.roster = roster
         self.db = db
-        self._state = state or {
+        if state:
+            self._state = state
+        else:
+            self._state = RosterState({
                 'from': False,
                 'to': False,
                 'pending_in': False,
@@ -130,26 +150,26 @@ class RosterItem(object):
                 'whitelisted': False,
                 'subscription': 'none',
                 'name': '',
-                'groups': []}
+                'groups': [],
+            })
 
         self._db_state = {}
         self.load()
 
-    def set_backend(self, db=None, save=True):
+    def set_backend(self, db: Optional[RosterDBProtocol]=None, save: bool = True) -> None:
         """
         Set the datastore interface object for the roster item.
 
-        Arguments:
-            db   -- The new datastore interface.
-            save -- If True, save the existing state to the new
-                    backend datastore. Defaults to True.
+        :param db: The new datastore interface.
+        :param save: If True, save the existing state to the new
+                     backend datastore. Defaults to True.
         """
         self.db = db
         if save:
             self.save()
         self.load()
 
-    def load(self):
+    def load(self) -> Optional[RosterState]:
         """
         Load the item's state information from an external datastore,
         if one has been provided.
@@ -169,13 +189,12 @@ class RosterItem(object):
             return self._state
         return None
 
-    def save(self, remove=False):
+    def save(self, remove: bool = False) -> None:
         """
         Save the item's state information to an external datastore,
         if one has been provided.
 
-        Arguments:
-            remove -- If True, expunge the item from the datastore.
+        :param remove: If True, expunge the item from the datastore.
         """
         self['subscription'] = self._subscription()
         if remove:
@@ -197,7 +216,7 @@ class RosterItem(object):
         else:
             raise KeyError
 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key: str, value: Union[str, List[str], bool]) -> None:
         """
         Set the value of a state field.
 
@@ -210,10 +229,10 @@ class RosterItem(object):
         """
         if key in self._state:
             if key in ['name', 'subscription', 'groups']:
-                self._state[key] = value
+                self._state[key] = value  # type: ignore
             else:
                 value = str(value).lower()
-                self._state[key] = value in ('true', '1', 'on', 'yes')
+                self._state[key] = value in ('true', '1', 'on', 'yes')  # type: ignore
         else:
             raise KeyError
 
@@ -228,7 +247,7 @@ class RosterItem(object):
         else:
             return 'none'
 
-    def remove(self):
+    def remove(self) -> None:
         """
         Remove a JID's whitelisted status and unsubscribe if a
         subscription exists.
@@ -244,7 +263,7 @@ class RosterItem(object):
         self['whitelisted'] = False
         self.save()
 
-    def subscribe(self):
+    def subscribe(self) -> None:
         """Send a subscription request to the JID."""
         p = self.xmpp.Presence()
         p['to'] = self.jid
@@ -255,7 +274,7 @@ class RosterItem(object):
         self.save()
         p.send()
 
-    def authorize(self):
+    def authorize(self) -> None:
         """Authorize a received subscription request from the JID."""
         self['from'] = True
         self['pending_in'] = False
@@ -263,7 +282,7 @@ class RosterItem(object):
         self._subscribed()
         self.send_last_presence()
 
-    def unauthorize(self):
+    def unauthorize(self) -> None:
         """Deny a received subscription request from the JID."""
         self['from'] = False
         self['pending_in'] = False
@@ -276,7 +295,7 @@ class RosterItem(object):
             p['from'] = self.owner
         p.send()
 
-    def _subscribed(self):
+    def _subscribed(self) -> None:
         """Handle acknowledging a subscription."""
         p = self.xmpp.Presence()
         p['to'] = self.jid
@@ -285,7 +304,7 @@ class RosterItem(object):
             p['from'] = self.owner
         p.send()
 
-    def unsubscribe(self):
+    def unsubscribe(self) -> None:
         """Unsubscribe from the JID."""
         p = self.xmpp.Presence()
         p['to'] = self.jid
@@ -295,7 +314,7 @@ class RosterItem(object):
         self.save()
         p.send()
 
-    def _unsubscribed(self):
+    def _unsubscribed(self) -> None:
         """Handle acknowledging an unsubscribe request."""
         p = self.xmpp.Presence()
         p['to'] = self.jid
@@ -312,15 +331,14 @@ class RosterItem(object):
         Otherwise, forward the send request to the recipient's roster
         entry for processing.
 
-        Arguments:
-            pshow     -- The presence's show value.
-            pstatus   -- The presence's status message.
-            ppriority -- This connections' priority.
-            pto       -- The recipient of a directed presence.
-            pfrom     -- The sender of a directed presence, which should
-                         be the owner JID plus resource.
-            ptype     -- The type of presence, such as 'subscribe'.
-            pnick     -- Optional nickname of the presence's sender.
+        :param pshow: The presence's show value.
+        :param pstatus: The presence's status message.
+        :param ppriority: This connections' priority.
+        :param pto: The recipient of a directed presence.
+        :param pfrom: The sender of a directed presence, which should
+                      be the owner JID plus resource.
+        :param ptype: The type of presence, such as 'subscribe'.
+        :param pnick: Optional nickname of the presence's sender.
         """
         if self.xmpp.is_component and not kwargs.get('pfrom', ''):
             kwargs['pfrom'] = self.owner
@@ -328,7 +346,7 @@ class RosterItem(object):
             kwargs['pto'] = self.jid
         self.xmpp.send_presence(**kwargs)
 
-    def send_last_presence(self):
+    def send_last_presence(self) -> None:
         if self.last_status is None:
             pres = self.roster.last_status
             if pres is None:
@@ -343,11 +361,13 @@ class RosterItem(object):
         else:
             self.last_status.send()
 
-    def handle_available(self, presence):
+    def handle_available(self, presence: Presence) -> None:
         resource = presence['from'].resource
-        data = {'status': presence['status'],
-                'show': presence['show'],
-                'priority': presence['priority']}
+        data = ResourceDict({
+            'status': presence['status'],
+            'show': presence['show'],
+            'priority': presence['priority'],
+        })
         got_online = not self.resources
         if resource not in self.resources:
             self.resources[resource] = {}
@@ -359,7 +379,7 @@ class RosterItem(object):
         if old_show != presence['show'] or old_status != presence['status']:
             self.xmpp.event('changed_status', presence)
 
-    def handle_unavailable(self, presence):
+    def handle_unavailable(self, presence: Presence) -> None:
         resource = presence['from'].resource
         if not self.resources:
             return
@@ -369,7 +389,7 @@ class RosterItem(object):
         if not self.resources:
             self.xmpp.event('got_offline', presence)
 
-    def handle_subscribe(self, presence):
+    def handle_subscribe(self, presence: Presence) -> None:
         """
         +------------------------------------------------------------------+
         |  EXISTING STATE          |  DELIVER?  |  NEW STATE               |
@@ -396,7 +416,7 @@ class RosterItem(object):
             #server shouldn't send an invalid subscription request
             self.xmpp.event('roster_subscription_request', presence)
 
-    def handle_subscribed(self, presence):
+    def handle_subscribed(self, presence: Presence) -> None:
         """
         +------------------------------------------------------------------+
         |  EXISTING STATE          |  DELIVER?  |  NEW STATE               |
@@ -421,7 +441,7 @@ class RosterItem(object):
         else:
             self.xmpp.event('roster_subscription_authorized', presence)
 
-    def handle_unsubscribe(self, presence):
+    def handle_unsubscribe(self, presence: Presence) -> None:
         """
         +------------------------------------------------------------------+
         |  EXISTING STATE          |  DELIVER?  |  NEW STATE               |
@@ -449,7 +469,7 @@ class RosterItem(object):
         else:
             self.xmpp.event('roster_subscription_remove', presence)
 
-    def handle_unsubscribed(self, presence):
+    def handle_unsubscribed(self, presence: Presence) -> None:
         """
         +------------------------------------------------------------------+
         |  EXISTING STATE          |  DELIVER?  |  NEW STATE               |
@@ -475,7 +495,7 @@ class RosterItem(object):
         else:
             self.xmpp.event('roster_subscription_removed', presence)
 
-    def handle_probe(self, presence):
+    def handle_probe(self, presence: Presence) -> None:
         if self['from']:
             self.send_last_presence()
         if self['pending_out']:
@@ -483,12 +503,12 @@ class RosterItem(object):
         if not self['from']:
             self._unsubscribed()
 
-    def reset(self):
+    def reset(self) -> None:
         """
         Forgot current resource presence information as part of
         a roster reset request.
         """
         self.resources = {}
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return repr(self._state)

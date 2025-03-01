@@ -6,9 +6,15 @@
 from slixmpp.stanza import Presence
 from slixmpp.xmlstream import JID
 from slixmpp.roster import RosterNode
+from slixmpp.types import RosterDBProtocol, JidStr
+
+from typing import Iterable, Dict, Optional, TYPE_CHECKING, Iterator
+
+if TYPE_CHECKING:
+    from slixmpp import BaseXMPP
 
 
-class Roster(object):
+class Roster:
 
     """
     Slixmpp's roster manager.
@@ -36,13 +42,18 @@ class Roster(object):
         send_presence -- Shortcut for sending a presence stanza.
     """
 
-    def __init__(self, xmpp, db=None):
+    xmpp: "BaseXMPP"
+    db: Optional[RosterDBProtocol]
+    _auto_authorize: bool
+    _auto_subscribe: bool
+    _rosters: Dict[str, RosterNode]
+
+    def __init__(self, xmpp: 'BaseXMPP', db: Optional[RosterDBProtocol] = None) -> None:
         """
         Create a new roster.
 
-        Arguments:
-            xmpp -- The main Slixmpp instance.
-            db   -- Optional interface object to a datastore.
+        :param xmpp: The main Slixmpp instance.
+        :param db: Optional interface object to a datastore.
         """
         self.xmpp = xmpp
         self.db = db
@@ -56,7 +67,7 @@ class Roster(object):
 
         self.xmpp.add_filter('out', self._save_last_status)
 
-    def _save_last_status(self, stanza):
+    def _save_last_status(self, stanza) -> None:
 
         if isinstance(stanza, Presence):
             sfrom = stanza['from'].full
@@ -71,9 +82,8 @@ class Roster(object):
                     self[sfrom][sto].last_status = stanza
                 else:
                     self[sfrom].last_status = stanza
-                    with self[sfrom]._last_status_lock:
-                        for jid in self[sfrom]:
-                            self[sfrom][jid].last_status = None
+                    for jid in self[sfrom]:
+                        self[sfrom][jid].last_status = None
 
                 if not self.xmpp.sentpresence:
                     self.xmpp.event('sent_presence')
@@ -81,15 +91,14 @@ class Roster(object):
 
         return stanza
 
-    def __getitem__(self, key):
+    def __getitem__(self, key: JidStr) -> RosterNode:
         """
         Return the roster node for a JID.
 
         A new roster node will be created if one
         does not already exist.
 
-        Arguments:
-            key -- Return the roster for this JID.
+        :param key: Return the roster for this JID.
         """
         if key is None:
             key = self.xmpp.boundjid
@@ -103,20 +112,19 @@ class Roster(object):
             self._rosters[key].auto_subscribe = self.auto_subscribe
         return self._rosters[key]
 
-    def keys(self):
+    def keys(self) -> Iterable[str]:
         """Return the JIDs managed by the roster."""
         return self._rosters.keys()
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[str]:
         """Iterate over the roster nodes."""
         return self._rosters.__iter__()
 
-    def add(self, node):
+    def add(self, node: JidStr) -> None:
         """
         Add a new roster node for the given JID.
 
-        Arguments:
-            node -- The JID for the new roster node.
+        :param node: The JID for the new roster node.
         """
         if not isinstance(node, JID):
             node = JID(node)
@@ -125,14 +133,13 @@ class Roster(object):
         if node not in self._rosters:
             self._rosters[node] = RosterNode(self.xmpp, node, self.db)
 
-    def set_backend(self, db=None, save=True):
+    def set_backend(self, db: Optional[RosterDBProtocol] = None, save: bool = True) -> None:
         """
         Set the datastore interface object for the roster.
 
-        Arguments:
-            db -- The new datastore interface.
-            save -- If True, save the existing state to the new
-                    backend datastore. Defaults to True.
+        :param db: The new datastore interface.
+        :param save: If True, save the existing state to the new
+                     backend datastore. Defaults to True.
         """
         self.db = db
         existing_entries = set(self._rosters)
@@ -143,7 +150,7 @@ class Roster(object):
         for node in new_entries - existing_entries:
             self.add(node)
 
-    def reset(self):
+    def reset(self) -> None:
         """
         Reset the state of the roster to forget any current
         presence information. Useful after a disconnection occurs.
@@ -151,7 +158,7 @@ class Roster(object):
         for node in self:
             self[node].reset()
 
-    def send_presence(self, **kwargs):
+    def send_presence(self, **kwargs) -> None:
         """
         Create, initialize, and send a Presence stanza.
 
@@ -159,22 +166,21 @@ class Roster(object):
         Otherwise, forward the send request to the recipient's roster
         entry for processing.
 
-        Arguments:
-            pshow     -- The presence's show value.
-            pstatus   -- The presence's status message.
-            ppriority -- This connections' priority.
-            pto       -- The recipient of a directed presence.
-            pfrom     -- The sender of a directed presence, which should
-                         be the owner JID plus resource.
-            ptype     -- The type of presence, such as 'subscribe'.
-            pnick     -- Optional nickname of the presence's sender.
+        :param pshow: The presence's show value.
+        :param pstatus: The presence's status message.
+        :param ppriority: This connections' priority.
+        :param pto: The recipient of a directed presence.
+        :param pfrom: The sender of a directed presence, which should
+                      be the owner JID plus resource.
+        :param ptype: The type of presence, such as 'subscribe'.
+        :param pnick: Optional nickname of the presence's sender.
         """
         if self.xmpp.is_component and not kwargs.get('pfrom', ''):
             kwargs['pfrom'] = self.jid
         self.xmpp.send_presence(**kwargs)
 
     @property
-    def auto_authorize(self):
+    def auto_authorize(self) -> bool:
         """
         Auto accept or deny subscription requests.
 
@@ -185,7 +191,7 @@ class Roster(object):
         return self._auto_authorize
 
     @auto_authorize.setter
-    def auto_authorize(self, value):
+    def auto_authorize(self, value: bool) -> None:
         """
         Auto accept or deny subscription requests.
 
@@ -198,7 +204,7 @@ class Roster(object):
             self._rosters[node].auto_authorize = value
 
     @property
-    def auto_subscribe(self):
+    def auto_subscribe(self) -> bool:
         """
         Auto send requests for mutual subscriptions.
 
@@ -207,7 +213,7 @@ class Roster(object):
         return self._auto_subscribe
 
     @auto_subscribe.setter
-    def auto_subscribe(self, value):
+    def auto_subscribe(self, value: bool) -> None:
         """
         Auto send requests for mutual subscriptions.
 
@@ -217,5 +223,5 @@ class Roster(object):
         for node in self._rosters:
             self._rosters[node].auto_subscribe = value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return repr(self._rosters)

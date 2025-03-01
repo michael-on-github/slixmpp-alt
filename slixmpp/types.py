@@ -8,8 +8,12 @@ This file contains boilerplate to define types relevant to slixmpp.
 """
 
 from typing import (
+    Any,
+    Dict,
     Optional,
     Union,
+    Iterable,
+    List,
 )
 
 try:
@@ -34,6 +38,11 @@ PresenceTypes = Literal[
 
 PresenceShows = Literal[
     'away', 'chat', 'dnd', 'xa',
+]
+
+# add the empty string, but not for sending
+ExtPresenceShows = Literal[
+    'away', 'chat', 'dnd', 'xa', ''
 ]
 
 MessageTypes = Literal[
@@ -72,6 +81,39 @@ class MucRoomItem(TypedDict, total=False):
     show: Optional[PresenceShows]
     status: str
     alt_nick: str
+
+
+class ResourceDict(TypedDict, total=False):
+    show: ExtPresenceShows
+    priority: int
+    status: str
+
+
+RosterState = TypedDict(
+    'RosterState',
+    {
+        'from': bool,
+        'to': bool,
+        'pending_in': bool,
+        'pending_out': bool,
+        'whitelisted': bool,
+        'subscription': str,
+        'name': str,
+        'groups': List[str],
+        'removed': bool,
+    }
+)
+
+
+class RosterDBProtocol(Protocol):
+    def load(self, owner:JidStr, jid:JidStr, db_state: Dict[str, Any]) -> Optional[RosterState]:
+        ...
+
+    def save(self, owner:JidStr, jid:JidStr, state: RosterState, db_state: Dict[str, Any]):
+        ...
+
+    def entries(self, owner: OptJidStr, db_state: Optional[dict[str, Any]] = None) -> Iterable[str]:
+        ...
 
 
 MucRoomItemKeys = Literal[
