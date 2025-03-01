@@ -176,7 +176,7 @@ class Roster:
         :param pnick: Optional nickname of the presence's sender.
         """
         if self.xmpp.is_component and not kwargs.get('pfrom', ''):
-            kwargs['pfrom'] = self.jid
+            raise ValueError("Components must set the pfrom attribute!")
         self.xmpp.send_presence(**kwargs)
 
     @property
