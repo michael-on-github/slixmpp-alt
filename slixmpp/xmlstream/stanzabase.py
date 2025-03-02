@@ -48,6 +48,9 @@ XML_TYPE = type(ET.Element('xml'))
 XML_NS = 'http://www.w3.org/XML/1998/namespace'
 
 
+STRICT_INTERFACE = False
+
+
 def register_stanza_plugin(stanza: Type[ElementBase], plugin: Type[ElementBase],
                            iterable: bool = False, overrides: bool = False) -> None:
     """
@@ -735,6 +738,8 @@ class ElementBase(object):
             # XXX: This is legacy from SleekXMPP
             #      We've probably missed the opportunity to fix it
             logging.warning("Unknown stanza interface: %s" % full_attrib)
+            if STRICT_INTERFACE:
+                raise ValueError(f'Unknown stanza interface: {full_attrib}')
             return ''
 
     def __setitem__(self, attrib: str, value: Any) -> Any:
