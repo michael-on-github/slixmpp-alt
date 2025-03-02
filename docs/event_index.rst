@@ -517,23 +517,23 @@ processing the same stanza twice.
 
         When a pubsub event of type ``subscription`` is received.
 
-    call-invite
+    call_invite
         - **Data:** :py:class:`~.Message`
         - **Source:** :py:class:`~.XEP_0482`
 
-    call-retract
+    call_retract
         - **Data:** :py:class:`~.Message`
         - **Source:** :py:class:`~.XEP_0482`
 
-    call-reject
+    call_reject
         - **Data:** :py:class:`~.Message`
         - **Source:** :py:class:`~.XEP_0482`
 
-    call-leave
+    call_leave
         - **Data:** :py:class:`~.Message`
         - **Source:** :py:class:`~.XEP_0482`
 
-    call-left
+    call_left
         - **Data:** :py:class:`~.Message`
         - **Source:** :py:class:`~.XEP_0482`
 

@@ -43,12 +43,12 @@ class XEP_0482(BasePlugin):
         for event in ('invite', 'reject', 'retract', 'leave', 'left'):
             self.xmpp.register_handler(
                 Callback(f'Call {event}',
-                         StanzaPath(f'message/call-{event}'),
+                         StanzaPath(f'message/call_{event}'),
                          self._handle_event))
     def _handle_event(self, message):
         for event in ('invite', 'reject', 'retract', 'leave', 'left'):
-            if message.get_plugin(f'call-{event}', check=True):
-                self.xmpp.event(f'call-{event}')
+            if message.get_plugin(f'call_{event}', check=True):
+                self.xmpp.event(f'call_{event}')
 
     def plugin_end(self):
         for event in ('invite', 'reject', 'retract', 'leave', 'left'):
