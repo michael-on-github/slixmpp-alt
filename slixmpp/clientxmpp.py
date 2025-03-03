@@ -234,7 +234,7 @@ class ClientXMPP(BaseXMPP):
         """
         return self.client_roster.remove(jid)
 
-    def get_roster(self, callback=None, timeout=None, timeout_callback=None):
+    def get_roster(self, callback=None, timeout=None):
         """Request the roster from the server.
 
         :param callback: Reference to a stream handler function. Will
@@ -255,7 +255,7 @@ class ClientXMPP(BaseXMPP):
                 orig_cb(resp)
             callback = wrapped
 
-        return iq.send(callback, timeout, timeout_callback)
+        return iq.send(callback, timeout)
 
     def _reset_connection_state(self, event: Optional[Any] = None) -> None:
         #TODO: Use stream state here
