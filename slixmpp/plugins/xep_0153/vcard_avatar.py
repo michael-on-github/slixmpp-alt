@@ -69,18 +69,16 @@ class XEP_0153(BasePlugin):
         """
         if jid is None:
             jid = self.xmpp.boundjid.bare
+
         async def get_and_set_avatar():
             timeout = iqkwargs.get('timeout', None)
-            timeout_cb = iqkwargs.get('timeout_callback', None)
             try:
                 result = await self.xmpp['xep_0054'].get_vcard(
                     jid,
                     cached=False,
                     timeout=timeout
                 )
-            except IqTimeout as exc:
-                if timeout_cb is not None:
-                    timeout_cb(exc)
+            except IqTimeout:
                 raise
             vcard = result['vcard_temp']
             vcard['PHOTO']['TYPE'] = mtype
@@ -92,8 +90,7 @@ class XEP_0153(BasePlugin):
                     vcard=vcard,
                     **iqkwargs
                 )
-            except IqTimeout as exc:
-                timeout_cb(exc)
+            except IqTimeout:
                 raise
             await self.api['reset_hash'](jid)
             self.xmpp.roster[jid].send_last_presence()
