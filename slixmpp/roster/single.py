@@ -247,7 +247,7 @@ class RosterNode:
             return self.update(jid, subscription='remove')
 
     def update(self, jid: JidStr, name: Optional[str] = None, subscription=None, groups: Optional[List[str]] = None,
-               timeout: Optional[int] = None, callback=None, timeout_callback=None):
+               timeout: Optional[int] = None, callback=None):
         """
         Update a JID's subscription information.
 
@@ -277,8 +277,7 @@ class RosterNode:
                                            'subscription': subscription,
                                            'groups': groups}}
 
-            return iq.send(timeout=timeout, callback=callback,
-                           timeout_callback=timeout_callback)
+            return iq.send(timeout=timeout, callback=callback)
 
     def presence(self, jid: JID, resource: Optional[str] = None) -> Union[ResourceDict, Dict[str, ResourceDict]]:
         """
