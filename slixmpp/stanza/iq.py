@@ -149,7 +149,7 @@ class Iq(RootStanza):
         new_iq['type'] = 'result'
         return new_iq
 
-    def send(self, callback=None, timeout=None, timeout_callback=None):
+    def send(self, callback=None, timeout=None):
         """Send an <iq> stanza over the XML stream.
 
         A callback handler can be provided that will be executed when the Iq
@@ -164,13 +164,7 @@ class Iq(RootStanza):
                                   function. Will be executed when a reply
                                   stanza is received.
         :param int timeout: The length of time (in seconds) to wait for a
-                            response before the timeout_callback is called,
-                            instead of the regular callback
-        :param function timeout_callback: Optional reference to a stream handler
-                                          function.  Will be executed when the
-                                          timeout expires before a response has
-                                          been received for the originally-sent
-                                          IQ stanza.
+                            response before raising an IqTimeout
         :rtype: asyncio.Future
         """
         if self.stream.session_bind_event.is_set():
@@ -214,8 +208,6 @@ class Iq(RootStanza):
             if not future.done():
                 future.set_exception(IqTimeout(self))
             self.stream.remove_handler('IqCallback_%s' % self['id'])
-            if timeout_callback is not None:
-                timeout_callback(self)
 
         if self['type'] in ('get', 'set'):
             handler_name = 'IqCallback_%s' % self['id']
@@ -246,7 +238,6 @@ class Iq(RootStanza):
     def _fire_timeout(self):
         # don't fire the handler for the IQ, if it finally does come in
         self.stream.remove_handler('IqCallback_%s' % self['id'])
-        self.timeout_callback(self)
 
     def _set_stanza_values(self, values):
         """
