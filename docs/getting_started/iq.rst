@@ -83,13 +83,10 @@ These options are:
 
        iq.send(callback=self.a_callback)
 
-* ``timeout_callback``: A callback to execute when the provided
-  ``timeout`` is reached before an answer is received.
-
 
 .. note::
 
-    Both ``callback`` and ``timeout_callback`` can be effectively
+    ``callback`` can be effectively
     replaced using ``await``, and standard exception handling
     (see below), which provide a more linear and readable workflow.
 
