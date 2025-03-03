@@ -45,8 +45,7 @@ class XEP_0013(BasePlugin):
                 local=False,
                 **kwargs)
 
-    def view(self, nodes, ifrom=None, timeout=None, callback=None,
-             timeout_callback=None):
+    def view(self, nodes, ifrom=None, timeout=None, callback=None):
         if not isinstance(nodes, (list, set)):
             nodes = [nodes]
 
@@ -70,11 +69,9 @@ class XEP_0013(BasePlugin):
             if iq['type'] == 'result':
                 iq['offline']['results'] = results
             callback(iq)
-        iq.send(timeout=timeout, callback=wrapped_cb,
-                       timeout_callback=timeout_callback)
+        iq.send(timeout=timeout, callback=wrapped_cb)
 
-    def remove(self, nodes, ifrom=None, timeout=None, callback=None,
-               timeout_callback=None):
+    def remove(self, nodes, ifrom=None, timeout=None, callback=None):
         if not isinstance(nodes, (list, set)):
             nodes = [nodes]
 
@@ -88,11 +85,9 @@ class XEP_0013(BasePlugin):
             item['action'] = 'remove'
             offline.append(item)
 
-        iq.send(timeout=timeout, callback=callback,
-                timeout_callback=timeout_callback)
+        iq.send(timeout=timeout, callback=callback)
 
-    def fetch(self, ifrom=None, timeout=None, callback=None,
-              timeout_callback=None):
+    def fetch(self, ifrom=None, timeout=None, callback=None):
         iq = self.xmpp.Iq()
         iq['type'] = 'set'
         iq['from'] = ifrom
@@ -108,14 +103,11 @@ class XEP_0013(BasePlugin):
             if iq['type'] == 'result':
                 iq['offline']['results'] = results
             callback(iq)
-        iq.send(timeout=timeout, callback=wrapped_cb,
-                timeout_callback=timeout_callback)
+        iq.send(timeout=timeout, callback=wrapped_cb)
 
-    def purge(self, ifrom=None, timeout=None, callback=None,
-              timeout_callback=None):
+    def purge(self, ifrom=None, timeout=None, callback=None):
         iq = self.xmpp.Iq()
         iq['type'] = 'set'
         iq['from'] = ifrom
         iq['offline']['purge'] = True
-        iq.send(timeout=timeout, callback=callback,
-                timeout_callback=timeout_callback)
+        iq.send(timeout=timeout, callback=callback)
