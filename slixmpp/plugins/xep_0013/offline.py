@@ -4,10 +4,11 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permissio
 import logging
+from asyncio import Future
+from typing import Iterable, Optional, Callable, List, Set, Union
 
-import slixmpp
+from slixmpp import JID
 from slixmpp.stanza import Message, Iq
-from slixmpp.exceptions import XMPPError
 from slixmpp.xmlstream.handler import Collector
 from slixmpp.xmlstream.matcher import StanzaPath
 from slixmpp.xmlstream import register_stanza_plugin
@@ -45,7 +46,9 @@ class XEP_0013(BasePlugin):
                 local=False,
                 **kwargs)
 
-    def view(self, nodes, ifrom=None, timeout=None, callback=None):
+    def view(self, nodes: Iterable[str], ifrom: Optional[JID] = None,
+             timeout: Optional[int] = None,
+             callback: Optional[Callable] = None) -> Future:
         if not isinstance(nodes, (list, set)):
             nodes = [nodes]
 
@@ -69,9 +72,11 @@ class XEP_0013(BasePlugin):
             if iq['type'] == 'result':
                 iq['offline']['results'] = results
             callback(iq)
-        iq.send(timeout=timeout, callback=wrapped_cb)
+        return iq.send(timeout=timeout, callback=wrapped_cb)
 
-    def remove(self, nodes, ifrom=None, timeout=None, callback=None):
+    def remove(self, nodes: Union[List[str], Set[str], str],
+               ifrom: Optional[JID] = None, timeout: Optional[int] = None,
+               callback: Optional[Callable] = None) -> Future:
         if not isinstance(nodes, (list, set)):
             nodes = [nodes]
 
@@ -85,9 +90,10 @@ class XEP_0013(BasePlugin):
             item['action'] = 'remove'
             offline.append(item)
 
-        iq.send(timeout=timeout, callback=callback)
+        return iq.send(timeout=timeout, callback=callback)
 
-    def fetch(self, ifrom=None, timeout=None, callback=None):
+    def fetch(self, ifrom: Optional[JID] = None, timeout: Optional[int] = None,
+              callback: Optional[Callable] = None) -> Future:
         iq = self.xmpp.Iq()
         iq['type'] = 'set'
         iq['from'] = ifrom
@@ -103,11 +109,12 @@ class XEP_0013(BasePlugin):
             if iq['type'] == 'result':
                 iq['offline']['results'] = results
             callback(iq)
-        iq.send(timeout=timeout, callback=wrapped_cb)
+        return iq.send(timeout=timeout, callback=wrapped_cb)
 
-    def purge(self, ifrom=None, timeout=None, callback=None):
+    def purge(self, ifrom: Optional[JID] = None, timeout: Optional[int] = None,
+              callback: Optional[Callable] = None):
         iq = self.xmpp.Iq()
         iq['type'] = 'set'
         iq['from'] = ifrom
         iq['offline']['purge'] = True
-        iq.send(timeout=timeout, callback=callback)
+        return iq.send(timeout=timeout, callback=callback)
