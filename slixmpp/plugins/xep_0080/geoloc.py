@@ -4,10 +4,11 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 import logging
+from asyncio import Future
+from typing import Optional, Callable
 
-import slixmpp
+from slixmpp import JID
 from slixmpp.plugins.base import BasePlugin
-from slixmpp.xmlstream import register_stanza_plugin
 from slixmpp.plugins.xep_0080 import stanza, Geoloc
 
 
@@ -29,10 +30,10 @@ class XEP_0080(BasePlugin):
         self.xmpp['xep_0163'].remove_interest(Geoloc.namespace)
         self.xmpp['xep_0030'].del_feature(feature=Geoloc.namespace)
 
-    def session_bind(self, jid):
+    def session_bind(self, jid: JID):
         self.xmpp['xep_0163'].register_pep('user_location', Geoloc)
 
-    def publish_location(self, **kwargs):
+    def publish_location(self, **kwargs) -> Future:
         """
         Publish the user's current location.
 
@@ -82,18 +83,24 @@ class XEP_0080(BasePlugin):
         geoloc = Geoloc()
         geoloc.values = kwargs
 
-        return self.xmpp['xep_0163'].publish(geoloc,
-                options=options,
-                ifrom=ifrom,
-                callback=callback,
-                timeout=timeout)
+        return self.xmpp['xep_0163'].publish(
+            geoloc,
+            options=options,
+            ifrom=ifrom,
+            callback=callback,
+            timeout=timeout,
+        )
 
-    def stop(self, ifrom=None, callback=None, timeout=None):
+    def stop(self, ifrom: Optional[JID] = None,
+             callback: Optional[Callable] = None,
+             timeout: Optional[int] = None) -> Future:
         """
         Clear existing user location information to stop notifications.
         """
         geoloc = Geoloc()
-        return self.xmpp['xep_0163'].publish(geoloc,
-                ifrom=ifrom,
-                callback=callback,
-                timeout=timeout)
+        return self.xmpp['xep_0163'].publish(
+            geoloc,
+            ifrom=ifrom,
+            callback=callback,
+            timeout=timeout,
+        )
