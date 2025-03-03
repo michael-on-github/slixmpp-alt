@@ -91,7 +91,6 @@ class XEP_0163(BasePlugin):
                 id: Optional[str] = None,
                 options: Optional[Form] = None,
                 ifrom: Optional[JID] = None,
-                timeout_callback: Optional[Callable] = None,
                 callback: Optional[Callable] = None,
                 timeout: Optional[int] = None):
         """
@@ -115,8 +114,7 @@ class XEP_0163(BasePlugin):
                                              payload=stanza.xml,
                                              options=options, ifrom=ifrom,
                                              callback=callback,
-                                             timeout=timeout,
-                                             timeout_callback=timeout_callback)
+                                             timeout=timeout)
 
 
 register_plugin(XEP_0163)
