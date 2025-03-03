@@ -112,7 +112,6 @@ class XEP_0332(BasePlugin):
         return iq.send(
             timeout=kwargs.get('timeout', None),
             callback=kwargs.get('callback', None),
-            timeout_callback=kwargs.get('timeout_callback', None)
         )
 
     def send_response(self, to=None, code=None, message=None, headers=None,
@@ -132,7 +131,6 @@ class XEP_0332(BasePlugin):
         return iq.send(
             timeout=kwargs.get('timeout', None),
             callback=kwargs.get('callback', None),
-            timeout_callback=kwargs.get('timeout_callback', None)
         )
 
     def send_error(self, to=None, ecode='500', etype='wait',
@@ -149,5 +147,4 @@ class XEP_0332(BasePlugin):
         return iq.send(
             timeout=kwargs.get('timeout', None),
             callback=kwargs.get('callback', None),
-            timeout_callback=kwargs.get('timeout_callback', None)
         )
