@@ -159,8 +159,7 @@ class XEP_0199(BasePlugin):
 
     def send_ping(self, jid: JID, ifrom: Optional[JID] = None,
                   timeout: Optional[int] = None,
-                  callback: Optional[Callable] = None,
-                  timeout_callback: Optional[Callable] = None):
+                  callback: Optional[Callable] = None):
         """Send a ping request.
 
         :param jid: The JID that will receive the ping.
@@ -174,8 +173,7 @@ class XEP_0199(BasePlugin):
         iq['from'] = ifrom
         iq.enable('ping')
 
-        return iq.send(timeout=timeout, callback=callback,
-                       timeout_callback=timeout_callback)
+        return iq.send(timeout=timeout, callback=callback)
 
     async def ping(self, jid: Optional[JID] =None,
             ifrom: Optional[JID] = None, timeout: Optional[int] = None) -> float:
