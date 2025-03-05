@@ -412,12 +412,14 @@ class XEP_0045(BasePlugin):
         def set_topic(msg: Message):
             if pfrom and pfrom != msg['to']:
                 return
-            topic_received.set_result(msg)
+            if not topic_received.done():
+                topic_received.set_result(msg)
 
         def set_self_presence(pres: Presence):
             if pfrom and pfrom != pres['to']:
                 return
-            presence_done.set_result(pres)
+            if not presence_done.done():
+                presence_done.set_result(pres)
 
         catch_occupants = self.xmpp.event_handler(
             "muc::%s::got_online" % room,
