@@ -31,9 +31,6 @@ xep-0444-compliance = ["emoji"]
 xep-0454 = ["cryptography"]
 safer-xml-parsing = ["defusedxml"]
 
-[project.scripts]
-slixmpp = "slixmpp:main"
-
 [tool.maturin]
 module-name = "slixmpp.jid"
 python-packages = ["slixmpp"]
