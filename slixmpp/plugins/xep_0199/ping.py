@@ -93,7 +93,6 @@ class XEP_0199(BasePlugin):
     def session_bind(self, jid):
         self.xmpp['xep_0030'].add_feature(Ping.namespace)
 
-
     def _clear_pending_futures(self):
         """Cancel all pending ping futures"""
         if self.__pending_futures:
@@ -102,13 +101,23 @@ class XEP_0199(BasePlugin):
                 future.cancel()
             self.__pending_futures.clear()
 
-    def enable_keepalive(self, interval=None, timeout=None):
+    def enable_keepalive(self, interval: Optional[float] = None,
+                         timeout: Optional[float] = None) -> None:
+        """
+        Enable the ping keepalive on the connection.
+        The plugin will send a ping at `interval` and reconnect if the ping
+        timeouts.
+
+        :param interval: The interval between each ping
+        :param timeout: The timeout of the ping
+        """
         if interval:
             self.interval = interval
         if timeout:
             self.timeout = timeout
 
         self.keepalive = True
+
         def handler(event=None):
             # Cleanup futures
             if self.__pending_futures:
@@ -146,7 +155,7 @@ class XEP_0199(BasePlugin):
                 ifrom=ifrom
             )
         except IqTimeout:
-            log.debug("Did not receive ping back in time. " + \
+            log.debug("Did not receive ping back in time. " +
                       "Requesting Reconnect.")
             self.xmpp.reconnect(0.0, "Ping timeout after %ds" % self.timeout)
         else:
@@ -158,8 +167,8 @@ class XEP_0199(BasePlugin):
         iq.reply().send()
 
     def send_ping(self, jid: JID, ifrom: Optional[JID] = None,
-                  timeout: Optional[int] = None,
-                  callback: Optional[Callable] = None):
+                  timeout: Optional[float] = None,
+                  callback: Optional[Callable] = None) -> Future[Iq]:
         """Send a ping request.
 
         :param jid: The JID that will receive the ping.
@@ -175,12 +184,15 @@ class XEP_0199(BasePlugin):
 
         return iq.send(timeout=timeout, callback=callback)
 
-    async def ping(self, jid: Optional[JID] =None,
-            ifrom: Optional[JID] = None, timeout: Optional[int] = None) -> float:
+    async def ping(self, jid: Optional[JID] = None,
+                   ifrom: Optional[JID] = None,
+                   timeout: Optional[float] = None) -> float:
         """Send a ping request and calculate RTT.
         This is a coroutine.
 
         :param jid: The JID that will receive the ping.
+        :raises IqError: When the remote entity answered an error
+        :raises IqTimeout: When the remote entity did not answer
         """
         own_host = False
         if not jid:
@@ -198,7 +210,7 @@ class XEP_0199(BasePlugin):
 
         start = time.time()
 
-        log.debug('Pinging %s' % jid)
+        log.debug('Pinging %s', jid)
         try:
             await self.send_ping(jid, ifrom=ifrom, timeout=timeout)
         except IqError as e:
