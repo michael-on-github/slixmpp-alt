@@ -47,13 +47,13 @@ class RootStanza(StanzaBase):
             reply['error']['condition'] = 'undefined-condition'
             reply['error']['text'] = 'External error'
             reply['error']['type'] = 'cancel'
-            log.warning('You should catch IqError exceptions')
+            log.warning('You should catch IqError exceptions', exc_info=True)
             reply.send()
         elif isinstance(e, IqTimeout):
             reply = self.reply()
             reply['error']['condition'] = 'remote-server-timeout'
             reply['error']['type'] = 'wait'
-            log.warning('You should catch IqTimeout exceptions')
+            log.warning('You should catch IqTimeout exceptions', exc_info=True)
             reply.send()
         elif isinstance(e, XMPPError):
             # We raised this deliberately
