@@ -41,12 +41,16 @@ class PingTask:
     """
     _event: Event
     _current_task: Task
+    _timeout: float
+    _interval: float
     _plugin: 'XEP_0410'
 
     def __init__(self, muc_resource: JID, orig_jid: JID,
-                 plugin: 'XEP_0410') -> None:
+                 plugin: 'XEP_0410', interval: float, timeout: float) -> None:
         self._event = Event()
         self._plugin = plugin
+        self._interval = interval
+        self._timeout = timeout
         self._current_task = plugin.xmpp.loop.create_task(self.run(
             muc_resource,
             orig_jid,
@@ -72,7 +76,7 @@ class PingTask:
                 done, pending = await wait(
                     [self._plugin.xmpp.loop.create_task(self._event.wait())],
                     return_when=FIRST_COMPLETED,
-                    timeout=self._plugin.ping_interval,
+                    timeout=self._interval,
                 )
                 # If the event is set, then the timer was reset and we clear it
                 # before going back to waiting
@@ -82,6 +86,7 @@ class PingTask:
                 result = await self._plugin.send_self_ping(
                     muc_resource,
                     orig_jid,
+                    timeout=self._timeout,
                 )
                 key = (muc_resource, orig_jid)
                 self._plugin._update_ping_results(key, result)
@@ -121,6 +126,7 @@ class XEP_0410(BasePlugin):
     dependencies = {'xep_0045', 'xep_0199'}
     default_config = {
         "ping_interval": 900,
+        "ping_timeout": 30,
     }
     ping_interval: Union[int, float]
     # Cache of the last bound JID, to be able to recover if we bind to
@@ -186,7 +192,9 @@ class XEP_0410(BasePlugin):
                 self.ping_timers[key] = PingTask(key[0], key[1], self)
 
     def enable_self_ping(self, muc_resource: JID,
-                                orig_jid: Optional[JID] = None) -> None:
+                         orig_jid: Optional[JID] = None,
+                         interval: Optional[float] = None,
+                         timeout: Optional[float] = None) -> None:
         """
         Enable client self-ping.
         The given MUC resource will be pinged periodically if the MUC is inactive,
@@ -197,9 +205,19 @@ class XEP_0410(BasePlugin):
         """
         if orig_jid is None:
             orig_jid = self.xmpp.boundjid
+        if timeout is None:
+            timeout = self.ping_timeout
+        if interval is None:
+            interval = self.ping_interval
         key = (muc_resource, orig_jid)
         if key not in self.ping_timers:
-            self.ping_timers[key] = PingTask(muc_resource, orig_jid, self)
+            self.ping_timers[key] = PingTask(
+                muc_resource=muc_resource,
+                orig_jid=orig_jid,
+                plugin=self,
+                timeout=timeout,
+                interval=interval,
+            )
 
     def disable_self_ping(self, muc_resource: JID,
                                  orig_jid: Optional[JID] = None) -> None:
@@ -257,7 +275,8 @@ class XEP_0410(BasePlugin):
             return PingStatus.DISCONNECTED
 
     async def send_self_ping(self, muc_resource: JID,
-                             orig_jid: Optional[JID] = None) -> PingStatus:
+                             orig_jid: Optional[JID] = None,
+                             timeout: Optional[float] = None) -> PingStatus:
         """
         Send a single self-ping to a MUC, and return the result.
 
@@ -271,7 +290,8 @@ class XEP_0410(BasePlugin):
         try:
             await self.xmpp.plugin['xep_0199'].send_ping(
                 muc_resource,
-                ifrom=orig_jid
+                ifrom=orig_jid,
+                timeout=timeout,
             )
             result = PingStatus.JOINED
         except IqTimeout:
