@@ -3,9 +3,9 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission
 import logging
-from asyncio import Event, Task, FIRST_COMPLETED, wait
+from asyncio import Event, Task, FIRST_COMPLETED, wait, CancelledError
 from enum import Enum
-from typing import Optional, Dict, Tuple, Union
+from typing import Optional, Tuple, Union
 
 from slixmpp.stanza import Message, Presence
 from slixmpp.exceptions import IqError, IqTimeout
@@ -168,7 +168,7 @@ class XEP_0410(BasePlugin):
                     del self.ping_timers[key]
                     timer.cancel()
                     key = (key[0], new_boundjid)
-                    self.ping_timers[key] = PingTimer(key[0], key[1], self)
+                    self.ping_timers[key] = PingTask(key[0], key[1], self)
         self.boundjid = jid
 
     def update_nick(self, previous_jid: JID, new_jid: JID) -> None:
@@ -183,7 +183,7 @@ class XEP_0410(BasePlugin):
                 del self.ping_timers[key]
                 timer.cancel()
                 key = (new_jid, key[1])
-                self.ping_timers[key] = PingTimer(key[0], key[1], self)
+                self.ping_timers[key] = PingTask(key[0], key[1], self)
 
     def enable_self_ping(self, muc_resource: JID,
                                 orig_jid: Optional[JID] = None) -> None:
@@ -240,7 +240,6 @@ class XEP_0410(BasePlugin):
             return
         key = (event['from'], event['to'])
         if key in self.ping_timers:
-            current = self.ping_timers[key]
             self.ping_timers[key].reset_timer()
 
     def _handle_condition(self, condition: ErrorConditions) -> PingStatus:
