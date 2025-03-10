@@ -1002,6 +1002,36 @@ class TestElementBase(SlixTest):
         self.assertEqual(stanza['test|es'], 'hola',
                 "Incorrect subinterface value: %s" % stanza['test|es'])
 
+    def testStanzaPresence(self):
+        """Test specifying various languages."""
+
+        class TestStanza(ElementBase):
+            name = 'foo'
+            namespace = 'test'
+            plugin_attrib = 'foo'
+            interfaces = {'test'}
+            sub_interfaces = interfaces
+            lang_interfaces = interfaces
+
+        class TestTopStanza(ElementBase):
+            name = 'top'
+            namespace = 'test'
+            interfaces = {'toto'}
+            sub_interfaces = interfaces
+            lang_interfaces = interfaces
+
+        register_stanza_plugin(TestTopStanza, TestStanza)
+
+        stanza = TestTopStanza()
+        stanza['foo']['test'] = 'hej'
+        stanza['foo|en']['test'] = 'hi'
+        stanza['foo|es']['test'] = 'hola'
+
+        self.assertTrue('foo' in stanza)
+        self.assertTrue('foo|en' in stanza)
+        self.assertTrue('foo|es' in stanza)
+        self.assertFalse('foo|fr' in stanza)
+
     def testSpecifyLangWithNoDefault(self):
         """Test specifying various languages."""
 

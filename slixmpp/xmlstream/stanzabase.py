@@ -507,6 +507,15 @@ class ElementBase(object):
         """
         return self.init_plugin(attrib, lang)
 
+    def __contains__(self, name: str) -> bool:
+        """
+        Check if the stanza contains a specific plugin.
+        """
+        lang = None
+        if '|' in name:
+            name, lang, *_ = name.split('|')
+        return self.get_plugin(name, lang=lang, check=True) is not None
+
     def get_plugin(self, name: str, lang: Optional[str] = None, check: bool = False) -> Optional[ElementBase]:
         """Retrieve a stanza plugin.
 
