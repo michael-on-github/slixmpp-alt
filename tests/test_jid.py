@@ -291,5 +291,13 @@ class TestJIDClass(SlixTest):
         self.assertEqual(jid.node, 'あいうえお')
         self.assertEqual(jid.domain, 'example.com')
 
+    def testHash(self):
+        jid = JID('あいうえお@example.com')
+        self.assertEqual(hash(jid.full), hash(jid))
+        jid = JID('toto@example.com/aaa')
+        self.assertEqual(hash(jid.full), hash(jid))
+        jid = JID('totoéà@example.com/aaa')
+        self.assertEqual(hash(jid.full), hash(jid))
+
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestJIDClass)
