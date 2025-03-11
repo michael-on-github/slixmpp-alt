@@ -233,13 +233,12 @@ impl PyJid {
     }
 
     /// Hash a JID based on the string version of its full JID.
-    fn __hash__(&self) -> isize {
+    fn __hash__(&self, py: Python) -> PyResult<isize> {
         if let Some(jid) = &self.jid {
             // Use the same algorithm as the Python JID.
-            let string = jid.to_string();
-            unsafe { pyo3::ffi::_Py_HashBytes(string.as_ptr() as *const _, string.len() as isize) }
+            PyString::new(py, jid.as_str()).hash()
         } else {
-            0
+            Ok(0)
         }
     }
 
