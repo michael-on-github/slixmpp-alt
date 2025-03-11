@@ -174,7 +174,13 @@ class XEP_0410(BasePlugin):
                     del self.ping_timers[key]
                     timer.cancel()
                     key = (key[0], new_boundjid)
-                    self.ping_timers[key] = PingTask(key[0], key[1], self)
+                    self.ping_timers[key] = PingTask(
+                        key[0],
+                        key[1],
+                        self,
+                        timeout=timer.timeout,
+                        interval=timer.interval,
+                    )
         self.boundjid = jid
 
     def update_nick(self, previous_jid: JID, new_jid: JID) -> None:
@@ -189,7 +195,13 @@ class XEP_0410(BasePlugin):
                 del self.ping_timers[key]
                 timer.cancel()
                 key = (new_jid, key[1])
-                self.ping_timers[key] = PingTask(key[0], key[1], self)
+                self.ping_timers[key] = PingTask(
+                    key[0],
+                    key[1],
+                    self,
+                    timeout=timer.timeout,
+                    interval=timer.interval,
+                )
 
     def enable_self_ping(self, muc_resource: JID,
                          orig_jid: Optional[JID] = None,
