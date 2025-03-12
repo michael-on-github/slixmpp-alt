@@ -2,11 +2,22 @@ when:
   event: [ manual ]
 
 steps:
-  build-and-push:
+  woodpecker:
     image: woodpeckerci/plugin-docker-buildx
     settings:
       repo: codeberg.org/poezio/woodpecker-slixmpp
       registry: codeberg.org
       username: nicoco
+      target: woodpecker
+      password:
+        from_secret: codeberg_package_nicoco
+
+  maturin-musl:
+    image: woodpeckerci/plugin-docker-buildx
+    settings:
+      repo: codeberg.org/poezio/maturin-musllinux
+      registry: codeberg.org
+      username: nicoco
+      target: mush-wheels
       password:
         from_secret: codeberg_package_nicoco

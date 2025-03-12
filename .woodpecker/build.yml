@@ -10,6 +10,14 @@ steps:
     commands:
     - maturin publish -i $TAG --username nicoco --password $TOKEN --repository-url https://codeberg.org/api/packages/poezio/pypi/ --no-sdist
 
+  build-and-publish-musl:
+    image: codeberg.org/poezio/maturin-musllinux
+    environment:
+      TOKEN:
+        from_secret: codeberg_package_nicoco
+    commands:
+    - maturin publish -i $TAG --username nicoco --password $TOKEN --repository-url https://codeberg.org/api/packages/poezio/pypi/ --no-sdist
+
 matrix:
   TAG:
     - "3.9"
