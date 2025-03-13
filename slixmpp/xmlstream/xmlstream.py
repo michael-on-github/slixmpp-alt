@@ -1508,3 +1508,7 @@ class XMLStream(asyncio.BaseProtocol):
             coroutine,
             loop=self.loop,
         )
+
+    def __del__(self) -> None:
+        if self._run_out_filters is not None:
+            self._run_out_filters.cancel()

@@ -657,7 +657,8 @@ class SlixTest(unittest.TestCase):
         """
         if hasattr(self, 'xmpp') and self.xmpp is not None:
             self.xmpp.data_received(self.xmpp.stream_footer)
-            self.xmpp.disconnect()
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(self.xmpp.disconnect(wait=0.01))
 
     # ------------------------------------------------------------------
     # XML Comparison and Cleanup
