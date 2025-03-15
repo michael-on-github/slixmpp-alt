@@ -67,7 +67,7 @@ class Failure(StanzaBase):
     def del_condition(self):
         """Remove the condition element."""
         for child in self.xml:
-            if "{%s}" % self.condition_ns in child.tag:
+            if "{%s}" % self.namespace in child.tag:
                 tag = child.tag.split('}', 1)[-1]
                 if tag in self.conditions:
                     self.xml.remove(child)
