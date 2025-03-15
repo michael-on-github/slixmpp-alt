@@ -30,7 +30,7 @@ class LegacyDelay(ElementBase):
 
     def set_stamp(self, value):
         if isinstance(value, dt.datetime):
-            value = value.astimezone(xep_0082.tzutc)
+            value = value.astimezone(dt.timezone.utc)
             value = xep_0082.format_datetime(value)
         self._set_attr('stamp', value[0:19].replace('-', ''))
 
