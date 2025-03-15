@@ -4,10 +4,9 @@
 # :license: MIT, see LICENSE for more details
 
 import socket
-import sys
 import logging
 import random
-from asyncio import Future, AbstractEventLoop
+from asyncio import Future, AbstractEventLoop, gather
 from typing import Optional, Tuple, Dict, List, Iterable, cast
 from slixmpp.types import Protocol
 
@@ -65,10 +64,10 @@ def default_resolver(loop: AbstractEventLoop) -> Optional[ResolverProtocol]:
 
 
 async def resolve(host: str, port: int, *, loop: AbstractEventLoop,
-                  service: Optional[str] = None, proto: str = 'tcp',
+                  services: Optional[List[str]] = None, proto: str = 'tcp',
                   resolver: Optional[ResolverProtocol] = None,
                   use_ipv6: bool = True,
-                  use_aiodns: bool = True) -> List[Tuple[str, str, int]]:
+                  use_aiodns: bool = True) -> List[Tuple[str, str, str, int]]:
     """Peform DNS resolution for a given hostname.
 
     Resolution may perform SRV record lookups if a service and protocol
@@ -128,7 +127,7 @@ async def resolve(host: str, port: int, *, loop: AbstractEventLoop,
     try:
         # If `host` is an IPv4 literal, we can return it immediately.
         socket.inet_aton(host)
-        return [(host, host, port)]
+        return [('', host, host, port)]
     except socket.error:
         pass
 
@@ -138,34 +137,34 @@ async def resolve(host: str, port: int, *, loop: AbstractEventLoop,
             # it immediately.
             if hasattr(socket, 'inet_pton'):
                 socket.inet_pton(socket.AF_INET6, host)
-                return [(host, host, port)]
+                return [('', host, host, port)]
         except (socket.error, ValueError):
             pass
 
     # If no service was provided, then we can just do A/AAAA lookups on the
     # provided host. Otherwise we need to get an ordered list of hosts to
     # resolve based on SRV records.
-    if not service:
-        hosts = [(host, port)]
+    if not services:
+        hosts = [('', host, port)]
     else:
-        hosts = await get_SRV(host, port, service, proto,
+        hosts = await get_SRV(host, port, services, proto,
                                    resolver=resolver,
                                    use_aiodns=use_aiodns)
         if not hosts:
-            hosts = [(host, port)]
+            hosts = [('', host, port)]
 
     results = []
-    for host, port in hosts:
+    for service, host, port in hosts:
         if use_ipv6:
             aaaa = await get_AAAA(host, resolver=resolver,
                                        use_aiodns=use_aiodns, loop=loop)
             for address in aaaa:
-                results.append((host, address, port))
+                results.append((service, host, address, port))
 
         a = await get_A(host, resolver=resolver,
                              use_aiodns=use_aiodns, loop=loop)
         for address in a:
-            results.append((host, address, port))
+            results.append((service, host, address, port))
 
     return results
 
@@ -262,10 +261,10 @@ async def get_AAAA(host: str, *, loop: AbstractEventLoop,
     return [addr for addr in recs.addresses]
 
 
-async def get_SRV(host: str, port: int, service: str,
+async def get_SRV(host: str, port: int, services: list[str],
                   proto: str = 'tcp',
                   resolver: Optional[ResolverProtocol] = None,
-                  use_aiodns: bool = True) -> List[Tuple[str, int]]:
+                  use_aiodns: bool = True) -> List[Tuple[str, str, int]]:
     """Perform SRV record resolution for a given host.
 
     .. note::
@@ -288,49 +287,62 @@ async def get_SRV(host: str, port: int, service: str,
     :type    proto: string
     :type resolver: :class:`aiodns.DNSResolver`
 
-    :return: A list of hostname, port pairs in the order dictacted
+    :return: A list of service, hostname, port pairs in the order dictacted
              by SRV priorities and weights.
     """
     if resolver is None or not use_aiodns:
         log.warning("DNS: aiodns not found. Can not use SRV lookup.")
-        return [(host, port)]
+        return [('', host, port)]
 
     log.debug("DNS: Querying SRV records for %s" % host)
-    try:
-        future = resolver.query('_%s._%s.%s' % (service, proto, host),
-                                'SRV')
-        recs = cast(Iterable[QueryAnswerProtocol], await future)
-    except Exception as e:
-        log.debug('DNS: Exception while querying for %s SRV records: %s', host, e)
+    recs_dict = {}
+    coros = []
+
+    async def query_and_add(s: str) -> None:
+        recs_dict[s] = await resolver.query('_%s._%s.%s' % (s, proto, host), 'SRV')
+        return None
+
+    for service in services:
+        coros.append(query_and_add(service))
+    results = await gather(*coros, return_exceptions=True)
+    for result in results:
+        if isinstance(result, Exception):
+            log.debug('DNS: Exception while querying for %s SRV records: %s',
+                      host, result)
+    recs = []
+    for service, recs_service in recs_dict.items():
+        recs.extend([(service, rec) for rec in recs_service])
+
+    if not recs:
         return []
 
-    answers: Dict[int, List[QueryAnswerProtocol]] = {}
-    for rec in recs:
+    answers: Dict[int, List[Tuple[str, QueryAnswerProtocol]]] = {}
+    for service, rec in recs:
         if rec.priority not in answers:
             answers[rec.priority] = []
         if rec.weight == 0:
-            answers[rec.priority].insert(0, rec)
+            answers[rec.priority].insert(0, (service, rec))
         else:
-            answers[rec.priority].append(rec)
+            answers[rec.priority].append((service, rec))
 
     sorted_recs = []
     for priority in sorted(answers.keys()):
         while answers[priority]:
             running_sum = 0
             sums = {}
-            for rec in answers[priority]:
+            for service, rec in answers[priority]:
                 running_sum += rec.weight
-                sums[running_sum] = rec
+                sums[running_sum] = (service, rec)
 
             selected = random.randint(0, running_sum + 1)
             for running_sum in sums:
                 if running_sum >= selected:
-                    rec = sums[running_sum]
+                    service, rec = sums[running_sum]
                     host = rec.host
                     if host.endswith('.'):
                         host = host[:-1]
-                    sorted_recs.append((host, rec.port))
-                    answers[priority].remove(rec)
+                    sorted_recs.append((service, host, rec.port))
+                    answers[priority].remove((service, rec))
                     break
 
     return sorted_recs

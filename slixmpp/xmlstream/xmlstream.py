@@ -259,7 +259,7 @@ class XMLStream(asyncio.BaseProtocol):
     _current_connection_attempt: Optional[Future]
 
     #: A list of DNS results that have not yet been tried.
-    _dns_answers: Optional[Iterator[Tuple[str, str, int]]]
+    _dns_answers: Optional[Iterator[Tuple[str, str, str, int]]]
 
     #: The service name to check with DNS SRV records. For
     #: example, setting this to ``'xmpp-client'`` would query the
@@ -494,7 +494,7 @@ class XMLStream(asyncio.BaseProtocol):
 
         record = await self._pick_dns_answer(self.default_domain)
         if record is not None:
-            host, address, dns_port = record
+            service, host, address, dns_port = record
             port = dns_port if dns_port else self.address[1]
             self.address = (address, port)
             self._service_name = host
@@ -974,7 +974,7 @@ class XMLStream(asyncio.BaseProtocol):
             idx += 1
         return False
 
-    async def get_dns_records(self, domain: str, port: Optional[int] = None) -> List[Tuple[str, str, int]]:
+    async def get_dns_records(self, domain: str, port: Optional[int] = None) -> List[Tuple[str, str, str, int]]:
         """Get the DNS records for a domain.
 
         :param domain: The domain in question.
@@ -986,15 +986,18 @@ class XMLStream(asyncio.BaseProtocol):
         resolver = default_resolver(loop=self.loop)
         self.configure_dns(resolver, domain=domain, port=port)
 
+        services = []
+        if self.dns_service:
+            services.append(self.dns_service)
         result = await resolve(domain, port,
-                                    service=self.dns_service,
-                                    resolver=resolver,
-                                    use_ipv6=self.use_ipv6,
-                                    use_aiodns=self.use_aiodns,
-                                    loop=self.loop)
+                               services=services,
+                               resolver=resolver,
+                               use_ipv6=self.use_ipv6,
+                               use_aiodns=self.use_aiodns,
+                               loop=self.loop)
         return result
 
-    async def _pick_dns_answer(self, domain: str, port: Optional[int] = None) -> Optional[Tuple[str, str, int]]:
+    async def _pick_dns_answer(self, domain: str, port: Optional[int] = None) -> Optional[Tuple[str, str, str, int]]:
         """Pick a server and port from DNS answers.
 
         Gets DNS answers if none available.
