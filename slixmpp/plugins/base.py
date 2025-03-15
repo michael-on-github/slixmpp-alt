@@ -13,7 +13,7 @@ import copy
 import logging
 import threading
 
-from typing import Any, Dict, Set, ClassVar, Union, TYPE_CHECKING
+from typing import Any, Dict, Set, ClassVar, Union, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from slixmpp.clientxmpp import ClientXMPP
@@ -242,6 +242,9 @@ class PluginManager(object):
         if plugin is None:
             raise PluginNotFound(name)
         return plugin
+
+    def get(self, name: str, default: Optional['BasePlugin']) -> Optional['BasePlugin']:
+        return self._plugins.get(name, default)
 
     def __iter__(self):
         """Return an iterator over the set of enabled plugins."""

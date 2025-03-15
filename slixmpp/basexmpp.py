@@ -38,7 +38,7 @@ from slixmpp.xmlstream.stanzabase import (
     XML_NS,
 )
 
-from slixmpp.plugins import PluginManager, load_plugin
+from slixmpp.plugins import PluginManager, load_plugin, BasePlugin
 
 
 log = logging.getLogger(__name__)
@@ -291,7 +291,7 @@ class BaseXMPP(XMLStream):
             log.warning("Plugin '%s' is not loaded.", key)
             return False
 
-    def get(self, key, default):
+    def get(self, key: str, default: Optional[BasePlugin] = None) -> Optional[BasePlugin]:
         """Return a plugin given its name, if it has been registered."""
         return self.plugin.get(key, default)
 
