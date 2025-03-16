@@ -109,10 +109,10 @@ class PluginManager(object):
         #: We will track all enabled plugins in a set so that we
         #: can enable plugins in batches and pull in dependencies
         #: without problems.
-        self._enabled = set()
+        self._enabled: Set[str] = set()
 
         #: Maintain references to active plugins.
-        self._plugins = {}
+        self._plugins: Dict[str, 'BasePlugin'] = {}
 
         self._plugin_lock = threading.RLock()
 

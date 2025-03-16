@@ -291,7 +291,7 @@ class BaseXMPP(XMLStream):
             log.warning("Plugin '%s' is not loaded.", key)
             return False
 
-    def get(self, key: str, default: Optional[BasePlugin] = None) -> Optional[BasePlugin]:
+    def get(self, key: str, default: Optional[BasePlugin] = None):
         """Return a plugin given its name, if it has been registered."""
         return self.plugin.get(key, default)
 
