@@ -64,6 +64,7 @@ class ClientXMPP(BaseXMPP):
         self.plugin_config = plugin_config
         self.plugin_whitelist = plugin_whitelist
         self.default_port = 5222
+        self.default_domain = self.boundjid.host
         self.default_lang = lang
 
         self.credentials: Dict[str, str] = {}
@@ -82,7 +83,8 @@ class ClientXMPP(BaseXMPP):
         self._stream_feature_handlers: Dict[str, Tuple[Callable, bool]] = {}
         self._stream_feature_order: List[Tuple[int, str]] = []
 
-        self.dns_service = 'xmpp-client'
+        self.tls_services = {'xmpps-client'}
+        self.starttls_services = {'xmpp-client'}
 
         #TODO: Use stream state here
         self.authenticated = False
@@ -139,40 +141,26 @@ class ClientXMPP(BaseXMPP):
     def password(self, value: str) -> None:
         self.credentials['password'] = value
 
-    def connect(self, address: Optional[Tuple[str, int]] = None,  # type: ignore
-                use_ssl: Optional[bool] = None, force_starttls: Optional[bool] = None,
-                disable_starttls: Optional[bool] = None) -> asyncio.Future:
+    def connect(self, host: Optional[str] = None, port: Optional[int] = None) -> asyncio.Future:
         """Connect to the XMPP server.
 
         When no address is given, a SRV lookup for the server will
-        be attempted. If that fails, the server user in the JID
+        be attempted. If that fails, the server used in the JID
         will be used.
 
-        :param address: A tuple containing the server's host and port.
-        :param force_starttls: Indicates that negotiation should be aborted
-                               if the server does not advertise support for
-                               STARTTLS. Defaults to ``True``.
-        :param disable_starttls: Disables TLS for the connection.
-                                 Defaults to ``False``.
-        :param use_ssl: Indicates if the older SSL connection method
-                        should be used. Defaults to ``False``.
+        :param host: A custom host to connect to (requires port as well)
+        :param port: A custom port to connect to (requires host as well)
         """
 
         # If an address was provided, disable using DNS SRV lookup;
         # otherwise, use the domain from the client JID with the standard
         # XMPP client port and allow SRV lookup.
-        if address:
-            self.dns_service = None
-            host, port = address
-        else:
-            host, port = (self.boundjid.host, 5222)
-            self.dns_service = 'xmpp-client'
+        if not (host and port):
+            host, port = None, None
 
         self.init_plugins()
 
-        return XMLStream.connect(self, host, port, use_ssl=use_ssl,
-                                 force_starttls=force_starttls,
-                                 disable_starttls=disable_starttls)
+        return XMLStream.connect(self, host=host, port=port)
 
     def register_feature(self, name: str, handler: Callable, restart: bool = False, order: int = 5000) -> None:
         """Register a stream feature handler.

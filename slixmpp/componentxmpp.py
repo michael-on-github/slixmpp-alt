@@ -68,6 +68,7 @@ class ComponentXMPP(BaseXMPP):
         if fix_error_ns:
             self._fix_error_ns()
 
+        self.enable_starttls = False
         self.auto_authorize = None
         self.stream_header = '<stream:stream %s %s to="%s">' % (
                 'xmlns="jabber:component:accept"',
@@ -75,6 +76,7 @@ class ComponentXMPP(BaseXMPP):
                 jid)
         self.stream_footer = "</stream:stream>"
         self.server_host = host
+        self.default_domain = host
         self.server_port = port
         self.secret = secret
 
@@ -96,9 +98,7 @@ class ComponentXMPP(BaseXMPP):
         for st in Message, Iq, Presence:
             register_stanza_plugin(st, Error)
 
-    def connect(self, host: Optional[str] = None, port: int = 0, use_ssl: Optional[bool] = None,
-                force_starttls: Optional[bool] = None,
-                disable_starttls: Optional[bool] = None) -> Future:
+    def connect(self, host: Optional[str] = None, port: Optional[int] = None) -> Future:
         """Connect to the server.
 
 
@@ -106,14 +106,10 @@ class ComponentXMPP(BaseXMPP):
                      Defaults to :attr:`server_host`.
         :param port: Port to connect to on the server.
                      Defauts to :attr:`server_port`.
-        :param use_ssl: Flag indicating if SSL should be used by connecting
-                        directly to a port using SSL.
-        :param force_starttls: UNUSED
-        :param disable_starttls: UNUSED
         """
         if host is not None:
             self.server_host = host
-        if port:
+        if port is not None:
             self.server_port = port
 
         self.server_name = self.boundjid.host
@@ -121,7 +117,7 @@ class ComponentXMPP(BaseXMPP):
         self.init_plugins()
 
         log.debug("Connecting to %s:%s", host, port)
-        return XMLStream.connect(self, host=self.server_host, port=self.server_port, use_ssl=use_ssl)
+        return XMLStream.connect(self, host=self.server_host, port=self.server_port)
 
     def incoming_filter(self, xml):
         """

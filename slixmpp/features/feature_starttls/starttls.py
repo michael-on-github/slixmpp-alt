@@ -51,7 +51,7 @@ class FeatureSTARTTLS(BasePlugin):
             # We have already negotiated TLS, but the server is
             # offering it again, against spec.
             return False
-        elif self.xmpp.disable_starttls:
+        elif not self.xmpp.enable_starttls:
             return False
         else:
             self.xmpp.send(stanza.STARTTLS())

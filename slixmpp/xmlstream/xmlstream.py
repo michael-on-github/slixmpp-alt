@@ -14,7 +14,6 @@ from typing import (
     Generator,
     Coroutine,
     Callable,
-    Iterator,
     Iterable,
     List,
     Optional,
@@ -22,7 +21,6 @@ from typing import (
     Union,
     Tuple,
     TypeVar,
-    NoReturn,
     Type,
     cast,
 )
@@ -147,9 +145,6 @@ class XMLStream(asyncio.BaseProtocol):
     xml_depth: int
     xml_root: Optional[ET.Element]
 
-    force_starttls: Optional[bool]
-    disable_starttls: Optional[bool]
-
     waiting_queue: asyncio.Queue
 
     # A dict of {name: handle}
@@ -198,13 +193,19 @@ class XMLStream(asyncio.BaseProtocol):
     _expected_server_name: str
     _service_name: str
 
-    #: The desired, or actual, address of the connected server.
-    address: Tuple[str, int]
+    #: A custom address to connect to that was provided to connect(). When
+    #: using DNS lookups, this is not used. Once set, it will be re-used until
+    #: connect() is called with no parameters (or both host and port set to
+    #: None).
+    custom_address: Optional[Tuple[str, int]]
 
     #: Enable connecting to the server directly over SSL, in
     #: particular when the service provides two ports: one for
     #: non-SSL traffic and another for SSL traffic.
-    use_ssl: bool
+    enable_direct_tls: bool
+    #: Enable connecting to the server using STARTTLS (i.e. upgrading a clear
+    #: connection once established).
+    enable_starttls: bool
 
     #: If set to ``True``, attempt to use IPv6.
     use_ipv6: bool
@@ -258,14 +259,6 @@ class XMLStream(asyncio.BaseProtocol):
     # Current connection attempt (Future)
     _current_connection_attempt: Optional[Future]
 
-    #: A list of DNS results that have not yet been tried.
-    _dns_answers: Optional[Iterator[Tuple[str, str, str, int]]]
-
-    #: The service name to check with DNS SRV records. For
-    #: example, setting this to ``'xmpp-client'`` would query the
-    #: ``_xmpp-client._tcp`` service.
-    dns_service: Optional[str]
-
     #: The reason why we are disconnecting from the server
     disconnect_reason: Optional[str]
 
@@ -281,6 +274,12 @@ class XMLStream(asyncio.BaseProtocol):
     __slow_tasks: List[Task]
     __queued_stanzas: List[Tuple[Union[StanzaBase, str], bool]]
 
+    #: List of DNS SRV services records which map to TLS services
+    tls_services: Set[str]
+    #: List of DNS SRV services records which map to STARTTLS services
+    starttls_services: Set[str]
+
+
     def __init__(self, host: str = '', port: int = 0,
                  ssl_context: Optional[ssl.SSLContext] = None):
         self.transport = None
@@ -290,9 +289,6 @@ class XMLStream(asyncio.BaseProtocol):
         self.parser = None
         self.xml_depth = 0
         self.xml_root = None
-
-        self.force_starttls = True
-        self.disable_starttls = False
 
         self.waiting_queue = asyncio.Queue()
 
@@ -322,9 +318,13 @@ class XMLStream(asyncio.BaseProtocol):
         self._expected_server_name = ''
         self._service_name = ''
 
-        self.address = (host, int(port))
+        self.custom_address = None
 
-        self.use_ssl = False
+        self.enable_starttls = True
+        self.enable_direct_tls = True
+
+        self.tls_services = set()
+        self.starttls_services = set()
         self.use_ipv6 = True
 
         self.use_aiodns = True
@@ -353,9 +353,6 @@ class XMLStream(asyncio.BaseProtocol):
         }
 
         self._current_connection_attempt = None
-
-        self._dns_answers = None
-        self.dns_service = None
 
         self.disconnect_reason = None
         self.disconnected = Future()
@@ -424,30 +421,12 @@ class XMLStream(asyncio.BaseProtocol):
             self.disconnected.set_result(True)
         self.disconnected = asyncio.Future()
 
-    def connect(self, host: str = '', port: int = 0,
-                use_ssl: Optional[bool] = None,
-                force_starttls: Optional[bool] = None,
-                disable_starttls: Optional[bool] = None) -> asyncio.Future:
+    def connect(self, host: Optional[str] = None, port: Optional[int] = None) -> asyncio.Future:
         """Create a new socket and connect to the server.
 
         :param host: The name of the desired server for the connection.
         :param port: Port to connect to on the server.
-        :param use_ssl: Flag indicating if SSL should be used by connecting
-                        directly to a port using SSL.  If it is False, the
-                        connection will be upgraded to SSL/TLS later, using
-                        STARTTLS.  Only use this value for old servers that
-                        have specific port for SSL/TLS
-        :param force_starttls: If True, the connection will be aborted if
-                               the server does not initiate a STARTTLS
-                               negotiation.  If None, the connection will be
-                               upgraded to TLS only if the server initiate
-                               the STARTTLS negotiation, otherwise it will
-                               connect in clear.  If False it will never
-                               upgrade to TLS, even if the server provides
-                               it.  Use this for example if you’re on
-                               localhost
         :returns: A future on the current connection attempt
-
         """
         if self._run_out_filters is None or self._run_out_filters.done():
             self._run_out_filters = asyncio.ensure_future(
@@ -459,75 +438,98 @@ class XMLStream(asyncio.BaseProtocol):
         self.cancel_connection_attempt()
         self._connect_loop_wait = 0
         if host and port:
-            self.address = (host, int(port))
-        try:
-            Socket.inet_aton(self.address[0])
-        except (Socket.error, ssl.SSLError):
-            self.default_domain = self.address[0]
-
-        # Respect previous TLS usage.
-        if use_ssl is not None:
-            self.use_ssl = use_ssl
-        if force_starttls is not None:
-            self.force_starttls = force_starttls
-        if disable_starttls is not None:
-            self.disable_starttls = disable_starttls
+            self.custom_address = (host, int(port))
+        elif (host, port) == (None, None):
+            self.custom_address = None
 
         self.event("connecting")
         self._current_connection_attempt = asyncio.ensure_future(
-            self._connect_routine(),
+            self._connect_loop(),
             loop=self.loop,
         )
         return self._current_connection_attempt
 
-    async def _connect_routine(self) -> Optional[asyncio.Future]:
+    async def _connect_loop(self) -> Optional[asyncio.Future]:
         """
-        Returns None if the attempt was canceled or if the connection succeeded
-        (cancelling done manually by the library user, so that should be known)
-        or the next connection attempt future if a new try has been scheduled.
+        Loop over the various connection methods. Only wait minimally before
+        retries within the same loop. If everything fails, the connection
+        is rescheduled for later.
         """
-        self.event_when_connected = "connected"
-
         if self._connect_loop_wait > 0:
             self.event('reconnect_delay', self._connect_loop_wait)
             await asyncio.sleep(self._connect_loop_wait)
-
-        record = await self._pick_dns_answer(self.default_domain)
-        if record is not None:
+        if self.custom_address:
+            host, port = self.custom_address
+            records = [('', self.default_domain, host, port)]
+        else:
+            records = await self.get_dns_records(self.default_domain)
+        if not records: # No DNS records
+            records = [
+                ('', self.default_domain, self.default_domain, self.default_port),
+            ]
+        success = False
+        for record in records:
+            if success:
+                break
             service, host, address, dns_port = record
-            port = dns_port if dns_port else self.address[1]
-            self.address = (address, port)
-            self._service_name = host
-        else:
-            # No DNS records left, stop iterating
-            # and try (host, port) as a last resort
-            self._dns_answers = None
+            tls = service in self.tls_services
+            server_hostname = None
+            if tls:
+                server_hostname = self.default_domain
+            try:
+                if not service:
+                    fake_services = []
+                    if self.enable_direct_tls:
+                        fake_services.extend(list(self.tls_services))
+                    if self.enable_starttls:
+                        fake_services.extend(list(self.starttls_services))
+                    for service in fake_services:
+                        if service in self.tls_services:
+                            tls, server_hostname = True, self.default_domain
+                        success = await self._attempt_connection(
+                            address, dns_port, tls, server_hostname,
+                        )
+                        if success:
+                            break
+                else:
+                    success = await self._attempt_connection(
+                        address, dns_port, tls, server_hostname,
+                    )
+            except Exception as exc:
+                log.error('Unhandled exception during connect(): %s',
+                          exc, exc_info=True)
+        if success:
+            return None
+        if self._current_connection_attempt is not None:
+            return self.reschedule_connection_attempt()
+        return None
 
-        ssl_context: Optional[ssl.SSLContext]
-        if self.use_ssl:
+    async def _attempt_connection(self, host: str, port: int, tls: bool,
+                                  server_hostname: Optional[str]) -> bool:
+        """Try to connect to a remote server."""
+        self.event_when_connected = "connected"
+        self._connect_loop_wait += 1
+        ssl_context: Optional[ssl.SSLContext] = None
+        if tls:
             ssl_context = self.get_ssl_context()
-        else:
-            ssl_context = None
 
         if self._current_connection_attempt is None:
-            return None
+            return False
         try:
-            server_hostname = self.default_domain if self.use_ssl else None
             await self.loop.create_connection(lambda: self,
-                                                   self.address[0],
-                                                   self.address[1],
-                                                   ssl=ssl_context,
-                                                   server_hostname=server_hostname)
+                                              host, port,
+                                              ssl=ssl_context,
+                                              server_hostname=server_hostname)
             self._connect_loop_wait = 0
-        except Socket.gaierror as e:
+            return True
+        except Socket.gaierror:
             self.event('connection_failed',
                        'No DNS record available for %s' % self.default_domain)
-            return self.reschedule_connection_attempt()
+            return False
         except OSError as e:
             log.debug('Connection failed: %s', e)
             self.event("connection_failed", e)
-            return self.reschedule_connection_attempt()
-        return None
+            return False
 
     def init_parser(self) -> None:
         """init the XML parser. The parser must always be reset for each new
@@ -551,7 +553,6 @@ class XMLStream(asyncio.BaseProtocol):
         self._current_connection_attempt = None
         self.init_parser()
         self.send_raw(self.stream_header)
-        self._dns_answers = None
 
     def data_received(self, data: bytes) -> None:
         """Called when incoming data is received on the socket.
@@ -638,7 +639,7 @@ class XMLStream(asyncio.BaseProtocol):
     def reschedule_connection_attempt(self) -> Optional[asyncio.Future]:
         """
         Increase the exponential back-off and initate another background
-        _connect_routine call to connect to the server.
+        _connect_loop call to connect to the server.
 
         :returns: A future on the next scheduled connection attempt.
         """
@@ -647,7 +648,7 @@ class XMLStream(asyncio.BaseProtocol):
             return None
         self._connect_loop_wait = min(300, self._connect_loop_wait * 2 + 1)
         self._current_connection_attempt = asyncio.ensure_future(
-            self._connect_routine(),
+            self._connect_loop(),
             loop=self.loop,
         )
         return self._current_connection_attempt
@@ -753,7 +754,10 @@ class XMLStream(asyncio.BaseProtocol):
         async def handler(event: Any) -> None:
             # We yield here to allow synchronous handlers to work first
             await asyncio.sleep(0)
-            self.connect()
+            host, port = None, None
+            if self.custom_address:
+                host, port = self.custom_address
+            self.connect(host=host, port=port)
         self.add_event_handler('disconnected', handler, disposable=True)
         self.disconnect(wait, reason)
 
@@ -987,8 +991,10 @@ class XMLStream(asyncio.BaseProtocol):
         self.configure_dns(resolver, domain=domain, port=port)
 
         services = []
-        if self.dns_service:
-            services.append(self.dns_service)
+        if self.enable_direct_tls:
+            services.extend(list(self.tls_services))
+        if self.enable_starttls:
+            services.extend(list(self.starttls_services))
         result = await resolve(domain, port,
                                services=services,
                                resolver=resolver,
@@ -996,24 +1002,6 @@ class XMLStream(asyncio.BaseProtocol):
                                use_aiodns=self.use_aiodns,
                                loop=self.loop)
         return result
-
-    async def _pick_dns_answer(self, domain: str, port: Optional[int] = None) -> Optional[Tuple[str, str, str, int]]:
-        """Pick a server and port from DNS answers.
-
-        Gets DNS answers if none available.
-        Removes used answer from available answers.
-
-        :param domain: The domain in question.
-        :param port: If the results don't include a port, use this one.
-        """
-        if self._dns_answers is None:
-            dns_records = await self.get_dns_records(domain, port)
-            self._dns_answers = iter(dns_records)
-
-        try:
-            return next(self._dns_answers)
-        except StopIteration:
-            return None
 
     def add_event_handler(self, name: str, pointer: Callable[..., Any], disposable: bool = False) -> None:
         """Add a custom event handler that will be executed whenever
