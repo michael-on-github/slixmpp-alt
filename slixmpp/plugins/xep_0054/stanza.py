@@ -529,7 +529,7 @@ class TimeZone(ElementBase):
 
     def get_tz(self):
         if not self.xml.text:
-            return xep_0082.tzutc()
+            return dt.timezone.utc
         try:
             time = xep_0082.parse('00:00:00%s' % self.xml.text)
             return time.tzinfo
