@@ -4,6 +4,7 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 import datetime as dt
+from typing import Union
 
 from slixmpp.plugins import BasePlugin, register_plugin
 
@@ -13,7 +14,7 @@ from slixmpp.plugins import BasePlugin, register_plugin
 # to use the XEP-0082 utility methods, we will define them as top-level
 # functions and then just reference them in the plugin itself.
 
-def parse(time_str):
+def parse(time_str: str) -> dt.datetime:
     """
     Convert a string timestamp into a datetime object.
 
@@ -26,7 +27,7 @@ def parse(time_str):
         return dt.datetime.strptime(time_str, '%Y-%m-%dT%H:%M:%S%z')
 
 
-def format_date(time_obj):
+def format_date(time_obj: Union[dt.datetime, dt.date]) -> str:
     """
     Return a formatted string version of a date object.
 
@@ -41,7 +42,7 @@ def format_date(time_obj):
     return time_obj.isoformat()
 
 
-def format_time(time_obj):
+def format_time(time_obj: Union[dt.datetime, dt.time]) -> str:
     """
     Return a formatted string version of a time object.
 
@@ -60,7 +61,7 @@ def format_time(time_obj):
     return timestamp
 
 
-def format_datetime(time_obj):
+def format_datetime(time_obj: dt.datetime) -> str:
     """
     Return a formatted string version of a datetime object.
 
@@ -77,7 +78,7 @@ def format_datetime(time_obj):
     return timestamp
 
 
-def date(year=None, month=None, day=None, obj=False):
+def date(year=None, month=None, day=None, obj=False) -> Union[str, dt.date]:
     """
     Create a date only timestamp for the given instant.
 
