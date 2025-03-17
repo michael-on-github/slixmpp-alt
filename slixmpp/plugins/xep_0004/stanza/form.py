@@ -83,10 +83,10 @@ class Form(ElementBase):
     def add_item(self, values):
         itemXML = ET.Element('{%s}item' % self.namespace)
         self.xml.append(itemXML)
-        reported_vars = self['reported'].keys()
+        reported_vars = self.get_reported().keys()
         for var in reported_vars:
             field = FormField()
-            field._type = self['reported'][var]['type']
+            field._type = self.get_reported()[var]['type']
             field['var'] = var
             field['value'] = values.get(var, None)
             itemXML.append(field.xml)
