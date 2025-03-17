@@ -77,6 +77,8 @@ class StaticDisco:
             node_jid = self.xmpp.boundjid.full
         elif isinstance(jid, JID):
             node_jid = jid.full
+        else:
+            node_jid = jid
         if ifrom is None:
             node_ifrom = ''
         elif isinstance(ifrom, JID):
