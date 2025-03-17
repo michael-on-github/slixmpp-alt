@@ -4,13 +4,11 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 from slixmpp.xmlstream import StanzaBase, ElementBase
-from typing import ClassVar, Dict, Type
+from typing import ClassVar, Dict, Type, List
 
 
 class StreamFeatures(StanzaBase):
-
-    """
-    """
+    """Stream feature element"""
 
     name = 'features'
     namespace = 'http://etherx.jabber.org/streams'
@@ -23,32 +21,22 @@ class StreamFeatures(StanzaBase):
         StanzaBase.setup(self, xml)
         self.values = self.values
 
-    def get_features(self):
-        """
-        """
+    def get_features(self) -> Dict[str, ElementBase]:
         features = {}
         for (name, lang), plugin in self.plugins.items():
             features[name] = plugin
         return features
 
     def set_features(self, value):
-        """
-        """
         pass
 
     def del_features(self):
-        """
-        """
         pass
 
-    def get_required(self):
-        """
-        """
-        features = self['features']
+    def get_required(self) -> List[ElementBase]:
+        features = self.get_features()
         return [f for n, f in features.items() if f['required']]
 
-    def get_optional(self):
-        """
-        """
-        features = self['features']
+    def get_optional(self) -> List[ElementBase]:
+        features = self.get_features()
         return [f for n, f in features.items() if not f['required']]
