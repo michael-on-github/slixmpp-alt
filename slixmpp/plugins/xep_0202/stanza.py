@@ -3,8 +3,8 @@
 # Copyright (C) 2010 Nathanael C. Fritz
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
-import logging
 import datetime as dt
+from typing import Union
 
 from slixmpp.xmlstream import ElementBase
 from slixmpp.plugins import xep_0082
@@ -42,7 +42,7 @@ class EntityTime(ElementBase):
     interfaces = {'tzo', 'utc', 'time'}
     sub_interfaces = interfaces
 
-    def set_time(self, value):
+    def set_time(self, value: Union[str, dt.datetime]) -> None:
         """
         Set both the UTC and TZO fields given a time object.
 
@@ -52,23 +52,23 @@ class EntityTime(ElementBase):
         date = value
         if not isinstance(value, dt.datetime):
             date = xep_0082.parse(value)
-        self['utc'] = date
-        self['tzo'] = date.tzinfo
+        self.set_utc(date)
+        self.set_tzo(date.tzinfo)
 
-    def get_time(self):
+    def get_time(self) -> dt.datetime:
         """
         Return the entity's local time based on the UTC and TZO data.
         """
-        date = self['utc']
-        tz = self['tzo']
+        date = self.get_utc()
+        tz = self.get_tzo()
         return date.astimezone(tz)
 
-    def del_time(self):
+    def del_time(self) -> None:
         """Remove both the UTC and TZO fields."""
         del self['utc']
         del self['tzo']
 
-    def get_tzo(self):
+    def get_tzo(self) -> dt.tzinfo:
         """
         Return the timezone offset from UTC as a tzinfo object.
         """
@@ -78,7 +78,7 @@ class EntityTime(ElementBase):
         time = xep_0082.parse('00:00:00%s' % tzo)
         return time.tzinfo
 
-    def set_tzo(self, value):
+    def set_tzo(self, value: Union[int, dt.tzinfo]) -> None:
         """
         Set the timezone offset from UTC.
 
@@ -91,7 +91,7 @@ class EntityTime(ElementBase):
         else:
             self._set_sub_text('tzo', time[-6:])
 
-    def get_utc(self):
+    def get_utc(self) -> dt.datetime:
         """
         Return the time in UTC as a datetime object.
         """
@@ -100,7 +100,7 @@ class EntityTime(ElementBase):
             return xep_0082.parse(xep_0082.datetime())
         return xep_0082.parse('%sZ' % value)
 
-    def set_utc(self, value):
+    def set_utc(self, value: Union[str, dt.datetime]) -> None:
         """
         Set the time in UTC.
 
