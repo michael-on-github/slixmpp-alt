@@ -16,7 +16,7 @@ import threading
 from typing import Any, Dict, Set, ClassVar, Union, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from slixmpp.clientxmpp import ClientXMPP
+    from slixmpp.clientxmpp import ClientXMPP, BaseXMPP
     from slixmpp.componentxmpp import ComponentXMPP
 
 log = logging.getLogger(__name__)
@@ -105,7 +105,7 @@ def load_plugin(name, module=None):
 
 
 class PluginManager(object):
-    def __init__(self, xmpp, config=None):
+    def __init__(self, xmpp: 'BaseXMPP', config: Optional[Dict] = None):
         #: We will track all enabled plugins in a set so that we
         #: can enable plugins in batches and pull in dependencies
         #: without problems.
