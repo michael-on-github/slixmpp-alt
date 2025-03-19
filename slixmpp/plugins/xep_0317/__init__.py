@@ -8,4 +8,4 @@ from slixmpp.plugins.xep_0317.stanza import Hat, Hats
 
 register_plugin(XEP_0317)
 
-__all__ = ['stanza', 'XEP_317']
+__all__ = ['stanza', 'XEP_0317', 'Hat', 'Hats', 'stanza']
