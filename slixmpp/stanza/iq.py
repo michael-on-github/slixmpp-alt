@@ -230,15 +230,6 @@ class Iq(RootStanza):
         StanzaBase.send(self)
         return future
 
-    def _handle_result(self, iq):
-        # we got the IQ, so don't fire the timeout
-        self.stream.cancel_schedule('IqTimeout_%s' % self['id'])
-        self.callback(iq)
-
-    def _fire_timeout(self):
-        # don't fire the handler for the IQ, if it finally does come in
-        self.stream.remove_handler('IqCallback_%s' % self['id'])
-
     def _set_stanza_values(self, values):
         """
         Set multiple stanza interface values using a dictionary.
