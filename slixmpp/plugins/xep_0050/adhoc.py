@@ -580,7 +580,7 @@ class XEP_0050(BasePlugin):
         try:
             del self.sessions[sessionid]
         except Exception as e:
-            log.error("Error deleting adhoc command session: %s" % e.message)
+            log.error("Error deleting adhoc command session: %s" % e)
 
     def _handle_command_result(self, iq):
         """
