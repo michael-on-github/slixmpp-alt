@@ -25,8 +25,8 @@ class OAuth(ElementBase):
                                  token_secret, method='HMAC-SHA1'):
         self['oauth_signature_method'] = method
 
-        request = urllib.quote('%s&%s' % (sfrom, sto), '')
-        parameters = urllib.quote('&'.join([
+        request = urllib.parse.quote('%s&%s' % (sfrom, sto), '')
+        parameters = urllib.parse.quote('&'.join([
             'oauth_consumer_key=%s' % self['oauth_consumer_key'],
             'oauth_nonce=%s' % self['oauth_nonce'],
             'oauth_signature_method=%s' % self['oauth_signature_method'],
@@ -37,14 +37,16 @@ class OAuth(ElementBase):
 
         sigbase = '%s&%s&%s' % (stanza, request, parameters)
 
-        consumer_secret = urllib.quote(consumer_secret, '')
-        token_secret = urllib.quote(token_secret, '')
+        consumer_secret = urllib.parse.quote(consumer_secret, '')
+        token_secret = urllib.parse.quote(token_secret, '')
         key = '%s&%s' % (consumer_secret, token_secret)
 
         if method == 'HMAC-SHA1':
             sig = base64.b64encode(hmac.new(key, sigbase, hashlib.sha1).digest())
         elif method == 'PLAINTEXT':
             sig = key
+        else:
+            raise ValueError('Unknown signature method')
 
         self['oauth_signature'] = sig
         return sig
@@ -53,8 +55,8 @@ class OAuth(ElementBase):
                                token_secret):
         method = self['oauth_signature_method']
 
-        request = urllib.quote('%s&%s' % (sfrom, sto), '')
-        parameters = urllib.quote('&'.join([
+        request = urllib.parse.quote('%s&%s' % (sfrom, sto), '')
+        parameters = urllib.parse.quote('&'.join([
             'oauth_consumer_key=%s' % self['oauth_consumer_key'],
             'oauth_nonce=%s' % self['oauth_nonce'],
             'oauth_signature_method=%s' % self['oauth_signature_method'],
@@ -65,13 +67,15 @@ class OAuth(ElementBase):
 
         sigbase = '%s&%s&%s' % (stanza, request, parameters)
 
-        consumer_secret = urllib.quote(consumer_secret, '')
-        token_secret = urllib.quote(token_secret, '')
+        consumer_secret = urllib.parse.quote(consumer_secret, '')
+        token_secret = urllib.parse.quote(token_secret, '')
         key = '%s&%s' % (consumer_secret, token_secret)
 
         if method == 'HMAC-SHA1':
             sig = base64.b64encode(hmac.new(key, sigbase, hashlib.sha1).digest())
         elif method == 'PLAINTEXT':
             sig = key
+        else:
+            raise ValueError('Unknown signature method')
 
         return self['oauth_signature'] == sig
