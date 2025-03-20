@@ -6,14 +6,16 @@
 from slixmpp.xmlstream import ET
 
 
-class OptionalSetting(object):
+class OptionalSetting:
 
     interfaces = {'required'}
+    xml: ET.Element
+    namespace: str
 
     def set_required(self, value):
         if value in (True, 'true', 'True', '1'):
             self.xml.append(ET.Element("{%s}required" % self.namespace))
-        elif self['required']:
+        elif self.get_required():
             self.del_required()
 
     def get_required(self):
