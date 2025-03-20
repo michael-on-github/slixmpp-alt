@@ -189,7 +189,7 @@ class IBBytestream(object):
     def makefile(self, *args, **kwargs):
         return self
 
-    def connect(*args, **kwargs):
+    def connect(self, *args, **kwargs):
         return None
 
     def shutdown(self, *args, **kwargs):
