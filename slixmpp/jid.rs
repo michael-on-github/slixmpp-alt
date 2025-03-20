@@ -217,7 +217,10 @@ impl PyJid {
         } else if other.is_none() {
             Bound::new(other.py(), PyJid::new(None, false)?)?.borrow()
         } else {
-            Bound::new(other.py(), PyJid::new(Some(other), false)?)?.borrow()
+            match PyJid::new(Some(other), false) {
+                Ok(res) => Bound::new(other.py(), res)?.borrow(),
+                Err(err) => return Ok(false),
+            }
         };
         match (&self.jid, &other.jid) {
             (None, None) => Ok(true),
