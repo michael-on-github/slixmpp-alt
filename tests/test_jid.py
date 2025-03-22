@@ -299,5 +299,10 @@ class TestJIDClass(SlixTest):
         jid = JID('totoéà@example.com/aaa')
         self.assertEqual(hash(jid.full), hash(jid))
 
+    def test_comparison_invalid(self):
+        jid = JID('toto@example.com')
+        self.assertFalse(jid == "@@@@")
+        self.assertFalse(jid in ["abc", "def", "@@@@"])
+
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestJIDClass)
