@@ -231,8 +231,11 @@ class TestTransport(object):
         """
         return self.socket.recv(block, timeout, **kwargs)
 
-    def get_extra_info(self, *args, **kwargs):
-        return self.socket
+    def get_extra_info(self, name, *args, default=None, **kwargs):
+        info = {
+            'socket': self.socket
+        }
+        return info.get(name, default)
 
     def abort(self, *args, **kwargs):
         return
