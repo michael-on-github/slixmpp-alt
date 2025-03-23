@@ -539,10 +539,11 @@ class XMLStream(asyncio.BaseProtocol):
         self.xml_root = None
         self.parser = ET.XMLPullParser(("start", "end"))
 
-    def connection_made(self, transport: BaseTransport) -> None:
+    def connection_made(self, transport: BaseTransport, send_event: bool = True) -> None:
         """Called when the TCP connection has been established with the server
         """
-        self.event(self.event_when_connected)
+        if send_event:
+            self.event(self.event_when_connected)
         self.transport = cast(Transport, transport)
         if self.transport is None:
             raise ValueError("Transport cannot be none")
@@ -550,6 +551,18 @@ class XMLStream(asyncio.BaseProtocol):
             "ssl_object",
             default=self.transport.get_extra_info("socket")
         )
+        ssl_object = transport.get_extra_info(
+            "ssl_object",
+            default=None,
+        )
+        if ssl_object is not None:
+            der_cert = ssl_object.getpeercert(True)
+            pem_cert = ssl.DER_cert_to_PEM_cert(der_cert)
+            self.event('ssl_cert', pem_cert)
+            if self._current_connection_attempt is None:
+                # Connection attempt aborted
+                return
+            self.event('tls_success')
         self._current_connection_attempt = None
         self.init_parser()
         self.send_raw(self.stream_header)
@@ -831,12 +844,15 @@ class XMLStream(asyncio.BaseProtocol):
         """
         if self.transport is None:
             raise ValueError("Transport should not be None")
-        self.event_when_connected = "tls_success"
         ssl_context = self.get_ssl_context()
         try:
-            transp = await self.loop.start_tls(self.transport,
-                                               self, ssl_context,
-                                               server_hostname=self.default_domain)
+            self._current_connection_attempt = asyncio.ensure_future(
+                self.loop.start_tls(self.transport,
+                                    self, ssl_context,
+                                    server_hostname=self.default_domain),
+                loop=self.loop,
+            )
+            transp = await self._current_connection_attempt
         except ssl.SSLError as e:
             log.debug('SSL: Unable to connect', exc_info=True)
             log.error('CERT: Invalid certificate trust chain.')
@@ -851,13 +867,10 @@ class XMLStream(asyncio.BaseProtocol):
             return False
         if transp is None:
             raise Exception("Transport should not be none")
-        der_cert = transp.get_extra_info("ssl_object").getpeercert(True)
-        pem_cert = ssl.DER_cert_to_PEM_cert(der_cert)
-        self.event('ssl_cert', pem_cert)
         # If we use the builtin start_tls, the connection_made() protocol
         # method is not called automatically
         if hasattr(self.loop, 'start_tls'):
-            self.connection_made(transp)
+            self.connection_made(transp, send_event=False)
         return True
 
     def _start_keepalive(self, event: Any) -> None:
