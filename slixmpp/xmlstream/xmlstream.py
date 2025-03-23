@@ -490,6 +490,7 @@ class XMLStream(asyncio.BaseProtocol):
                     if self.enable_plaintext:
                         fake_services.extend([''])
                     for service in fake_services:
+                        tls, server_hostname = (False, None)
                         if service in self.tls_services:
                             tls, server_hostname = True, self.default_domain
                         success = await self._attempt_connection(
