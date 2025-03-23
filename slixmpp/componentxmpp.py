@@ -69,6 +69,7 @@ class ComponentXMPP(BaseXMPP):
             self._fix_error_ns()
 
         self.enable_starttls = False
+        self.enable_plaintext = True
         self.auto_authorize = None
         self.stream_header = '<stream:stream %s %s to="%s">' % (
                 'xmlns="jabber:component:accept"',

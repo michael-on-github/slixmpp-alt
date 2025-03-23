@@ -206,6 +206,9 @@ class XMLStream(asyncio.BaseProtocol):
     #: Enable connecting to the server using STARTTLS (i.e. upgrading a clear
     #: connection once established).
     enable_starttls: bool
+    #: Enable connecting to the server using plaintext
+    #: strongly not recommended (unless for localhost components)
+    enable_plaintext: bool
 
     #: If set to ``True``, attempt to use IPv6.
     use_ipv6: bool
@@ -322,6 +325,7 @@ class XMLStream(asyncio.BaseProtocol):
 
         self.enable_starttls = True
         self.enable_direct_tls = True
+        self.enable_plaintext = False
 
         self.tls_services = set()
         self.starttls_services = set()
@@ -483,6 +487,8 @@ class XMLStream(asyncio.BaseProtocol):
                         fake_services.extend(list(self.tls_services))
                     if self.enable_starttls:
                         fake_services.extend(list(self.starttls_services))
+                    if self.enable_plaintext:
+                        fake_services.extend([''])
                     for service in fake_services:
                         if service in self.tls_services:
                             tls, server_hostname = True, self.default_domain
