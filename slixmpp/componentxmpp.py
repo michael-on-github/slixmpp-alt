@@ -116,7 +116,7 @@ class ComponentXMPP(BaseXMPP):
 
         self.init_plugins()
 
-        log.debug("Connecting to %s:%s", host, port)
+        log.debug("Connecting to %s:%s", self.server_host, self.server_port)
         return XMLStream.connect(self, host=self.server_host, port=self.server_port)
 
     def incoming_filter(self, xml):
