@@ -36,7 +36,7 @@ class FeatureMechanisms(BasePlugin):
         'unencrypted_plain': False,
         'unencrypted_digest': False,
         'unencrypted_cram': False,
-        'unencrypted_scram': True,
+        'unencrypted_scram': False,
         'order': 100,
         'tls_version': None,
     }
