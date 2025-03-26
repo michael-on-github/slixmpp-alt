@@ -4,7 +4,15 @@ version = "1.9.1"
 description = "Slixmpp is an elegant Python library for XMPP (aka Jabber)."
 readme = "README.rst"
 authors = [
-    { name = "Florent Le Coz", email = "louiz@louiz.org" }
+    { name = "Florent Le Coz", email = "louiz@louiz.org" },
+    { name = "Mathieu Pasquet (mathieui)", email = "mathieui@mathieui.net" },
+    { name = "Emmanuel Gil Peyrot (Link Mauve)", email = "linkmauve@linkmauve.fr" },
+    { name = "Maxime “pep” Buquet", email = "pep@bouah.org" },
+]
+maintainers = [
+    { name = "Mathieu Pasquet (mathieui)", email = "mathieui@mathieui.net" },
+    { name = "Emmanuel Gil Peyrot (Link Mauve)", email = "linkmauve@linkmauve.fr" },
+    { name = "Maxime “pep” Buquet", email = "pep@bouah.org" },
 ]
 requires-python = ">=3.9"
 dependencies = [
