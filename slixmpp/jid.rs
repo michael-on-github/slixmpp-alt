@@ -219,7 +219,7 @@ impl PyJid {
         } else {
             match PyJid::new(Some(other), false) {
                 Ok(res) => Bound::new(other.py(), res)?.borrow(),
-                Err(err) => return Ok(false),
+                Err(_) => return Ok(false),
             }
         };
         match (&self.jid, &other.jid) {
