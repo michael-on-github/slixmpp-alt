@@ -785,7 +785,7 @@
             <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0368.html"/>
             <xmpp:status>complete</xmpp:status>
             <xmpp:version>1.1.0</xmpp:version>
-            <xmpp:since>1.9.2</xmpp:since>
+            <xmpp:since>1.10.0</xmpp:since>
         </xmpp:SupportedXep>
     </implements>
     <implements>
@@ -1154,6 +1154,13 @@
             <revision>1.9.1</revision>
             <created>2025-03-11</created>
             <file-release rdf:resource="https://codeberg.org/poezio/slixmpp/archive/slix-1.9.1.tar.gz"/>
+        </Version>
+    </release>
+    <release>
+        <Version>
+            <revision>1.10.0</revision>
+            <created>2025-03-26</created>
+            <file-release rdf:resource="https://codeberg.org/poezio/slixmpp/archive/slix-1.10.0.tar.gz"/>
         </Version>
     </release>
 </Project>
