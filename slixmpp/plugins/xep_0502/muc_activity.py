@@ -8,6 +8,8 @@ from slixmpp import JID
 from slixmpp.plugins import BasePlugin
 from slixmpp.exceptions import IqError, IqTimeout
 
+MUC_ROOMINFO = 'http://jabber.org/protocol/muc#roominfo'
+
 
 class XEP_0502(BasePlugin):
     """
@@ -33,7 +35,7 @@ class XEP_0502(BasePlugin):
         disco = info_iq.get_plugin('disco_info', check=True)
         if not disco:
             return None
-        if not 'forms' in disco:
+        if 'forms' not in disco:
             return None
         forms = disco['forms']
         if not forms:
@@ -41,5 +43,6 @@ class XEP_0502(BasePlugin):
         field = '{%s}message-activity' % self.namespace
         for form in forms:
             values = form.get_values()
-            result = values.get(field, None)
-        return result
+            if form.get('FORM_TYPE') == MUC_ROOMINFO:
+                return values.get(field, None)
+        return None
