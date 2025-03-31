@@ -23,7 +23,14 @@ RUN for VER in 3.9 3.10 3.11 3.12 3.13; do \
 
 # This container is used to build slixmpp wheels for MUSL-based distributions.
 # For other linux distros, we use the maturin-provided base images instead.
-FROM quay.io/pypa/musllinux_1_2_x86_64 as musl-wheels
+FROM quay.io/pypa/musllinux_1_2_x86_64 as musl-wheels-amd64
+
+RUN apk add maturin
+RUN apk add cargo
+RUN mkdir /io
+WORKDIR /io
+
+FROM quay.io/pypa/musllinux_1_2_aarch64 as musl-wheels-arm64
 
 RUN apk add maturin
 RUN apk add cargo
