@@ -6,9 +6,10 @@ labels:
 
 variables:
   - &settings
-      platform: linux/amd64,linux/arm64
+      platforms: linux/amd64,linux/arm64
       registry: codeberg.org
       username: nicoco
+      dockerfile: Containerfile
       target: woodpecker
       password:
         from_secret: codeberg_package_nicoco
