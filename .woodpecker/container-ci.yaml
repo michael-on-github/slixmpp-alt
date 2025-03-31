@@ -1,6 +1,9 @@
 when:
   event: [ manual ]
 
+labels:
+  platform: linux/amd64
+
 variables:
   - &settings
       platform: linux/amd64,linux/arm64
