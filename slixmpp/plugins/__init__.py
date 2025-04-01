@@ -125,6 +125,7 @@ PLUGINS = [
     'xep_0482',  # Call Invites
     'xep_0490',  # Message Displayed Synchronization
     'xep_0492',  # Chat Notification Settings
+    'xep_0494',  # Client Access Management
     'xep_0502',  # MUC Activity Indicator
     # Meant to be imported by plugins
 ]
