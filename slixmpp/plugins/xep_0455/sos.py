@@ -106,18 +106,20 @@ class XEP_0455(BasePlugin):
         except json.JSONDecodeError:
             log.error('Unable to parse the external status: {text}')
             return None
+        if not payload:
+            return None
         beginning_raw = payload.get('beginning')
         try:
             beginning = xep_0082.parse(beginning_raw)
-        except ValueError:
-            log.error('Unable to parse the external status: {text}')
+        except (ValueError, TypeError):
+            log.error(f'Bad value for beginning: "{beginning_raw}"')
             return None
 
         expected_end_raw = payload.get('expected_end')
         expected_end = None
         try:
             expected_end = xep_0082.parse(expected_end_raw)
-        except ValueError:
+        except (ValueError, TypeError):
             log.error(f'Bad value for expected end: "{expected_end_raw}"')
 
         planned_raw = payload.get('planned')
