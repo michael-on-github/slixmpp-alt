@@ -43,6 +43,6 @@ class XEP_0502(BasePlugin):
         field = '{%s}message-activity' % self.namespace
         for form in forms:
             values = form.get_values()
-            if values.get('FORM_TYPE') == MUC_ROOMINFO:
+            if values.get('FORM_TYPE') == [MUC_ROOMINFO]:
                 return values.get(field, None)
         return None
