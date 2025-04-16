@@ -120,6 +120,7 @@ PLUGINS = [
     'xep_0444',  # Message Reactions
     'xep_0446',  # File metadata element
     'xep_0447',  # Stateless file sharing
+    'xep_0455',  # Service Outage Status
     'xep_0461',  # Message Replies
     'xep_0469',  # Bookmarks Pinning
     'xep_0482',  # Call Invites
