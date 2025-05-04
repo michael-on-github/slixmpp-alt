@@ -98,7 +98,6 @@ from slixmpp.plugins.xep_0403 import XEP_0403
 from slixmpp.plugins.xep_0404 import XEP_0404
 from slixmpp.plugins.xep_0405 import XEP_0405
 from slixmpp.plugins.xep_0410 import XEP_0410
-from slixmpp.plugins.xep_0420 import XEP_0420
 from slixmpp.plugins.xep_0421 import XEP_0421
 from slixmpp.plugins.xep_0422 import XEP_0422
 from slixmpp.plugins.xep_0424 import XEP_0424
@@ -209,7 +208,6 @@ class PluginsDict(TypedDict):
     xep_0404: XEP_0404
     xep_0405: XEP_0405
     xep_0410: XEP_0410
-    xep_0420: XEP_0420
     xep_0421: XEP_0421
     xep_0422: XEP_0422
     xep_0424: XEP_0424
