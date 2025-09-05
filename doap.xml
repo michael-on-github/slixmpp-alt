@@ -685,9 +685,9 @@
     <implements>
         <xmpp:SupportedXep>
             <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0317.html"/>
-            <xmpp:status>complete</xmpp:status>
-            <xmpp:version>1.8.6</xmpp:version>
-            <xmpp:since>0.2</xmpp:since>
+            <xmpp:status>partial</xmpp:status>
+            <xmpp:version>0.3.0</xmpp:version>
+            <xmpp:since>1.8.6</xmpp:since>
         </xmpp:SupportedXep>
     </implements>
     <implements>
