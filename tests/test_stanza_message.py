@@ -51,7 +51,9 @@ class TestMessageStanzas(SlixTest):
 
     def testSubject(self):
         msg = self.Message()
+        assert "subject" not in msg
         msg["subject"] = "some subject"
+        assert "subject" in msg
         self.check(
             msg,
             """
@@ -62,10 +64,13 @@ class TestMessageStanzas(SlixTest):
         )
         assert msg["subject"] == "some subject"
         del msg["subject"]
+        assert "subject" not in msg
         assert not msg["subject"]
+        assert "subject" not in msg
         self.check(msg, "<message />")
         msg = self.Message()
         msg["subject"] = ""
+        assert "subject" in msg
         self.check(
             msg,
             """
@@ -76,6 +81,7 @@ class TestMessageStanzas(SlixTest):
         use_values=False  # third stanza produced does not contain the <subject /> element
         )
         del msg["subject"]
+        assert "subject" not in msg
         self.check(msg, "<message />")
 
 
