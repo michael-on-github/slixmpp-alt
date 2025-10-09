@@ -430,7 +430,7 @@ class XEP_0050(BasePlugin):
                       combination handled by this Slixmpp instance and
                       no stanzas need to be sent.
                       Otherwise, a disco stanza must be sent to the
-                      remove JID to retrieve the items.
+                      remote JID to retrieve the items.
         :param iterator: If True, return a result set iterator using
                          the XEP-0059 plugin, if the plugin is loaded.
                          Otherwise the parameter is ignored.
