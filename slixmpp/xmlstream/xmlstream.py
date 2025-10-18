@@ -282,9 +282,9 @@ class XMLStream(asyncio.BaseProtocol):
     #: List of DNS SRV services records which map to STARTTLS services
     starttls_services: Set[str]
 
-
     def __init__(self, host: str = '', port: int = 0,
-                 ssl_context: Optional[ssl.SSLContext] = None):
+                 ssl_context: Optional[ssl.SSLContext] = None,
+                 loop: Optional[asyncio.AbstractEventLoop] = None):
         self.transport = None
         self.socket = None
         self._connect_loop_wait = 0
@@ -314,7 +314,13 @@ class XMLStream(asyncio.BaseProtocol):
 
         self.keyfile = None
 
-        self._loop = None
+        if loop:
+            self._loop = loop
+        else:
+            self._loop = None
+            # Let the loop be set by the getter
+            self.loop
+
 
         self.default_port = int(port)
         self.default_domain = ''
