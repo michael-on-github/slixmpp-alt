@@ -360,7 +360,7 @@ class XMLStream(asyncio.BaseProtocol):
         self._current_connection_attempt = None
 
         self.disconnect_reason = None
-        self.disconnected = Future()
+        self.disconnected = Future(loop=self.loop)
         self._session_started = False
         self._always_send_everything = False
 
@@ -424,7 +424,7 @@ class XMLStream(asyncio.BaseProtocol):
         """Set the self.disconnected future on disconnect"""
         if not self.disconnected.done():
             self.disconnected.set_result(True)
-        self.disconnected = asyncio.Future()
+        self.disconnected = asyncio.Future(loop=self.loop)
 
     def connect(self, host: Optional[str] = None, port: Optional[int] = None) -> asyncio.Future:
         """Create a new socket and connect to the server.
@@ -724,7 +724,7 @@ class XMLStream(asyncio.BaseProtocol):
         else:
             self._set_disconnected_future()
             self.event("disconnected", reason)
-            future: Future = Future()
+            future: Future = Future(loop=self.loop)
             future.set_result(None)
             return future
 
@@ -1470,7 +1470,7 @@ class XMLStream(asyncio.BaseProtocol):
         :param int timeout: Timeout
         :raises: :class:`asyncio.TimeoutError` when the timeout is reached
         """
-        fut: Future = asyncio.Future()
+        fut: Future = asyncio.Future(loop=self.loop)
 
         def result_handler(event_data: Any) -> None:
             if not fut.done():
