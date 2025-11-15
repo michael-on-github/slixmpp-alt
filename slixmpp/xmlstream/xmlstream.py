@@ -44,9 +44,9 @@ from asyncio import (
     Task,
     TimerHandle,
     Transport,
-    iscoroutinefunction,
     wait,
 )
+from inspect import iscoroutinefunction
 from pathlib import Path
 
 from slixmpp.types import FilterString

@@ -567,13 +567,13 @@ class GPG(object):
         """
         stderr = codecs.getreader(self.encoding)(process.stderr)
         rr = threading.Thread(target=self._read_response, args=(stderr, result))
-        rr.setDaemon(True)
+        rr.daemon = True
         logger.debug('stderr reader: %r', rr)
         rr.start()
 
         stdout = process.stdout
         dr = threading.Thread(target=self._read_data, args=(stdout, result))
-        dr.setDaemon(True)
+        dr.daemon = True
         logger.debug('stdout reader: %r', dr)
         dr.start()
 

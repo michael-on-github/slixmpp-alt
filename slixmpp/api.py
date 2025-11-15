@@ -1,5 +1,6 @@
 from typing import Any, Optional, Callable
-from asyncio import iscoroutinefunction, Future
+from asyncio import Future
+from inspect import iscoroutinefunction
 from slixmpp.xmlstream import JID
 
 APIHandler = Callable[
