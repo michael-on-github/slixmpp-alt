@@ -46,7 +46,7 @@ Running the event loop
 ~~~~~~~~~~~~~~~~~~~~~~
 
 You can handle the event loop in any way you like, either forever, until an
-event, only for a specific duration, in conjonction with another asyncio user,
+event, only for a specific duration, in conjunction with another asyncio user,
 anything goes.  But remember slixmpp will only process events and send messages
 when its event loop is running.
 

@@ -53,7 +53,7 @@ class APIRegistry(object):
     """API Registry.
 
     This class is the global Slixmpp API registry, on which any handler will
-    be registed.
+    be registered.
     """
 
     def __init__(self, xmpp):

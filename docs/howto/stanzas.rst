@@ -86,7 +86,7 @@ The main attributes defining a stanza interface:
 - interfaces_: ``set``, all known interfaces for this element
 - sub_interfaces_: ``set`` (subset of ``interfaces``), for sub-elements with only text nodes
 - bool_interfaces_: ``set`` (subset of ``interfaces``), for empty-sub-elements
-- overrides_: ``list`` (subset of ``interfaces``), for ``interfaces`` to ovverride on the parent
+- overrides_: ``list`` (subset of ``interfaces``), for ``interfaces`` to override on the parent
 - is_extension_: ``bool``, if the element is only an extension of the parent stanza
 
 .. _plugin_attrib:
@@ -194,10 +194,10 @@ Re-using our previous example:
     parent.append(Sub())
 
     for sub in parent['subs']:
-        do_something # ony Sub objects here
+        do_something # only Sub objects here
 
     for sub2 in parent['subs2']:
-        do_something # ony Sub2 objects here
+        do_something # only Sub2 objects here
 
 
 .. _interfaces:

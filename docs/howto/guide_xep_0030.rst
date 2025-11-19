@@ -75,7 +75,7 @@ components or ``xmpp.boundjid.bare`` for clients. The node value may be None or
 a string.
 
 Only handlers for the actions ``get_info`` and ``get_items`` need to have return
-values. For these actions, DiscoInfo or DiscoItems stanzas are exepected as
+values. For these actions, DiscoInfo or DiscoItems stanzas are expected as
 output. It is also acceptable for handlers for these actions to generate an
 XMPPError exception when necessary.
 

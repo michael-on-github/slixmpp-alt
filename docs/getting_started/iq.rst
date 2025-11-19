@@ -63,7 +63,7 @@ These options are:
 
 * ``timeout``: When using the blocking behaviour, the call will eventually
   timeout with an error. The default timeout is 30 seconds, but this may
-  be overidden two ways. To change the timeout globally, set:
+  be overridden two ways. To change the timeout globally, set:
 
     .. code-block:: python
 

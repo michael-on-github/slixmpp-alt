@@ -1644,7 +1644,7 @@ Complete code from tutorial
             self.send_presence()
             self.get_roster()
 
-            self.disconnect_counter = 6 # This is only for disconnect when we receive all replies for sended Iq
+            self.disconnect_counter = 6 # This is only for disconnect when we receive all replies for sent Iq
 
             self.send_example_iq(self.to)
             # <iq to=RESPONDER/RESOURCE xml:lang="en" type="get" id="0" from="SENDER/RESOURCE"><example_tag xmlns="https://example.net/our_extension" some_string="Another_string" boolean="True">Info_inside_tag</example_tag></iq>

@@ -207,7 +207,7 @@ def _format_jid(
 
     :param string local: Optional. The local portion of the JID.
     :param string domain: Required. The domain name portion of the JID.
-    :param strin resource: Optional. The resource portion of the JID.
+    :param string resource: Optional. The resource portion of the JID.
 
     :return: A full or bare JID string.
     """

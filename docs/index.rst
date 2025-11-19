@@ -18,7 +18,7 @@ Slixmpp
 
 Slixmpp is an :ref:`MIT licensed <license>` XMPP library for Python 3.7+,
 
-Slixmpp's design goals and philosphy are:
+Slixmpp's design goals and philosophy are:
 
 **Low number of dependencies**
     Installing and using Slixmpp should be as simple as possible, without

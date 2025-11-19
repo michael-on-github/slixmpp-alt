@@ -152,7 +152,7 @@ Responding to Messages
 ~~~~~~~~~~~~~~~~~~~~~~
 Now that an ``EchoBot`` instance handles :term:`session_start`, we can begin receiving and
 responding to messages. Now we can register a handler for the :term:`message` event that is raised
-whenever a messsage is received.
+whenever a message is received.
 
 .. code-block:: python
 

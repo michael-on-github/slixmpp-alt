@@ -111,7 +111,7 @@ def register_stanza_plugin(stanza: Type[ElementBase], plugin: Type[ElementBase],
 
 def multifactory(stanza: Type[ElementBase], plugin_attrib: str) -> Type[ElementBase]:
     """
-    Returns a ElementBase class for handling reoccuring child stanzas
+    Returns a ElementBase class for handling reoccurring child stanzas
     """
 
     def plugin_filter(self: Multi) -> Callable[..., bool]:

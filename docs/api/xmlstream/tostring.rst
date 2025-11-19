@@ -42,7 +42,7 @@ entities: ``&amp;``, ``&lt;``, ``&gt;``, ``&apos;``, and ``&quot;``.
 
 In the future, the use of CDATA sections may be allowed to reduce the
 size of escaped text or for when other XMPP processing agents do not
-undertand these entities.
+understand these entities.
 
 ..
     autofunction:: xml_escape

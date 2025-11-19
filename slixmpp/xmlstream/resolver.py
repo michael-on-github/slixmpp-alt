@@ -68,7 +68,7 @@ async def resolve(host: str, port: int, *, loop: AbstractEventLoop,
                   resolver: Optional[ResolverProtocol] = None,
                   use_ipv6: bool = True,
                   use_aiodns: bool = True) -> List[Tuple[str, str, str, int]]:
-    """Peform DNS resolution for a given hostname.
+    """Perform DNS resolution for a given hostname.
 
     Resolution may perform SRV record lookups if a service and protocol
     are specified. The returned addresses will be sorted according to
@@ -287,7 +287,7 @@ async def get_SRV(host: str, port: int, services: list[str],
     :type    proto: string
     :type resolver: :class:`aiodns.DNSResolver`
 
-    :return: A list of service, hostname, port pairs in the order dictacted
+    :return: A list of service, hostname, port pairs in the order dictated
              by SRV priorities and weights.
     """
     if resolver is None or not use_aiodns:

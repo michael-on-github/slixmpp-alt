@@ -34,7 +34,7 @@ Likewise, we will change the bot's class definition to match:
             ComponentXMPP.__init__(self, jid, secret, server, port)
 
 A component instance requires two extra parameters compared to a client
-instance: ``server`` and ``port``. These specifiy the name and port of
+instance: ``server`` and ``port``. These specify the name and port of
 the XMPP server that will be accepting the component. For example, for
 a MUC component, the following could be used:
 

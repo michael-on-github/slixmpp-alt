@@ -415,7 +415,7 @@ class DeleteResult(object):
     problem_reason = {
         '1': 'No such key',
         '2': 'Must delete secret key first',
-        '3': 'Ambigious specification',
+        '3': 'Ambiguous specification',
     }
 
     def handle_status(self, key, value):

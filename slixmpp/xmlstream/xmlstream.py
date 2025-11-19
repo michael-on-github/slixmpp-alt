@@ -665,7 +665,7 @@ class XMLStream(asyncio.BaseProtocol):
 
     def reschedule_connection_attempt(self) -> Optional[asyncio.Future]:
         """
-        Increase the exponential back-off and initate another background
+        Increase the exponential back-off and initiate another background
         _connect_loop call to connect to the server.
 
         :returns: A future on the next scheduled connection attempt.

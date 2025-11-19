@@ -9,7 +9,7 @@ plugin or do more dark magic.
 
 The idea is that each api call can be replaced, most of them use a form
 of in-memory storage that can be, for example, replaced with database
-or file-based storaged.
+or file-based storage.
 
 
 Each plugin is assigned an API proxy bound to itself, but only a few make use

@@ -236,7 +236,7 @@ class Iq(RootStanza):
         """
         Set multiple stanza interface values using a dictionary.
 
-        Stanza plugin values may be set usind nested dictionaries.
+        Stanza plugin values may be set using nested dictionaries.
 
         If the interface 'query' is given, then it will be set
         last to avoid duplication of the <query /> element.
