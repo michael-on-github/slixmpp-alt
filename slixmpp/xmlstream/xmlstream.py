@@ -1483,7 +1483,7 @@ class XMLStream(asyncio.BaseProtocol):
                 fut.set_result(event_data)
             else:
                 log.debug(
-                    "Future registered on event '%s' was alredy done",
+                    "Future registered on event '%s' was already done",
                     event
                 )
 
