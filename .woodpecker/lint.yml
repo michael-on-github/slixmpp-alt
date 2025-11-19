@@ -12,3 +12,7 @@ steps:
     image: codeberg.org/poezio/woodpecker-slixmpp
     commands:
     - mypy slixmpp
+  typos:
+    image: codeberg.org/poezio/woodpecker-slixmpp
+    commands:
+    - typos
