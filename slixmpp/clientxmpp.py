@@ -8,6 +8,7 @@
 # :license: MIT, see LICENSE for more details
 import asyncio
 import logging
+from inspect import iscoroutinefunction
 from typing import Optional, Any, Callable, Tuple, Dict, Set, List
 
 from slixmpp.jid import JID
@@ -261,7 +262,7 @@ class ClientXMPP(BaseXMPP):
         for order, name in self._stream_feature_order:
             if name in features['features']:
                 handler, restart = self._stream_feature_handlers[name]
-                if asyncio.iscoroutinefunction(handler):
+                if iscoroutinefunction(handler):
                     result = await handler(features)
                 else:
                     result = handler(features)
