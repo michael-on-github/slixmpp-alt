@@ -148,7 +148,7 @@ class TestPermissions(SlixTest):
         iq.set_from("juliet@xxx")
         iq.set_to("somemuc@conf")
         iq.set_type("get")
-        self.xmpp["xep_0356"].granted_privileges["conf"].iq["http://jabber.org/protocol/muc#admin"] = permissions.IqPermission.BOTH
+        self.xmpp["xep_0356"].granted_privileges["xxx"].iq["http://jabber.org/protocol/muc#admin"] = permissions.IqPermission.BOTH
         r = self.xmpp.loop.create_task(self.xmpp["xep_0356"].send_privileged_iq(iq, iq_id="0"))
         self.send(
             """

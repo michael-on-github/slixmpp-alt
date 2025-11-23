@@ -201,7 +201,7 @@ class XEP_0356(BasePlugin):
         """
         iq_id = iq_id or str(uuid.uuid4())
         encapsulated_iq["id"] = iq_id
-        server = encapsulated_iq.get_to().domain
+        server = encapsulated_iq.get_from().domain
         perms = self.granted_privileges.get(server)
         if not perms:
             raise PermissionError(f"{server} has not granted us any privilege")
