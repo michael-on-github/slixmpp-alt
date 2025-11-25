@@ -110,7 +110,7 @@ class XEP_0363(BasePlugin):
 
         candidates = []
         for info in results:
-            if not info['disco_info']:
+            if not info.get_plugin('disco_info', check=True):
                 continue
             for identity in info['disco_info']['identities']:
                 if identity[0] == 'store' and identity[1] == 'file':
