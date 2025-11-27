@@ -16,16 +16,54 @@ processing the same stanza twice.
 
     connected
         - **Data:** ``{}``
-        - **Source:** :py:class:`~.xmlstream.XMLstream`
+        - **Source:** :class:`~.XMLStream`
 
         Signal that a connection has been made with the XMPP server, but a session
         has not yet been established.
 
-    connection_failed
-        - **Data:** ``{}`` or ``Failure Stanza`` if available
-        - **Source:** :py:class:`~.xmlstream.XMLstream`
+    connecting
+        - **Data:** ``{}``
+        - **Source:** :class:`~.XMLStream`
 
-        Signal that a connection can not be established after number of attempts.
+        Signal that a slixmpp will start to try establishing a connection.
+
+    connection_failed
+        - **Data:** ``str`` or ``OSerror``
+        - **Source:** :class:`~.XMLStream`
+
+        Signal that a connection attempt failed, either due to a lack of DNS
+        records, or a network-level exception happened.
+
+    ssl_cert
+        - **Data:** ``str``
+        - **Source:** :class:`~.XMLStream`
+
+        Signal containing a PEM representation of the peer certificate when
+        establishing a TLS connection. The certificate can be checked synchronously
+        in this handler, and the attempt can be aborted if needed.
+
+    tls_success
+        - **Data:** None
+        - **Source:** :class:`~.XMLStream`
+
+        Signal following ``ssl_cert`` indicating that a TLS connection has been
+        established and the XML stream will be proceeding.
+
+    ssl_invalid_chain
+        - **Data:** :py:class:`ssl.SSLError` the ssl exception
+        - **Source:** :class:`~.XMLStream`
+
+        Signal emitted when there is an SSL error when connecting. If not
+        handled, slixmpp will disconnect rather than attempt connecting
+        using the next method.
+
+    stanza_not_sent
+        - **Data:** :py:class:`~.stanza.rootstanza.RootStanza` or ``str``, the stanza slixmpp attempted to send
+        - **Source:** :class:`~.XMLStream`
+
+        Signal emitted when a stanza could not be sent because slixmpp is not
+        connected (fully or at all) to the server. The stanza is queued for
+        sending when the connection is established again.
 
     changed_status
         - **Data:** :py:class:`~.Presence`
@@ -91,7 +129,7 @@ processing the same stanza twice.
 
     disconnected
         - **Data:** ``Union[str, Exception]``, the reason for the disconnect (if any). If a textual reason is not provided and an exception is the cause, it will be given to the event handler.
-        - **Source:** :py:class:`~.XMLstream`
+        - **Source:** :class:`~.XMLStream`
 
         Signal that the connection with the XMPP server has been lost.
 
@@ -302,7 +340,7 @@ processing the same stanza twice.
 
     session_end
         - **Data:** ``{}``
-        - **Source:** :py:class:`~.xmlstream.XMLstream`
+        - **Source:** :class:`~.XMLStream`
 
         Signal that a connection to the XMPP server has been lost and the current
         stream session has ended. Equivalent to :term:`disconnected`, unless the
@@ -329,7 +367,7 @@ processing the same stanza twice.
 
     socket_error
         - **Data:** ``Socket`` exception object
-        - **Source:** :py:class:`~.xmlstream.XMLstream`
+        - **Source:** :class:`~.XMLStream`
 
     stream_error
         - **Data:** :py:class:`~.StreamError`
