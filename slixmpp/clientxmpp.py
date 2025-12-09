@@ -223,7 +223,7 @@ class ClientXMPP(BaseXMPP):
         """
         return self.client_roster.remove(jid)
 
-    def get_roster(self, callback=None, timeout=None):
+    def get_roster(self, callback=None, timeout=None) -> asyncio.Future[Iq | None]:
         """Request the roster from the server.
 
         :param callback: Reference to a stream handler function. Will

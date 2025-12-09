@@ -4,6 +4,7 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 from slixmpp.stanza.rootstanza import RootStanza
+from slixmpp.types import MessageTypes
 from slixmpp.xmlstream import StanzaBase, ET
 
 
@@ -68,7 +69,7 @@ class Message(RootStanza):
             else:
                 self.del_origin_id()
 
-    def get_type(self):
+    def get_type(self) -> MessageTypes:
         """
         Return the message type.
 
@@ -203,7 +204,7 @@ class Message(RootStanza):
         else:
             return ''
 
-    def get_mucnick(self):
+    def get_mucnick(self) -> str:
         """
         Return the nickname of the MUC user that sent the message.
 
