@@ -4,7 +4,7 @@ when:
 
 steps:
   test_integration:
-    image: codeberg.org/poezio/woodpecker-slixmpp
+    image: codeberg.org/poezio/slixmpp:ci
     pull: true
     environment:
       CI_ACCOUNT1:

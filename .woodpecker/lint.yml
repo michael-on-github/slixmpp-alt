@@ -4,15 +4,15 @@ when:
 
 steps:
   setup_venv:
-    image: codeberg.org/poezio/woodpecker-slixmpp
+    image: codeberg.org/poezio/slixmpp:ci
     pull: true
     commands:
     - uv sync --frozen --only-group dev
   mypy:
-    image: codeberg.org/poezio/woodpecker-slixmpp
+    image: codeberg.org/poezio/slixmpp:ci
     commands:
     - mypy slixmpp
   typos:
-    image: codeberg.org/poezio/woodpecker-slixmpp
+    image: codeberg.org/poezio/slixmpp:ci
     commands:
     - typos

@@ -1,6 +1,6 @@
 [project]
 name = "slixmpp"
-version = "1.12.0"
+dynamic = ["version"]
 description = "Slixmpp is an elegant Python library for XMPP (aka Jabber)."
 readme = "README.rst"
 license = "MIT"
@@ -40,17 +40,20 @@ xep-0444-compliance = ["emoji"]
 xep-0454 = ["cryptography"]
 safer-xml-parsing = ["defusedxml"]
 
-[tool.maturin]
-module-name = "slixmpp.jid"
-python-packages = ["slixmpp"]
-python-source = "."
-
 [tool.uv]
 cache-keys = [{file = "pyproject.toml"}, {file = "rust/Cargo.toml"}, {file = "**/*.rs"}]
 
 [build-system]
-requires = ["maturin>=1.0,<2.0"]
-build-backend = "maturin"
+requires = ["setuptools", "setuptools-rust", "setuptools-scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["slixmpp"]
+
+[tool.setuptools_scm]
+
+[[tool.setuptools-rust.ext-modules]]
+target = "slixmpp.jid"
 
 [dependency-groups]
 dev = [
