@@ -3,6 +3,7 @@
 import sys
 import logging
 import unittest
+import warnings
 
 from argparse import ArgumentParser
 from importlib import import_module
@@ -50,6 +51,8 @@ def run_tests(filenames=None, debug=False, log_filename=None):
 
 
 if __name__ == '__main__':
+    warnings.filterwarnings("once", category=DeprecationWarning)
+
     parser = ArgumentParser(description='Run unit tests.')
     parser.add_argument('tests', metavar='TEST', nargs='*', help='list of tests to run, or nothing to run them all')
     parser.add_argument('-d', '--debug', action='store_true', dest='debug', default=False, help='enable debug output')
