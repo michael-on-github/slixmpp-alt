@@ -422,7 +422,9 @@ class JID:
 
     def __repr__(self):
         """Use the full JID as the representation."""
-        return self._full
+        if self._domain != '':
+            return f"JID('{self._full}')"
+        return "JID()"
 
     # pylint: disable=W0212
     def __eq__(self, other):

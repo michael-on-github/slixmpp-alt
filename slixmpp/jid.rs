@@ -209,8 +209,8 @@ impl PyJid {
     /// Use the full JID as the representation.
     fn __repr__(&self) -> String {
         match &self.jid {
-            None => String::new(),
-            Some(jid) => jid.to_string(),
+            None => String::from("JID()"),
+            Some(jid) => format!("JID('{jid}')"),
         }
     }
 
