@@ -58,6 +58,10 @@ impl PyJid {
         }
     }
 
+    fn __bool__(&self) -> bool {
+        self.jid.is_some()
+    }
+
     /*
     // TODO: implement or remove from the API
     fn unescape() {

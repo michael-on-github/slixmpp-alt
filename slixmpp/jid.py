@@ -330,6 +330,9 @@ class JID:
             self._resource = jid._resource if not bare else ''
         self._update_bare_full()
 
+    def __bool__(self) -> bool:
+        return self._domain != ''
+
     def unescape(self):
         """Return an unescaped JID object.
 
