@@ -79,7 +79,7 @@ class Message(RootStanza):
 
         :rtype: str
         """
-        return self._get_attr('type', 'normal')
+        return self._get_attr('type', 'normal')  # type:ignore[return-value]
 
     def get_id(self):
         return self._get_attr('id') or ''

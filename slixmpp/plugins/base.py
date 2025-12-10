@@ -29,7 +29,7 @@ PLUGIN_REGISTRY = {}
 
 #: In order to do cascading plugin disabling, reverse dependencies
 #: must be tracked.
-PLUGIN_DEPENDENTS = {}
+PLUGIN_DEPENDENTS: dict[str, set[str]] = {}
 
 #: Only allow one thread to manipulate the plugin registry at a time.
 REGISTRY_LOCK = threading.RLock()
