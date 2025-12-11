@@ -42,9 +42,11 @@ def run_tests(filenames=None, debug=False, log_filename=None):
             kwargs['level'] = logging.DEBUG
         logging.basicConfig(**kwargs)
     else:
-        # Disable logging output
-        logging.basicConfig(level=100)
-        logging.disable(100)
+        if debug:
+            logging.basicConfig(level=logging.DEBUG)
+        else:
+            logging.basicConfig(level=100)
+            logging.disable(100)
 
     result = runner.run(tests)
     return result
