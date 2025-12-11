@@ -20,7 +20,7 @@ except PackageNotFoundError:
     __version__ = "not-installed"
 else:
     try:
-        ver = tuple(int(x) for x in __version__.split("."))
+        ver = tuple(int(x) for x in __version__.split(".")[:3])
     except ValueError:
         warn_pride()
     else:
