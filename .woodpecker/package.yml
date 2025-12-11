@@ -1,7 +1,9 @@
 when:
-  - event: [ push, pull_request ]
+  - event: [ push ]
     path: [ "pyproject.toml", "**/*.py", "README*", ".woodpecker/package.yml" ]
+    branch: master
   - event: tag
+    branch: master
 
 matrix:
   PYTHON_VERSION:
