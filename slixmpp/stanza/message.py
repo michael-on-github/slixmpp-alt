@@ -81,16 +81,16 @@ class Message(RootStanza):
         """
         return self._get_attr('type', 'normal')  # type:ignore[return-value]
 
-    def get_id(self):
+    def get_id(self) -> str:
         return self._get_attr('id') or ''
 
-    def get_origin_id(self):
+    def get_origin_id(self) -> str:
         sub = self.xml.find(ORIGIN_NAME)
         if sub is not None:
             return sub.attrib.get('id') or ''
         return ''
 
-    def _set_ids(self, value) -> None:
+    def _set_ids(self, value: str | None) -> None:
         if value is None or value == '':
             return None
 
@@ -109,10 +109,10 @@ class Message(RootStanza):
             sub.attrib['id'] = value
             self.xml.append(sub)
 
-    def set_id(self, value):
+    def set_id(self, value:str) -> None:
         return self._set_ids(value)
 
-    def set_origin_id(self, value: str):
+    def set_origin_id(self, value: str) -> None:
         return self._set_ids(value)
 
     def del_origin_id(self):

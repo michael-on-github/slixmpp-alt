@@ -7,8 +7,10 @@ import socket
 import logging
 import random
 from asyncio import Future, AbstractEventLoop, gather
-from typing import Optional, Tuple, Dict, List, Iterable, cast
-from slixmpp.types import Protocol
+from typing import Optional, cast, Literal, Protocol, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    import pycares
 
 
 log = logging.getLogger(__name__)
@@ -16,8 +18,8 @@ log = logging.getLogger(__name__)
 
 class GetHostByNameAnswerProtocol(Protocol):
     name: str
-    aliases: List[str]
-    addresses: List[str]
+    aliases: list[str]
+    addresses: list[str]
 
 
 class QueryAnswerProtocol(Protocol):
@@ -26,13 +28,13 @@ class QueryAnswerProtocol(Protocol):
     weight: int
     port: int
 
-
 class ResolverProtocol(Protocol):
-    def gethostbyname(self, host: str, socket_family: socket.AddressFamily) -> Future:
+    def gethostbyname(self, host: str, family: socket.AddressFamily) -> Future["pycares.ares_host_result"]:
         ...
 
-    def query(self, query: str, querytype: str) -> Future:
-        ...
+    def query(
+        self, host: str, qtype: Literal['SRV'], qclass: Optional[str] = None
+    ) -> Future[list["pycares.ares_query_srv_result"]]: ...
 
 
 #: Global flag indicating the availability of the ``aiodns`` package.
@@ -64,10 +66,10 @@ def default_resolver(loop: AbstractEventLoop) -> Optional[ResolverProtocol]:
 
 
 async def resolve(host: str, port: int, *, loop: AbstractEventLoop,
-                  services: Optional[List[str]] = None, proto: str = 'tcp',
+                  services: Optional[list[str]] = None, proto: str = 'tcp',
                   resolver: Optional[ResolverProtocol] = None,
                   use_ipv6: bool = True,
-                  use_aiodns: bool = True) -> List[Tuple[str, str, str, int]]:
+                  use_aiodns: bool = True) -> list[tuple[str, str, str, int]]:
     """Perform DNS resolution for a given hostname.
 
     Resolution may perform SRV record lookups if a service and protocol
@@ -171,7 +173,7 @@ async def resolve(host: str, port: int, *, loop: AbstractEventLoop,
 
 async def get_A(host: str, *, loop: AbstractEventLoop,
                 resolver: Optional[ResolverProtocol] = None,
-                use_aiodns: bool = True) -> List[str]:
+                use_aiodns: bool = True) -> list[str]:
     """Lookup DNS A records for a given host.
 
     If ``resolver`` is not provided, or is ``None``, then resolution will
@@ -215,7 +217,7 @@ async def get_A(host: str, *, loop: AbstractEventLoop,
 
 async def get_AAAA(host: str, *, loop: AbstractEventLoop,
                    resolver: Optional[ResolverProtocol] = None,
-                   use_aiodns: bool = True) -> List[str]:
+                   use_aiodns: bool = True) -> list[str]:
     """Lookup DNS AAAA records for a given host.
 
     If ``resolver`` is not provided, or is ``None``, then resolution will
@@ -264,7 +266,7 @@ async def get_AAAA(host: str, *, loop: AbstractEventLoop,
 async def get_SRV(host: str, port: int, services: list[str],
                   proto: str = 'tcp',
                   resolver: Optional[ResolverProtocol] = None,
-                  use_aiodns: bool = True) -> List[Tuple[str, str, int]]:
+                  use_aiodns: bool = True) -> list[tuple[str, str, int]]:
     """Perform SRV record resolution for a given host.
 
     .. note::
@@ -309,14 +311,14 @@ async def get_SRV(host: str, port: int, services: list[str],
         if isinstance(result, Exception):
             log.debug('DNS: Exception while querying for %s SRV records: %s',
                       host, result)
-    recs = []
+    recs: list[tuple[str, QueryAnswerProtocol]] = []
     for service, recs_service in recs_dict.items():
         recs.extend([(service, rec) for rec in recs_service])
 
     if not recs:
         return []
 
-    answers: Dict[int, List[Tuple[str, QueryAnswerProtocol]]] = {}
+    answers: dict[int, list[tuple[str, QueryAnswerProtocol]]] = {}
     for service, rec in recs:
         if rec.priority not in answers:
             answers[rec.priority] = []

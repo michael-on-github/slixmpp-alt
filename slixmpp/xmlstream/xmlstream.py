@@ -594,7 +594,8 @@ class XMLStream(asyncio.BaseProtocol):
             return
         self.parser.feed(data)
         try:
-            for event, xml in self.parser.read_events():
+            for event, xml in self.parser.read_events():  # type:ignore[misc]
+                xml = cast(ET.Element, xml)
                 if event == 'start':
                     if self.xml_depth == 0:
                         # We have received the start of the root element.
