@@ -5,8 +5,10 @@ FROM debian:trixie-slim AS ci
 ENV UV_LINK_MODE=copy
 ENV PATH=.venv/bin:$PATH
 
-RUN apt update && apt install cargo gpg git -y
+RUN apt update && apt install cargo gpg git -y && rm -rf /var/lib/apt/lists/*
 
+COPY ./itests/prosody.crt /usr/local/share/ca-certificates/
+RUN update-ca-certificates
 COPY --from=ghcr.io/astral-sh/uv /uv /uvx /bin/
 
 # install different python versions and populate the pypi cache,
@@ -62,3 +64,17 @@ RUN curl https://sh.rustup.rs -sSf | sh -s -- -y
 ENV PATH="/root/.cargo/bin:$PATH"
 RUN mkdir /io
 WORKDIR /io
+
+# Prosody server for integration tests
+FROM docker.io/library/alpine:edge as prosody
+RUN apk add prosody luarocks openssl
+RUN ln -s /usr/bin/luarocks-?.? /usr/bin/luarocks  # luarocks is apparently not packaged correctly in alpine?
+COPY ./itests/prosody.cfg.lua /etc/prosody/prosody.cfg.lua
+COPY ./itests/prosody.crt ./itests/prosody.key /etc/prosody/certs/
+RUN mkdir /var/www && echo "null" > /var/www/status.json
+RUN prosodyctl register slix-ci-1 prosody slix-ci-1-pass
+RUN prosodyctl register slix-ci-2 prosody slix-ci-2-pass
+RUN prosodyctl install --server=https://modules.prosody.im/rocks/ mod_muc_moderation
+RUN prosodyctl install --server=https://modules.prosody.im/rocks/ mod_service_outage_status
+USER prosody
+ENTRYPOINT ["prosody", "-F"]

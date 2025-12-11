@@ -12,6 +12,7 @@ labels:
 steps:
   ci:
     image: woodpeckerci/plugin-docker-buildx:6.0.2
+    depends_on: []
     settings:
       platforms: linux/amd64,linux/arm64
       target: ci
@@ -20,5 +21,19 @@ steps:
       username: nicoco
       dockerfile: Containerfile
       repo: codeberg.org/poezio/slixmpp
+      password:
+        from_secret: codeberg_package_nicoco
+
+  prosody:
+    image: woodpeckerci/plugin-docker-buildx:6.0.2
+    depends_on: []
+    settings:
+      repo: codeberg.org/poezio/slixmpp
+      platforms: linux/amd64,linux/arm64
+      target: prosody
+      tag: prosody
+      registry: codeberg.org
+      username: nicoco
+      dockerfile: Containerfile
       password:
         from_secret: codeberg_package_nicoco
