@@ -38,7 +38,7 @@ steps:
     image: codeberg.org/poezio/slixmpp:${TARGET}-${ARCH}
     when:
       event: [ push, tag ]
-      branch: main
+      branch: master
     environment:
       TOKEN:
         from_secret: codeberg_package_nicoco
