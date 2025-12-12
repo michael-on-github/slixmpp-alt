@@ -1,6 +1,6 @@
 when:
   event: [ push, pull_request ]
-  path: [ "**/*.py", "uv.lock", "Cargo.toml", ".woodpecker/test.yml" ]
+  path: [ "**/*.py", "uv.lock", "Cargo.toml", ".woodpecker/test.yml", "**/*.rs"  ]
 
 steps:
   setup_venv:
