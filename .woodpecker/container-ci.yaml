@@ -19,6 +19,6 @@ steps:
       registry: codeberg.org
       username: nicoco
       dockerfile: Containerfile
-      repo: codeberg.org/poezio/woodpecker-slixmpp
+      repo: codeberg.org/poezio/slixmpp
       password:
         from_secret: codeberg_package_nicoco
