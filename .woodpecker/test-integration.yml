@@ -5,7 +5,6 @@ when:
 steps:
   test_integration:
     image: codeberg.org/poezio/slixmpp:ci
-    pull: true
     environment:
       CI_ACCOUNT1:
         from_secret: ci_account1

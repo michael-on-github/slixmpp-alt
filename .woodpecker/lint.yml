@@ -5,7 +5,6 @@ when:
 steps:
   setup_venv:
     image: codeberg.org/poezio/slixmpp:ci
-    pull: true
     commands:
     - uv sync --frozen --only-group dev
   mypy:

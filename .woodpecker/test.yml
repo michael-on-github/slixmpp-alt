@@ -5,7 +5,6 @@ when:
 steps:
   setup_venv:
     image: codeberg.org/poezio/slixmpp:ci
-    pull: true
     commands:
     - uv python pin ${TAG}
     - uv sync --frozen --all-groups --all-extras
