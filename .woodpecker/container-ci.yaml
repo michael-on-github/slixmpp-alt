@@ -3,6 +3,8 @@ when:
   - event: push
     path: [ "Containerfile" ]
     branch: master
+  - event: cron
+    cron: containers
 
 labels:
   platform: linux/amd64
