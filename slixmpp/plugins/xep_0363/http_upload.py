@@ -44,8 +44,21 @@ class FileTooBig(FileUploadError):
     - max file size allowed
     """
     def __str__(self):
-        return 'File size too large: {} (max: {} bytes)' \
-            .format(self.args[0], self.args[1])
+        return f"File size too large: {self._human_readable(self.args[0])} (max: {self._human_readable(self.args[1])})"
+
+    @staticmethod
+    def _human_readable(size):
+        """
+        Convert a size in bytes to a human-readable string with decimals.
+        """
+        for unit in ['Bytes', 'KB', 'MB', 'GB', 'TB']:
+            if size < 1024:
+                if unit == 'Bytes':
+                    return f"{size} {unit}"
+                return f"{size:.2f} {unit}"
+            size /= 1024
+        return f"{size:.2f} PB"
+
 
 class HTTPError(FileUploadError):
     """
