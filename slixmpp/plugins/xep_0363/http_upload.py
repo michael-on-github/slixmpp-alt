@@ -52,11 +52,11 @@ class FileTooBig(FileUploadError):
         Convert a size in bytes to a human-readable string with decimals.
         """
         for unit in ['Bytes', 'KB', 'MB', 'GB', 'TB']:
-            if size < 1024:
+            if size < 1000:
                 if unit == 'Bytes':
                     return f"{size} {unit}"
                 return f"{size:.2f} {unit}"
-            size /= 1024
+            size /= 1000
         return f"{size:.2f} PB"
 
 
