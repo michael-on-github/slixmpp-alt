@@ -51,13 +51,13 @@ class FileTooBig(FileUploadError):
         """
         Convert a size in bytes to a human-readable string with decimals.
         """
-        for unit in ['Bytes', 'KB', 'MB', 'GB', 'TB']:
-            if size < 1000:
-                if unit == 'Bytes':
+        for unit in ['bytes', 'KiB', 'MiB', 'GiB', 'TiB']:
+            if size < 1024:
+                if unit == 'bytes':
                     return f"{size} {unit}"
                 return f"{size:.2f} {unit}"
-            size /= 1000
-        return f"{size:.2f} PB"
+            size /= 1024
+        return f"{size:.2f} PiB"
 
 
 class HTTPError(FileUploadError):
