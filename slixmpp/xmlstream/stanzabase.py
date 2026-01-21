@@ -1454,6 +1454,8 @@ class ElementBase(object):
     #: Child stanzas are exposed as nested dictionaries.
     values = property(_get_stanza_values, _set_stanza_values)  # type: ignore
 
+    get_toplevel_attr = _get_attr
+
 
 class StanzaBase(ElementBase):
 
