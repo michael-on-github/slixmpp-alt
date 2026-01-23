@@ -8,6 +8,7 @@ import logging
 import random
 from asyncio import Future, AbstractEventLoop, gather
 from typing import Optional, cast, Literal, Protocol, TYPE_CHECKING
+from dataclasses import dataclass
 
 if TYPE_CHECKING:
     import pycares
@@ -22,11 +23,31 @@ class GetHostByNameAnswerProtocol(Protocol):
     addresses: list[str]
 
 
-class QueryAnswerProtocol(Protocol):
+@dataclass
+class SRVAnswer:
     host: str
     priority: int
     weight: int
     port: int
+
+    @classmethod
+    def from_aiohttp4(cls, aiohttp_4_data):
+        return cls(
+            host=aiohttp_4_data.target,
+            port=aiohttp_4_data.port,
+            weight=aiohttp_4_data.weight,
+            priority=aiohttp_4_data.priority,
+        )
+
+    @classmethod
+    def from_aiohttp3(cls, aiohttp_3_data):
+        return cls(
+            host=aiohttp_3_data.host,
+            port=aiohttp_3_data.port,
+            weight=aiohttp_3_data.weight,
+            priority=aiohttp_3_data.priority,
+        )
+
 
 class ResolverProtocol(Protocol):
     def gethostbyname(self, host: str, family: socket.AddressFamily) -> Future["pycares.ares_host_result"]:
@@ -194,8 +215,8 @@ async def get_A(host: str, *, loop: AbstractEventLoop,
     log.debug("DNS: Querying %s for A records." % host)
 
     # If not using aiodns, attempt lookup using the OS level
-    # getaddrinfo() method.
-    if resolver is None or not use_aiodns:
+    # getaddrinfo() method. Similarly, if aiodns is too old, use the builtin
+    if resolver is None or not use_aiodns or not hasattr(resolver, 'getaddrinfo'):
         try:
             inet_recs = await loop.getaddrinfo(host, None,
                                                family=socket.AF_INET,
@@ -206,13 +227,13 @@ async def get_A(host: str, *, loop: AbstractEventLoop,
             return []
 
     # Using aiodns:
-    future = resolver.gethostbyname(host, socket.AF_INET)
+    future = resolver.getaddrinfo(host, socket.AF_INET)
     try:
-        recs = cast(GetHostByNameAnswerProtocol, await future)
+        recs = await future
     except Exception as e:
         log.debug('DNS: Exception while querying for %s A records: %s', host, e)
         return []
-    return [addr for addr in recs.addresses]
+    return [node.addr[0].decode('utf-8') for node in recs.nodes]
 
 
 async def get_AAAA(host: str, *, loop: AbstractEventLoop,
@@ -238,8 +259,8 @@ async def get_AAAA(host: str, *, loop: AbstractEventLoop,
     log.debug("DNS: Querying %s for AAAA records." % host)
 
     # If not using aiodns, attempt lookup using the OS level
-    # getaddrinfo() method.
-    if resolver is None or not use_aiodns:
+    # getaddrinfo() method. Similarly, if aiodns is too old, use the builtin
+    if resolver is None or not use_aiodns or not hasattr(resolver, 'getaddrinfo'):
         if not socket.has_ipv6:
             log.debug("DNS: Unable to query %s for AAAA records: IPv6 is not supported", host)
             return []
@@ -254,13 +275,13 @@ async def get_AAAA(host: str, *, loop: AbstractEventLoop,
             return []
 
     # Using aiodns:
-    future = resolver.gethostbyname(host, socket.AF_INET6)
+    future = resolver.getaddrinfo(host, socket.AF_INET6)
     try:
-        recs = cast(GetHostByNameAnswerProtocol, await future)
+        recs = await future
     except Exception as e:
         log.debug('DNS: Exception while querying for %s AAAA records: %s', host, e)
         return []
-    return [addr for addr in recs.addresses]
+    return [node.addr[0].decode('utf-8') for node in recs.nodes]
 
 
 async def get_SRV(host: str, port: int, services: list[str],
@@ -301,8 +322,14 @@ async def get_SRV(host: str, port: int, services: list[str],
     coros = []
 
     async def query_and_add(s: str) -> None:
-        recs_dict[s] = await resolver.query('_%s._%s.%s' % (s, proto, host), 'SRV')
-        return None
+        if hasattr(resolver, 'query_dns'):
+            # aiodns 4+
+            result = await resolver.query_dns('_%s._%s.%s' % (s, proto, host), 'SRV')
+            recs_dict[s] = [SRVAnswer.from_aiohttp4(rec.data) for rec in result.answer]
+        else:
+            # aiodns < 4
+            result = await resolver.query('_%s._%s.%s' % (s, proto, host), 'SRV')
+            recs_dict[s] = [SRVAnswer.from_aiohttp3(rec) for rec in result]
 
     for service in services:
         coros.append(query_and_add(service))
@@ -311,14 +338,14 @@ async def get_SRV(host: str, port: int, services: list[str],
         if isinstance(result, Exception):
             log.debug('DNS: Exception while querying for %s SRV records: %s',
                       host, result)
-    recs: list[tuple[str, QueryAnswerProtocol]] = []
+    recs: list[tuple[str, SRVAnswer]] = []
     for service, recs_service in recs_dict.items():
         recs.extend([(service, rec) for rec in recs_service])
 
     if not recs:
         return []
 
-    answers: dict[int, list[tuple[str, QueryAnswerProtocol]]] = {}
+    answers: dict[int, list[tuple[str, SRVAnswer]]] = {}
     for service, rec in recs:
         if rec.priority not in answers:
             answers[rec.priority] = []
