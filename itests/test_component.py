@@ -1,7 +1,10 @@
+import os
 import unittest
 
 from slixmpp.componentxmpp import ComponentXMPP
 from slixmpp import JID
+
+IN_CI = os.getenv('CI') == 'woodpecker'
 
 
 class SlixComponentIntegration(unittest.IsolatedAsyncioTestCase):
@@ -14,6 +17,7 @@ class SlixComponentIntegration(unittest.IsolatedAsyncioTestCase):
     async def asyncTearDown(self):
         self.component.abort()
 
+    @unittest.skipIf(not IN_CI, "Not in woodpecker CI")
     async def test_ping(self):
         """Check that a component can connect and send a ping to the server"""
         jid = JID(f"whatever@{CI_JID}")
