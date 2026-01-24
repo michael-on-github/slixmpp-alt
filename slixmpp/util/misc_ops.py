@@ -1,6 +1,6 @@
 import builtins
-import sys
 import hashlib
+from sys import byteorder
 
 from typing import Callable
 
@@ -84,9 +84,11 @@ def XOR(x: bytes_, y: bytes_) -> bytes_:
     :param bytes y: A byte string
     :rtype: bytes
     """
-    # This operation is faster with a list comprehension than with a
-    # generator, as of 2016 on python 3.5.
-    return builtins.bytes([a ^ b for a, b in zip(x, y)])
+    # This operation is faster than the previous zip() + individual xor
+    # by a factor of 5
+    return (
+        int.from_bytes(x, byteorder) ^ int.from_bytes(y, byteorder)
+    ).to_bytes(len(x), byteorder)
 
 
 def hash(name: str) -> Callable | None:
