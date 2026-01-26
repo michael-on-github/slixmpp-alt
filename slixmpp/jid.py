@@ -173,7 +173,7 @@ def _validate_resource(resource: Optional[str]):
     return resource
 
 
-def _unescape_node(node: str):
+def unescape_node(node: str):
     """Unescape a local portion of a JID.
 
     .. note::
