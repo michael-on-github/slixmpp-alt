@@ -68,12 +68,6 @@ impl PyJid {
         self.jid.is_some()
     }
 
-    /*
-    // TODO: implement or remove from the API
-    fn unescape() {
-    }
-    */
-
     #[getter]
     fn get_bare(&self) -> String {
         match &self.jid {
