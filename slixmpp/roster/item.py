@@ -415,6 +415,8 @@ class RosterItem:
             self.save()
         else:
             #server shouldn't send an invalid subscription request
+            if not self['from'] and not self['pending_in']:
+                self['pending_in'] = True
             self.xmpp.event('roster_subscription_request', presence)
 
     def handle_subscribed(self, presence: Presence) -> None:
