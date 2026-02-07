@@ -16,7 +16,7 @@ version = sys.argv[1]
 doap_release = f"""    <release>
         <Version>
             <revision>{version}</revision>
-            <created>{datetime.now():%Y-%M-%d}</created>
+            <created>{datetime.now():%Y-%m-%d}</created>
             <file-release rdf:resource="https://codeberg.org/poezio/slixmpp/archive/slix-{version}.tar.gz"/>
         </Version>
     </release>
