@@ -1201,5 +1201,12 @@
             <file-release rdf:resource="https://codeberg.org/poezio/slixmpp/archive/slix-1.12.0.tar.gz"/>
         </Version>
     </release>
+    <release>
+        <Version>
+            <revision>1.13.0</revision>
+            <created>2026-02-07</created>
+            <file-release rdf:resource="https://codeberg.org/poezio/slixmpp/archive/slix-1.13.0.tar.gz"/>
+        </Version>
+    </release>
 </Project>
 </rdf:RDF>
