@@ -56,8 +56,18 @@ def register_stanza_plugin(stanza: Type[ElementBase], plugin: Type[ElementBase],
     """
     Associate a stanza object as a plugin for another stanza.
 
-    >>> from slixmpp.xmlstream import register_stanza_plugin
-    >>> register_stanza_plugin(Iq, CustomStanza)
+        >>> from slixmpp import Iq
+        >>> from slixmpp.xmlstream import register_stanza_plugin
+        >>> class IqPlugin(ElementBase):
+        ...     name = 'plugin'
+        ...     namespace = 'sleek:xmpp'
+        ...     interfaces = {'plugin'}
+        ...     plugin_attrib = 'plugin'
+        >>> register_stanza_plugin(Iq, IqPlugin)
+        >>> iq = Iq()
+        >>> iq['plugin'] = 'value'
+        >>> iq
+        <iq xmlns="jabber:client" id="0"><plugin xmlns="sleek:xmpp" plugin="value" /></iq>
 
     Plugin stanzas marked as iterable will be included in the list of
     substanzas for the parent, using ``parent['substanzas']``. If the
@@ -247,13 +257,14 @@ class ElementBase(object):
 
     The resulting Message stanza's contents may be accessed as so::
 
+        >>> message = Message()
         >>> message['to'] = "user@example.com"
         >>> message['body'] = "Hi!"
         >>> message['body']
-        "Hi!"
+        'Hi!'
         >>> del message['body']
         >>> message['body']
-        ""
+        ''
 
     The interface values map to either custom access methods, stanza
     XML attributes, or (if the interface is also in sub_interfaces) the
@@ -297,6 +308,9 @@ class ElementBase(object):
     and getting an interface value that is the same as the plugin's
     plugin_attrib value will work, as so::
 
+        >>> MessagePlugin.is_extension = True
+        >>> register_stanza_plugin(Message, MessagePlugin)
+        >>> message = Message()
         >>> message['custom'] = 'bar'  # Using is_extension=True
         >>> message['custom']
         'bar'
@@ -590,10 +604,15 @@ class ElementBase(object):
         """Return A JSON/dictionary version of the XML content
         exposed through the stanza's interfaces::
 
+            >>> class Message(ElementBase):
+            ...     name = "message"
+            ...     namespace = "jabber:client"
+            ...     interfaces = {'to', 'from', 'type', 'body'}
+            ...     sub_interfaces = {'body'}
             >>> msg = Message()
-            >>> msg.values
-            {'body': '', 'from': , 'mucnick': '', 'mucroom': '',
-            'to': , 'type': 'normal', 'id': '', 'subject': ''}
+            >>> from pprint import pprint
+            >>> pprint(msg.values)
+            {'body': '', 'from': '', 'lang': '', 'to': '', 'type': ''}
 
         Likewise, assigning to :attr:`values` will change the XML
         content::
@@ -601,7 +620,7 @@ class ElementBase(object):
             >>> msg = Message()
             >>> msg.values = {'body': 'Hi!', 'to': 'user@example.com'}
             >>> msg
-            '<message to="user@example.com"><body>Hi!</body></message>'
+            <message xmlns="jabber:client" to="user@example.com"><body>Hi!</body></message>
 
         .. versionadded:: 1.0-Beta1
         """
@@ -689,6 +708,9 @@ class ElementBase(object):
 
         Example::
 
+            >>> from slixmpp import Message
+            >>> msg = Message()
+            >>> msg['body'] = 'Message contents'
             >>> msg['body']
             'Message contents'
 
@@ -759,6 +781,8 @@ class ElementBase(object):
 
         Example::
 
+            >>> from slixmpp import Message
+            >>> msg = Message()
             >>> msg['body'] = "Hi!"
             >>> msg['body']
             'Hi!'
@@ -844,6 +868,8 @@ class ElementBase(object):
 
         Example::
 
+            >>> from slixmpp import Message
+            >>> msg = Message()
             >>> msg['body'] = "Hi!"
             >>> msg['body']
             'Hi!'
