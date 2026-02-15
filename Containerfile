@@ -20,7 +20,7 @@ COPY pyproject.toml uv.lock .
 RUN for VER in 3.11 3.12 3.13 3.14; do \
         uv python install $VER ; \
         uv python pin $VER ; \
-        uv sync --frozen --only-group dev --no-install-project ; \
+        uv sync --frozen --only-group lint --no-install-project ; \
 	done
 
 # Containers used to build wheels
