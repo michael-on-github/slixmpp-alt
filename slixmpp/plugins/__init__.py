@@ -129,6 +129,7 @@ PLUGINS = [
     'xep_0492',  # Chat Notification Settings
     'xep_0494',  # Client Access Management
     'xep_0502',  # MUC Activity Indicator
+    'xep_0511',  # Link Metadata
     # Meant to be imported by plugins
 ]
 

@@ -1,0 +1,15 @@
+XEP-0511: Link Metadata
+================================
+
+.. module:: slixmpp.plugins.xep_0511
+
+.. autoclass:: XEP_0511
+    :members:
+    :exclude-members: session_bind, plugin_init, plugin_end, dependencies, description, name
+
+Stanza elements
+---------------
+
+.. automodule:: slixmpp.plugins.xep_0511.stanza
+    :members:
+    :undoc-members:
