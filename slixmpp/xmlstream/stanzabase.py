@@ -1665,3 +1665,11 @@ class StanzaBase(ElementBase):
         return tostring(self.xml, xmlns=xmlns,
                         stream=self.stream,
                         top_level=(self.stream is None))
+
+    def pretty_print(self) -> None:
+        """
+        Print an indented version of the XML content of this stanza.
+        """
+        xml = copy.deepcopy(self.xml)
+        ET.indent(xml)
+        print(tostring(xml))
