@@ -42,14 +42,14 @@ class PingTask:
     _event: Event
     _current_task: Task
     timeout: float
-    _interval: float
+    interval: float
     _plugin: 'XEP_0410'
 
     def __init__(self, muc_resource: JID, orig_jid: JID,
                  plugin: 'XEP_0410', interval: float, timeout: float) -> None:
         self._event = Event()
         self._plugin = plugin
-        self._interval = interval
+        self.interval = interval
         self.timeout = timeout
         self._current_task = plugin.xmpp.loop.create_task(self.run(
             muc_resource,
@@ -76,7 +76,7 @@ class PingTask:
                 done, pending = await wait(
                     [self._plugin.xmpp.loop.create_task(self._event.wait())],
                     return_when=FIRST_COMPLETED,
-                    timeout=self._interval,
+                    timeout=self.interval,
                 )
                 # If the event is set, then the timer was reset and we clear it
                 # before going back to waiting
@@ -137,7 +137,6 @@ class XEP_0410(BasePlugin):
     ping_timers: dict[Tuple[JID, JID], PingTask]
     # Cache of the latest ping results
     last_ping_results: dict[Tuple[JID, JID], PingStatus]
-
 
     def plugin_init(self):
         self.ping_timers = dict()
@@ -232,7 +231,7 @@ class XEP_0410(BasePlugin):
             )
 
     def disable_self_ping(self, muc_resource: JID,
-                                 orig_jid: Optional[JID] = None) -> None:
+                          orig_jid: Optional[JID] = None) -> None:
         """
         Disable client self-ping. Cancels the scheduled pings for the given
         MUC resource.
