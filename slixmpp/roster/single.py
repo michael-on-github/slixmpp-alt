@@ -3,7 +3,8 @@
 # Copyright (C) 2010  Nathanael C. Fritz
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
-from slixmpp import JID
+from asyncio import Future
+from slixmpp import JID, Iq
 from slixmpp.stanza import Presence
 from slixmpp.roster import RosterItem
 from slixmpp.types import RosterState, RosterDBProtocol, JidStr, ResourceDict
@@ -247,7 +248,7 @@ class RosterNode:
             return self.update(jid, subscription='remove')
 
     def update(self, jid: JidStr, name: Optional[str] = None, subscription=None, groups: Optional[List[str]] = None,
-               timeout: Optional[int] = None, callback=None):
+               timeout: Optional[int] = None, callback=None) -> Future[Iq]:
         """
         Update a JID's subscription information.
 
