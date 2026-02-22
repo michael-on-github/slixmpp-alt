@@ -8,6 +8,7 @@
 # :license: MIT, see LICENSE for more details
 import asyncio
 import logging
+from asyncio import Future
 from inspect import iscoroutinefunction
 from typing import Optional, Any, Callable, Tuple, Dict, Set, List
 
@@ -184,7 +185,7 @@ class ClientXMPP(BaseXMPP):
         self._stream_feature_order.remove((order, name))
         self._stream_feature_order.sort()
 
-    def update_roster(self, jid: JID, **kwargs) -> None:
+    def update_roster(self, jid: JID, **kwargs) -> Future[Iq] | None:
         """Add or change a roster item.
 
         :param jid: The JID of the entry to modify.

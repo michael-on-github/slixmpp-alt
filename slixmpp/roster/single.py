@@ -237,18 +237,19 @@ class RosterNode:
         """
         self[jid].unsubscribe()
 
-    def remove(self, jid: JidStr) -> None:
+    def remove(self, jid: JidStr) -> Future[Iq] | None:
         """
         Remove a JID from the roster.
 
         :param jid: The JID to remove.
         """
         self[jid].remove()
-        if not self.xmpp.is_component:
-            return self.update(jid, subscription='remove')
+        if self.xmpp.is_component:
+            return None
+        return self.update(jid, subscription='remove')
 
     def update(self, jid: JidStr, name: Optional[str] = None, subscription=None, groups: Optional[List[str]] = None,
-               timeout: Optional[int] = None, callback=None) -> Future[Iq]:
+               timeout: Optional[int] = None, callback=None) -> Future[Iq] | None:
         """
         Update a JID's subscription information.
 
@@ -271,14 +272,16 @@ class RosterNode:
         self[jid]['groups'] = groups
         self[jid].save()
 
-        if not self.xmpp.is_component:
-            iq = self.xmpp.Iq()
-            iq['type'] = 'set'
-            iq['roster']['items'] = {jid: {'name': name,
-                                           'subscription': subscription,
-                                           'groups': groups}}
+        if self.xmpp.is_component:
+            return None
 
-            return iq.send(timeout=timeout, callback=callback)
+        iq = self.xmpp.Iq()
+        iq['type'] = 'set'
+        iq['roster']['items'] = {jid: {'name': name,
+                                       'subscription': subscription,
+                                       'groups': groups}}
+
+        return iq.send(timeout=timeout, callback=callback)
 
     def presence(self, jid: JID, resource: Optional[str] = None) -> Union[ResourceDict, Dict[str, ResourceDict]]:
         """

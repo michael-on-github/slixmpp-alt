@@ -10,9 +10,6 @@ from asyncio import Future, AbstractEventLoop, gather
 from typing import Optional, cast, Literal, Protocol, TYPE_CHECKING
 from dataclasses import dataclass
 
-if TYPE_CHECKING:
-    import pycares
-
 
 log = logging.getLogger(__name__)
 
@@ -49,15 +46,6 @@ class SRVAnswer:
         )
 
 
-class ResolverProtocol(Protocol):
-    def gethostbyname(self, host: str, family: socket.AddressFamily) -> Future["pycares.ares_host_result"]:
-        ...
-
-    def query(
-        self, host: str, qtype: Literal['SRV'], qclass: Optional[str] = None
-    ) -> Future[list["pycares.ares_query_srv_result"]]: ...
-
-
 #: Global flag indicating the availability of the ``aiodns`` package.
 #: Installing ``aiodns`` can be done via:
 #:
@@ -71,6 +59,15 @@ try:
 except ImportError:
     log.debug("Could not find aiodns package. "
               "Not all features will be available")
+
+
+class ResolverProtocol(Protocol):
+    def gethostbyname(self, host: str, family: socket.AddressFamily) -> Future["aiodns.AresHostResult"]:
+        ...
+
+    def query(
+        self, host: str, qtype: Literal['SRV'], qclass: Optional[str] = None
+    ) -> Future[list["aiodns.AresQuerySRVResult"]]: ...
 
 
 def default_resolver(loop: AbstractEventLoop) -> Optional[ResolverProtocol]:
