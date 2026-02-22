@@ -59,8 +59,8 @@ class XEP_0333(BasePlugin):
         self.xmpp.event('marker', message)
 
     def send_marker(self, mto: JID, id: str, marker: str,
-                    thread: Optional[str] = None, *,
-                    mfrom: Optional[JID] = None):
+                    thread: Optional[str] = None,
+                    **msg_kwargs):
         """
         Send a chat marker.
 
@@ -69,11 +69,11 @@ class XEP_0333(BasePlugin):
         :param str marker: Marker to send (one of
             displayed, received, or acknowledged)
         :param str thread: Message thread
-        :param str mfrom: Use a specific JID to send the message
+        :param msg_kwargs: Parameters are consistent with the make_message method
         """
         if marker not in ('displayed', 'received', 'acknowledged'):
             raise ValueError('Invalid marker: %s' % marker)
-        msg = self.xmpp.make_message(mto=mto, mfrom=mfrom)
+        msg = self.xmpp.make_message(mto=mto, **msg_kwargs)
         if thread:
             msg['thread'] = thread
         msg[marker]['id'] = id
