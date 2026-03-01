@@ -4,7 +4,6 @@
 # See the file LICENSE for copying permission.
 from typing import (
     Optional,
-    Set,
 )
 
 from slixmpp import JID, Iq

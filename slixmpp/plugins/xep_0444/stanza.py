@@ -3,7 +3,7 @@
 # Copyright (C) 2020 Mathieu Pasquet
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
-from typing import Set, Iterable
+from typing import Iterable
 from slixmpp.xmlstream import ElementBase
 try:
     from emoji import is_emoji
@@ -20,7 +20,7 @@ class Reactions(ElementBase):
     namespace = NS
     interfaces = {'id', 'values'}
 
-    def get_values(self, *, all_chars=False) -> Set[str]:
+    def get_values(self, *, all_chars=False) -> set[str]:
         """"Get all reactions as str"""
         reactions = set()
         for reaction in self:

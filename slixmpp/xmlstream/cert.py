@@ -1,6 +1,6 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Set, Tuple, Optional
+from typing import Tuple, Optional
 
 # Make a call to strptime before starting threads to
 # prevent thread safety issues.
@@ -38,8 +38,8 @@ def decode_str(data: bytes) -> str:
     return bytes(data).decode(encoding)
 
 
-def extract_names(raw_cert: bytes) -> dict[str, Set[str]]:
-    results: dict[str, Set[str]] = {'CN': set(),
+def extract_names(raw_cert: bytes) -> dict[str, set[str]]:
+    results: dict[str, set[str]] = {'CN': set(),
                'DNS': set(),
                'SRV': set(),
                'URI': set(),

@@ -5,7 +5,6 @@
 from typing import (
     Iterable,
     Optional,
-    Set,
     Tuple,
     Union,
 )
@@ -72,8 +71,8 @@ class DiscoInfo(ElementBase):
     lang_interfaces = {'identities'}
 
     # Cache identities and features
-    _identities: Set[Tuple[str, str, Optional[str]]]
-    _features: Set[str]
+    _identities: set[Tuple[str, str, Optional[str]]]
+    _features: set[str]
 
     def setup(self, xml: Optional[ET.ElementTree] = None):
         """
@@ -175,7 +174,7 @@ class DiscoInfo(ElementBase):
         :param dedupe: If True, de-duplicate identities, otherwise
                        return a list of all identities.
         """
-        identities: Union[list[IdentityType], Set[IdentityType]]
+        identities: Union[list[IdentityType], set[IdentityType]]
         if dedupe:
             identities = set()
         else:
@@ -264,7 +263,7 @@ class DiscoInfo(ElementBase):
 
     def get_features(self, dedupe: bool = True) -> Iterable[str]:
         """Return the set of all supported features."""
-        features: Union[list[str], Set[str]]
+        features: Union[list[str], set[str]]
         if dedupe:
             features = set()
         else:

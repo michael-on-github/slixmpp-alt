@@ -8,7 +8,6 @@ import logging
 from asyncio import Future
 from typing import (
     Optional,
-    Set,
     Union,
 )
 
@@ -24,7 +23,7 @@ log = logging.getLogger(__name__)
 
 BlockedJIDs = Union[
     JID,
-    Set[JID],
+    set[JID],
     list[JID]
 ]
 
@@ -64,7 +63,7 @@ class XEP_0191(BasePlugin):
         iq.enable('blocklist')
         return iq.send(**iqkwargs)
 
-    async def get_blocked_jids(self, ifrom: Optional[JID] = None, **iqkwargs) -> Set[JID]:
+    async def get_blocked_jids(self, ifrom: Optional[JID] = None, **iqkwargs) -> set[JID]:
         """Get the list of blocked JIDs."""
         iq = self.xmpp.make_iq_get(ifrom=ifrom)
         iq.enable('blocklist')

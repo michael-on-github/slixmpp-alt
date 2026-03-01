@@ -13,7 +13,7 @@ import copy
 import logging
 import threading
 
-from typing import Any, Set, ClassVar, Union, Optional, TYPE_CHECKING, Type
+from typing import Any, ClassVar, Union, Optional, TYPE_CHECKING, Type
 
 if TYPE_CHECKING:
     from slixmpp.clientxmpp import ClientXMPP, BaseXMPP
@@ -109,7 +109,7 @@ class PluginManager(object):
         #: We will track all enabled plugins in a set so that we
         #: can enable plugins in batches and pull in dependencies
         #: without problems.
-        self._enabled: Set[str] = set()
+        self._enabled: set[str] = set()
 
         #: Maintain references to active plugins.
         self._plugins: dict[str, 'BasePlugin'] = {}
@@ -269,7 +269,7 @@ class BasePlugin(object):
     #: Some plugins may depend on others in order to function properly.
     #: Any plugin names included in :attr:`~BasePlugin.dependencies` will
     #: be initialized as needed if this plugin is enabled.
-    dependencies: ClassVar[Set[str]] = set()
+    dependencies: ClassVar[set[str]] = set()
 
     #: The basic, standard configuration for the plugin, which may
     #: be overridden when initializing the plugin. The configuration

@@ -4,7 +4,6 @@
 # See the file LICENSE for copying permission.
 from typing import (
     Optional,
-    Set,
     Tuple,
 )
 
@@ -41,19 +40,19 @@ class XEP_0405(BasePlugin):
         features = result['disco_info']['features']
         return stanza.NS in features
 
-    async def join_channel(self, room: JID, nick: str, subscribe: Optional[Set[str]] = None, *,
+    async def join_channel(self, room: JID, nick: str, subscribe: Optional[set[str]] = None, *,
                            ito: Optional[JID] = None,
                            ifrom: Optional[JID] = None,
-                           **iqkwargs) -> Set[str]:
+                           **iqkwargs) -> set[str]:
         """
         Join a MIX channel.
 
         :param JID room: JID of the MIX channel
         :param str nick: Desired nickname on that channel
-        :param Set[str] subscribe: Set of nodes to subscribe to when joining.
+        :param set[str] subscribe: Set of nodes to subscribe to when joining.
             If empty, all nodes will be subscribed by default.
 
-        :rtype: Set[str]
+        :rtype: set[str]
         :return: The nodes that failed to subscribe, if any
         """
         if subscribe is None:

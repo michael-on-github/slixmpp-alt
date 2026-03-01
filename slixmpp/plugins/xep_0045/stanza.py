@@ -6,7 +6,6 @@
 # See the file LICENSE for copying permission.
 from typing import (
     Iterable,
-    Set,
     Optional,
     Union,
 )
@@ -31,7 +30,7 @@ class MUCBase(ElementBase):
         'item_nick',
     }
 
-    def get_status_codes(self) -> Set[int]:
+    def get_status_codes(self) -> set[int]:
         status = self.xml.findall(f'{{{NS_USER}}}status')
         return {int(status.attrib['code']) for status in status}
 

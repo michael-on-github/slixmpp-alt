@@ -5,7 +5,6 @@
 from typing import (
     Any,
     Optional,
-    Set,
     Tuple,
 )
 
@@ -107,17 +106,17 @@ class XEP_0369(BasePlugin):
                 fields['Contact'] = contact
             return fields
 
-    async def join_channel(self, channel: JID, nick: str, subscribe: Optional[Set[str]] = None, *,
-                           ifrom: Optional[JID] = None, **iqkwargs) -> Set[str]:
+    async def join_channel(self, channel: JID, nick: str, subscribe: Optional[set[str]] = None, *,
+                           ifrom: Optional[JID] = None, **iqkwargs) -> set[str]:
         """
         Join a MIX channel.
 
         :param JID channel: JID of the MIX channel
         :param str nick: Desired nickname on that channel
-        :param Set[str] subscribe: Set of notes to subscribe to when joining.
+        :param set[str] subscribe: Set of notes to subscribe to when joining.
             If empty, all nodes will be subscribed by default.
 
-        :rtype: Set[str]
+        :rtype: set[str]
         :return: The nodes that failed to subscribe, if any
         """
         if not subscribe:
@@ -133,16 +132,16 @@ class XEP_0369(BasePlugin):
         return result_nodes.difference(subscribe)
 
     async def update_subscription(self, channel: JID,
-                                  subscribe: Optional[Set[str]] = None,
-                                  unsubscribe: Optional[Set[str]] = None, *,
-                                  ifrom: Optional[JID] = None, **iqkwargs) -> Tuple[Set[str], Set[str]]:
+                                  subscribe: Optional[set[str]] = None,
+                                  unsubscribe: Optional[set[str]] = None, *,
+                                  ifrom: Optional[JID] = None, **iqkwargs) -> Tuple[set[str], set[str]]:
         """
         Update a MIX channel subscription.
 
         :param JID channel: JID of the MIX channel
-        :param Set[str] subscribe: Set of notes to subscribe to additionally.
-        :param Set[str] unsubscribe: Set of notes to unsubscribe from.
-        :rtype: Tuple[Set[str], Set[str]]
+        :param set[str] subscribe: Set of notes to subscribe to additionally.
+        :param set[str] unsubscribe: Set of notes to unsubscribe from.
+        :rtype: Tuple[set[str], set[str]]
         :return: A tuple containing the set of nodes that failed to subscribe
             and the set of nodes that failed to unsubscribe.
         """
@@ -236,7 +235,7 @@ class XEP_0369(BasePlugin):
         await iq.send(**iqkwargs)
 
     async def list_mix_nodes(self, channel: JID,
-                             ifrom: Optional[JID] = None, **discokwargs) -> Set[str]:
+                             ifrom: Optional[JID] = None, **discokwargs) -> set[str]:
         """
         List mix nodes for a channel.
 

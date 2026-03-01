@@ -18,7 +18,6 @@ from typing import (
     Coroutine,
     Iterable,
     Optional,
-    Set,
     Tuple,
     Type,
     TYPE_CHECKING,
@@ -353,23 +352,23 @@ class ElementBase(object):
     #: manipulating the underlying XML object. This set may be augmented
     #: with the :attr:`plugin_attrib` value of any registered
     #: stanza plugins.
-    interfaces: ClassVar[Set[str]] = {'type', 'to', 'from', 'id', 'payload'}
+    interfaces: ClassVar[set[str]] = {'type', 'to', 'from', 'id', 'payload'}
 
     #: A subset of :attr:`interfaces` which maps interfaces to direct
     #: subelements of the underlying XML object. Using this set, the text
     #: of these subelements may be set, retrieved, or removed without
     #: needing to define custom methods.
-    sub_interfaces: ClassVar[Set[str]] = set()
+    sub_interfaces: ClassVar[set[str]] = set()
 
     #: A subset of :attr:`interfaces` which maps the presence of
     #: subelements to boolean values. Using this set allows for quickly
     #: checking for the existence of empty subelements like ``<required />``.
     #:
     #: .. versionadded:: 1.1
-    bool_interfaces: ClassVar[Set[str]] = set()
+    bool_interfaces: ClassVar[set[str]] = set()
 
     #: .. versionadded:: 1.1.2
-    lang_interfaces: ClassVar[Set[str]] = set()
+    lang_interfaces: ClassVar[set[str]] = set()
 
     #: In some cases you may wish to override the behaviour of one of the
     #: parent stanza's interfaces. The ``overrides`` list specifies the
@@ -419,7 +418,7 @@ class ElementBase(object):
     #:     register_stanza_plugin(DiscoInfo, DiscoItem, iterable=True)
     #:
     #: .. versionadded:: 1.0-Beta5
-    plugin_iterables: ClassVar[Set[Type[ElementBase]]] = set()
+    plugin_iterables: ClassVar[set[Type[ElementBase]]] = set()
 
     #: The default XML namespace: ``http://www.w3.org/XML/1998/namespace``.
     xml_ns: ClassVar[str] = XML_NS
@@ -429,7 +428,7 @@ class ElementBase(object):
     #: :class:`xml.etree.ElementTree` object.
     xml: ET.Element
     _index: int
-    loaded_plugins: Set[str]
+    loaded_plugins: set[str]
     iterables: list[ElementBase]
     tag: str
     parent: Optional[ReferenceType[ElementBase]]
@@ -1516,7 +1515,7 @@ class StanzaBase(ElementBase):
 
     #: The default XMPP client namespace
     namespace = 'jabber:client'
-    types: ClassVar[Set[str]] = set()
+    types: ClassVar[set[str]] = set()
 
     def __init__(self, stream: Optional[XMLStream] = None,
                  xml: Optional[ET.Element] = None,

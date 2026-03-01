@@ -9,7 +9,6 @@ from asyncio import Future
 from typing import (
     Literal,
     Optional,
-    Set,
     Union,
 )
 
@@ -28,7 +27,7 @@ log = logging.getLogger(__name__)
 
 BlockedJIDs = Union[
     JID,
-    Set[JID],
+    set[JID],
     list[JID],
 ]
 

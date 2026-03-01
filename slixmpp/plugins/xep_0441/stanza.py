@@ -4,7 +4,6 @@
 # See the file LICENSE for copying permissio
 from typing import (
     Iterable,
-    Set,
 )
 
 from slixmpp.jid import JID
@@ -42,7 +41,7 @@ class Preferences(ElementBase):
     interfaces = {'default', 'always', 'never'}
     sub_interfaces = {'always', 'never'}
 
-    def get_always(self) -> Set[JID]:
+    def get_always(self) -> set[JID]:
         results = set()
 
         jids = self.xml.findall('{%s}always/{%s}jid' % (
@@ -66,7 +65,7 @@ class Preferences(ElementBase):
             jid_xml.text = str(jid)
             always.append(jid_xml)
 
-    def get_never(self) -> Set[JID]:
+    def get_never(self) -> set[JID]:
         results = set()
 
         jids = self.xml.findall('{%s}never/{%s}jid' % (

@@ -15,7 +15,6 @@ from typing import (
     Callable,
     Iterable,
     Optional,
-    Set,
     Union,
     Tuple,
     TypeVar,
@@ -276,9 +275,9 @@ class XMLStream(asyncio.BaseProtocol):
     __queued_stanzas: list[Tuple[Union[StanzaBase, str], bool]]
 
     #: List of DNS SRV services records which map to TLS services
-    tls_services: Set[str]
+    tls_services: set[str]
     #: List of DNS SRV services records which map to STARTTLS services
-    starttls_services: Set[str]
+    starttls_services: set[str]
 
     def __init__(self, host: str = '', port: int = 0,
                  ssl_context: Optional[ssl.SSLContext] = None,
@@ -1230,7 +1229,7 @@ class XMLStream(asyncio.BaseProtocol):
     async def _continue_slow_send(
             self,
             task: asyncio.Task,
-            already_used: Set[Filter]
+            already_used: set[Filter]
     ) -> None:
         """
         Used when an item in the send queue has taken too long to process.

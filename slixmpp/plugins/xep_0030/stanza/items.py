@@ -5,7 +5,6 @@
 from typing import (
     Iterable,
     Optional,
-    Set,
     Tuple,
 )
 from slixmpp import JID
@@ -68,7 +67,7 @@ class DiscoItems(ElementBase):
     interfaces = {'node', 'items'}
 
     # Cache items
-    _items: Set[Tuple[JID, Optional[str]]]
+    _items: set[Tuple[JID, Optional[str]]]
 
     def setup(self, xml: Optional[ET.ElementTree] = None):
         """
@@ -121,7 +120,7 @@ class DiscoItems(ElementBase):
                     return True
         return False
 
-    def get_items(self) -> Set[DiscoItem]:
+    def get_items(self) -> set[DiscoItem]:
         """Return all items."""
         items = set()
         for item in self['substanzas']:
