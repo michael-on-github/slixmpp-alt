@@ -14,7 +14,6 @@ import logging
 from asyncio import Future
 from typing import (
     Iterable,
-    List,
     Optional,
     Set,
     Union,
@@ -45,7 +44,7 @@ class AvatarMetadataItem(TypedDict, total=False):
 
 MetadataItems = Union[
     AvatarMetadataItem,
-    List[AvatarMetadataItem],
+    list[AvatarMetadataItem],
     Set[AvatarMetadataItem]
 ]
 

@@ -7,7 +7,6 @@ import asyncio
 import os
 from unittest import IsolatedAsyncioTestCase
 from typing import (
-    List,
     Optional,
 )
 
@@ -31,7 +30,7 @@ class SlixIntegration(IsolatedAsyncioTestCase):
         """get a str from an env var"""
         return os.getenv(name)
 
-    def register_plugins(self, plugins: List[str], configs: Optional[List[dict]] = None):
+    def register_plugins(self, plugins: list[str], configs: Optional[list[dict]] = None):
         """Register plugins on all known clients"""
         for index, plugin in enumerate(plugins):
             for client in self.clients:

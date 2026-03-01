@@ -4,7 +4,6 @@
 # See the file LICENSE for copying permission.
 from typing import (
     Any,
-    List,
     Optional,
     Set,
     Tuple,
@@ -25,7 +24,7 @@ try:
         {
             'Name': str,
             'Description': str,
-            'Contact': Optional[List[JID]],
+            'Contact': Optional[list[JID]],
             'modified': datetime
         },
         total=False,
@@ -256,7 +255,7 @@ class XEP_0369(BasePlugin):
         return nodes
 
     async def list_participants(self, channel: JID, *,
-                                ifrom: Optional[JID] = None, **pubsubkwargs) -> List[Tuple[str, str, Optional[JID]]]:
+                                ifrom: Optional[JID] = None, **pubsubkwargs) -> list[Tuple[str, str, Optional[JID]]]:
         """
         List the participants of a MIX channel
         :param JID channel: The MIX channel
@@ -280,7 +279,7 @@ class XEP_0369(BasePlugin):
         return participants
 
     async def list_channels(self, service: JID, *,
-                            ifrom: Optional[JID] =None, **discokwargs) -> List[Tuple[JID, str]]:
+                            ifrom: Optional[JID] =None, **discokwargs) -> list[Tuple[JID, str]]:
         """
         List the channels on a MIX service
 

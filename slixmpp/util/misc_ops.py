@@ -2,7 +2,7 @@ import builtins
 import sys
 import hashlib
 
-from typing import Optional, Union, Callable, List
+from typing import Optional, Union, Callable
 
 bytes_ = builtins.bytes  # alias the stdlib type but ew
 
@@ -106,7 +106,7 @@ def hash(name: str) -> Optional[Callable]:
     return None
 
 
-def hashes() -> List[str]:
+def hashes() -> list[str]:
     """
     Return a list of available hashing algorithms.
 

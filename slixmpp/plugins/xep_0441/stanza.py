@@ -35,9 +35,9 @@ class Preferences(ElementBase):
     #:
     #: - ``default``: Default MAM policy (must be one of 'roster', 'always',
     #:   'never'
-    #: - ``always``  (``List[JID]``): list of JIDs to always store
+    #: - ``always``  (``list[JID]``): list of JIDs to always store
     #:   conversations with.
-    #: - ``never``  (``List[JID]``): list of JIDs to never store
+    #: - ``never``  (``list[JID]``): list of JIDs to never store
     #:   conversations with.
     interfaces = {'default', 'always', 'never'}
     sub_interfaces = {'always', 'never'}

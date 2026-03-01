@@ -8,7 +8,6 @@ import logging
 from asyncio import Future
 from typing import (
     Literal,
-    List,
     Optional,
     Set,
     Union,
@@ -30,7 +29,7 @@ log = logging.getLogger(__name__)
 BlockedJIDs = Union[
     JID,
     Set[JID],
-    List[JID],
+    list[JID],
 ]
 
 class XEP_0377(BasePlugin):

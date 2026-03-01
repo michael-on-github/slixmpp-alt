@@ -12,7 +12,6 @@ from typing import (
     Optional,
     Union,
     Iterable,
-    List,
     NamedTuple,
 )
 
@@ -100,7 +99,7 @@ RosterState = TypedDict(
         'whitelisted': bool,
         'subscription': str,
         'name': str,
-        'groups': List[str],
+        'groups': list[str],
         'removed': bool,
     }
 )

@@ -3,7 +3,7 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission
 
-from typing import Tuple, List, Optional
+from typing import Tuple, Optional
 from slixmpp import Message
 from slixmpp.jid import JID
 from slixmpp.xmlstream import ElementBase, register_stanza_plugin
@@ -47,7 +47,7 @@ class Invite(ElementBase):
     plugin_attrib = 'call-invite'
     interfaces = {'video'}
 
-    def get_methods(self) -> Tuple[List[Jingle], List[External]]:
+    def get_methods(self) -> Tuple[list[Jingle], list[External]]:
         return (self['jingles'], self['externals'])
 
     def set_video(self, value: bool) -> None:

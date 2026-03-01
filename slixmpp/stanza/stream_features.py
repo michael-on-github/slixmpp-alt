@@ -4,7 +4,7 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 from slixmpp.xmlstream import StanzaBase, ElementBase
-from typing import ClassVar, Type, List
+from typing import ClassVar, Type
 
 
 class StreamFeatures(StanzaBase):
@@ -33,10 +33,10 @@ class StreamFeatures(StanzaBase):
     def del_features(self):
         pass
 
-    def get_required(self) -> List[ElementBase]:
+    def get_required(self) -> list[ElementBase]:
         features = self.get_features()
         return [f for n, f in features.items() if f['required']]
 
-    def get_optional(self) -> List[ElementBase]:
+    def get_optional(self) -> list[ElementBase]:
         features = self.get_features()
         return [f for n, f in features.items() if not f['required']]

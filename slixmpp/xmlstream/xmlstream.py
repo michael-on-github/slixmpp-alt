@@ -14,7 +14,6 @@ from typing import (
     Coroutine,
     Callable,
     Iterable,
-    List,
     Optional,
     Set,
     Union,
@@ -96,7 +95,7 @@ Filter = Union[
     AsyncFilter,
 ]
 
-_FiltersDict = dict[str, List[Filter]]
+_FiltersDict = dict[str, list[Filter]]
 
 Handler = Callable[[Any], Union[
     Any,
@@ -253,9 +252,9 @@ class XMLStream(asyncio.BaseProtocol):
     #: A mapping of XML namespaces to well-known prefixes.
     namespace_map: dict
 
-    __root_stanza: List[Type[StanzaBase]]
-    __handlers: List[BaseHandler]
-    __event_handlers: dict[str, List[Tuple[Handler, bool]]]
+    __root_stanza: list[Type[StanzaBase]]
+    __handlers: list[BaseHandler]
+    __event_handlers: dict[str, list[Tuple[Handler, bool]]]
     __filters: _FiltersDict
 
     # Current connection attempt (Future)
@@ -273,8 +272,8 @@ class XMLStream(asyncio.BaseProtocol):
     _always_send_everything: bool
 
     _run_out_filters: Optional[Future]
-    __slow_tasks: List[Task]
-    __queued_stanzas: List[Tuple[Union[StanzaBase, str], bool]]
+    __slow_tasks: list[Task]
+    __queued_stanzas: list[Tuple[Union[StanzaBase, str], bool]]
 
     #: List of DNS SRV services records which map to TLS services
     tls_services: Set[str]
@@ -995,7 +994,7 @@ class XMLStream(asyncio.BaseProtocol):
             idx += 1
         return False
 
-    async def get_dns_records(self, domain: str, port: Optional[int] = None) -> List[Tuple[str, str, str, int]]:
+    async def get_dns_records(self, domain: str, port: Optional[int] = None) -> list[Tuple[str, str, str, int]]:
         """Get the DNS records for a domain.
 
         :param domain: The domain in question.

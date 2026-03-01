@@ -16,7 +16,6 @@ from typing import (
     Callable,
     ClassVar,
     Coroutine,
-    List,
     Iterable,
     Optional,
     Set,
@@ -140,7 +139,7 @@ def multifactory(stanza: Type[ElementBase], plugin_attrib: str) -> Type[ElementB
             self.xml = ET.Element('')
             return False
 
-    def get_multi(self: Multi, lang: Optional[str] = None) -> List[ElementBase]:
+    def get_multi(self: Multi, lang: Optional[str] = None) -> list[ElementBase]:
         parent = fail_without_parent(self)
         if not lang or lang == '*':
             res = filter(plugin_filter(self), parent)
@@ -193,7 +192,7 @@ def multifactory(stanza: Type[ElementBase], plugin_attrib: str) -> Type[ElementB
 
 
 def fix_ns(xpath: str, split: bool = False, propagate_ns: bool = True,
-           default_ns: str = '') -> Union[str, List[str]]:
+           default_ns: str = '') -> Union[str, list[str]]:
     """Apply the stanza's namespace to elements in an XPath expression.
 
     :param string xpath: The XPath expression to fix with namespaces.
@@ -384,7 +383,7 @@ class ElementBase(object):
     #: be affected.
     #:
     #: .. versionadded:: 1.0-Beta5
-    overrides: ClassVar[List[str]] = []
+    overrides: ClassVar[list[str]] = []
 
     #: If you need to add a new interface to an existing stanza, you
     #: can create a plugin and set ``is_extension = True``. Be sure
@@ -431,7 +430,7 @@ class ElementBase(object):
     xml: ET.Element
     _index: int
     loaded_plugins: Set[str]
-    iterables: List[ElementBase]
+    iterables: list[ElementBase]
     tag: str
     parent: Optional[ReferenceType[ElementBase]]
 
@@ -1061,13 +1060,13 @@ class ElementBase(object):
             self._del_sub(name, lang=lang)
             return None
 
-        path = cast(List[str], self._fix_ns(name, split=True))
+        path = cast(list[str], self._fix_ns(name, split=True))
         name = path[-1]
         parent: Optional[ET.Element] = self.xml
 
         # The first goal is to find the parent of the subelement, or, if
         # we can't find that, the closest grandparent element.
-        missing_path: List[str] = []
+        missing_path: list[str] = []
         search_order = path[:-1]
         while search_order:
             parent = self.xml.find('/'.join(search_order))
@@ -1163,7 +1162,7 @@ class ElementBase(object):
                 # after deleting the first level of elements.
                 return
 
-    def match(self, xpath: Union[str, List[str]]) -> bool:
+    def match(self, xpath: Union[str, list[str]]) -> bool:
         """Compare a stanza object with an XPath-like expression.
 
         If the XPath matches the contents of the stanza object, the match
@@ -1246,7 +1245,7 @@ class ElementBase(object):
             return default
         return value
 
-    def keys(self) -> List[str]:
+    def keys(self) -> list[str]:
         """Return the names of all stanza interfaces provided by the
         stanza object.
 
@@ -1363,7 +1362,7 @@ class ElementBase(object):
             del self.xml.attrib[attr]
 
     def _fix_ns(self, xpath: str, split: bool = False,
-                propagate_ns: bool = True) -> Union[str, List[str]]:
+                propagate_ns: bool = True) -> Union[str, list[str]]:
         return fix_ns(xpath, split=split,
                              propagate_ns=propagate_ns,
                              default_ns=self.namespace)
@@ -1574,11 +1573,11 @@ class StanzaBase(ElementBase):
         """
         return self._set_attr('from', str(value))
 
-    def get_payload(self) -> List[ET.Element]:
+    def get_payload(self) -> list[ET.Element]:
         """Return a list of XML objects contained in the stanza."""
         return list(self.xml)
 
-    def set_payload(self, value: Union[List[ElementBase], ElementBase]) -> StanzaBase:
+    def set_payload(self, value: Union[list[ElementBase], ElementBase]) -> StanzaBase:
         """Add XML content to the stanza.
 
         :param value: Either an XML or a stanza object, or a list

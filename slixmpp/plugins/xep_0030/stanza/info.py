@@ -4,7 +4,6 @@
 # See the file LICENSE for copying permission.
 from typing import (
     Iterable,
-    List,
     Optional,
     Set,
     Tuple,
@@ -144,7 +143,7 @@ class DiscoInfo(ElementBase):
                     return True
         return False
 
-    def dict_identities(self, lang: Optional[str] = None) -> List[dict[str, str]]:
+    def dict_identities(self, lang: Optional[str] = None) -> list[dict[str, str]]:
         """
         Return the list of all identities, each one as a dict with
         category, type, xml_lang, and name keys.
@@ -176,7 +175,7 @@ class DiscoInfo(ElementBase):
         :param dedupe: If True, de-duplicate identities, otherwise
                        return a list of all identities.
         """
-        identities: Union[List[IdentityType], Set[IdentityType]]
+        identities: Union[list[IdentityType], Set[IdentityType]]
         if dedupe:
             identities = set()
         else:
@@ -265,7 +264,7 @@ class DiscoInfo(ElementBase):
 
     def get_features(self, dedupe: bool = True) -> Iterable[str]:
         """Return the set of all supported features."""
-        features: Union[List[str], Set[str]]
+        features: Union[list[str], Set[str]]
         if dedupe:
             features = set()
         else:

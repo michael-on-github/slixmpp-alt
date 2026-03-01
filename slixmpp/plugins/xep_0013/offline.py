@@ -5,7 +5,7 @@
 # See the file LICENSE for copying permissio
 import logging
 from asyncio import Future
-from typing import Iterable, Optional, Callable, List, Set, Union
+from typing import Iterable, Optional, Callable, Set, Union
 
 from slixmpp import JID
 from slixmpp.stanza import Message, Iq
@@ -74,7 +74,7 @@ class XEP_0013(BasePlugin):
             callback(iq)
         return iq.send(timeout=timeout, callback=wrapped_cb)
 
-    def remove(self, nodes: Union[List[str], Set[str], str],
+    def remove(self, nodes: Union[list[str], Set[str], str],
                ifrom: Optional[JID] = None, timeout: Optional[int] = None,
                callback: Optional[Callable] = None) -> Future:
         if not isinstance(nodes, (list, set)):

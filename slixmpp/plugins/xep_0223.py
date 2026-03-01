@@ -6,7 +6,7 @@
 import logging
 
 from asyncio import Future
-from typing import Optional, Callable, List
+from typing import Optional, Callable
 from slixmpp import JID
 from slixmpp.xmlstream import register_stanza_plugin, ElementBase
 from slixmpp.plugins.base import BasePlugin, register_plugin
@@ -97,7 +97,7 @@ class XEP_0223(BasePlugin):
         return self.xmpp['xep_0163'].publish(stanza, node, id=id, **pubsubkwargs)
 
     def retrieve(self, node: str, id: Optional[str] = None,
-                 item_ids: Optional[List[str]] = None, **iqkwargs) -> Future:
+                 item_ids: Optional[list[str]] = None, **iqkwargs) -> Future:
         """
         Retrieve private data via PEP.
 

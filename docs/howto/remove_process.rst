@@ -27,7 +27,7 @@ functions:
             else:
                 self.loop.run_until_complete(self.disconnected)
         else:
-            tasks: List[Future] = [asyncio.sleep(timeout)]
+            tasks: list[Future] = [asyncio.sleep(timeout)]
             if not forever:
                 tasks.append(self.disconnected)
             self.loop.run_until_complete(asyncio.wait(tasks))

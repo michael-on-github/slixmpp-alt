@@ -3,7 +3,6 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 from typing import (
-    List,
     Optional,
     Set,
     Tuple,
@@ -90,7 +89,7 @@ class XEP_0405(BasePlugin):
     async def get_mix_roster(self, *,
                             ito: Optional[JID] = None,
                             ifrom: Optional[JID] = None,
-                            **iqkwargs) -> Tuple[List[RosterItem], List[RosterItem]]:
+                            **iqkwargs) -> Tuple[list[RosterItem], list[RosterItem]]:
         """
         Get the annotated roster, with MIX channels.
 

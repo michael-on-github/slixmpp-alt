@@ -10,7 +10,6 @@ from asyncio import Future
 from typing import (
     Optional,
     Callable,
-    List,
     Union,
 )
 
@@ -212,7 +211,7 @@ class XEP_0030(BasePlugin):
         self.api.unregister(htype, jid, node)
 
     def restore_defaults(self, jid: OptJid = None, node: Optional[str] = None,
-                         handlers: Optional[List[Callable]] = None):
+                         handlers: Optional[list[Callable]] = None):
         """
         Change all or some of a node's handlers to the default
         handlers. Useful for manually overriding the contents

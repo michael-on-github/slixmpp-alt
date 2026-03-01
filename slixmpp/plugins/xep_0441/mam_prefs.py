@@ -6,7 +6,6 @@ import logging
 
 from asyncio import Future
 from typing import (
-    List,
     Optional,
     Tuple,
 )
@@ -37,7 +36,7 @@ class XEP_0441(BasePlugin):
         register_stanza_plugin(Iq, stanza.Preferences)
 
     async def get_preferences(self, **iqkwargs
-                              ) -> Tuple[MAMDefault, List[JID], List[JID]]:
+                              ) -> Tuple[MAMDefault, list[JID], list[JID]]:
         """Get the current MAM preferences.
 
         :returns: A tuple of MAM preferences with (default, always, never)
@@ -56,8 +55,8 @@ class XEP_0441(BasePlugin):
         )
 
     def set_preferences(self, default: Optional[MAMDefault] = 'roster',
-                        always: Optional[List[JID]] = None,
-                        never: Optional[List[JID]] = None, *,
+                        always: Optional[list[JID]] = None,
+                        never: Optional[list[JID]] = None, *,
                         ito: Optional[JID] = None, ifrom: Optional[JID] = None,
                         **iqkwargs) -> Future:
         """Set MAM Preferences.

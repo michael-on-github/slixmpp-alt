@@ -6,7 +6,6 @@ from datetime import datetime
 from typing import (
     Any,
     Iterable,
-    List,
     Optional,
     Set,
     Union,
@@ -59,7 +58,7 @@ class MAM(ElementBase):
 
     def setup(self, xml=None):
         ElementBase.setup(self, xml)
-        self._results: List[Message] = []
+        self._results: list[Message] = []
 
     def _setup_form(self):
         found = self.xml.find(
@@ -143,7 +142,7 @@ class MAM(ElementBase):
     def get_after_id(self):
         self.get_custom_field('after-id')
 
-    def set_ids(self, value: List[str]):
+    def set_ids(self, value: list[str]):
         self._setup_form()
         fields = self.get_fields()
         field = fields.get('ids')
@@ -160,10 +159,10 @@ class MAM(ElementBase):
     # way to access the set of collected message responses
     # from the query.
 
-    def get_results(self) -> List[Message]:
+    def get_results(self) -> list[Message]:
         return self._results
 
-    def set_results(self, values: List[Message]):
+    def set_results(self, values: list[Message]):
         self._results = values
 
     def del_results(self):
@@ -194,16 +193,16 @@ class Fin(ElementBase):
 
     def setup(self, xml=None):
         ElementBase.setup(self, xml)
-        self._results: List[Message] = []
+        self._results: list[Message] = []
 
     # The results interface is meant only as an easy
     # way to access the set of collected message responses
     # from the query.
 
-    def get_results(self) -> List[Message]:
+    def get_results(self) -> list[Message]:
         return self._results
 
-    def set_results(self, values: List[Message]):
+    def set_results(self, values: list[Message]):
         self._results = values
 
     def del_results(self):

@@ -11,7 +11,7 @@ import hmac
 import random
 
 from base64 import b64encode, b64decode
-from typing import List, Optional
+from typing import Optional
 
 bytes_ = bytes
 
@@ -218,7 +218,7 @@ class SCRAM(Mech):
 
     def saslname(self, value_b: bytes_) -> bytes_:
         value = value_b.decode("utf-8")
-        escaped: List[str] = []
+        escaped: list[str] = []
         for char in value:
             if char == ',':
                 escaped.append('=2C')

@@ -10,7 +10,6 @@ from collections import defaultdict
 from datetime import datetime
 from typing import (
     Any,
-    List,
     Tuple,
     Optional,
 )
@@ -56,7 +55,7 @@ from slixmpp.types import (
     PresenceShows,
 )
 
-JoinResult = Tuple[Presence, Message, List[Presence], List[Message]]
+JoinResult = Tuple[Presence, Message, list[Presence], list[Message]]
 
 log = logging.getLogger(__name__)
 
@@ -402,8 +401,8 @@ class XEP_0045(BasePlugin):
         """
         presence_done: asyncio.Future = asyncio.Future(loop=self.xmpp.loop)
         topic_received: asyncio.Future = asyncio.Future(loop=self.xmpp.loop)
-        history_buffer: List[Message] = []
-        occupant_buffer: List[Presence] = []
+        history_buffer: list[Message] = []
+        occupant_buffer: list[Presence] = []
 
         pfrom = stanza['from'] or None
 
@@ -635,7 +634,7 @@ class XEP_0045(BasePlugin):
         await iq.send(**iqkwargs)
 
     async def get_affiliation_list(self, room: JidStr, affiliation: MucAffiliation, *,
-                                   ifrom: Optional[JidStr] = None, **iqkwargs) -> List[JID]:
+                                   ifrom: Optional[JidStr] = None, **iqkwargs) -> list[JID]:
         """Get a list of JIDs with the specified affiliation
 
         :param room: Room to get affiliations from.
@@ -647,7 +646,7 @@ class XEP_0045(BasePlugin):
         return [item['jid'] for item in result['mucadmin_query']]
 
     async def send_affiliation_list(self, room: JidStr,
-                                    affiliations: List[Tuple[JidStr, MucAffiliation]], *,
+                                    affiliations: list[Tuple[JidStr, MucAffiliation]], *,
                                     ifrom: Optional[JidStr] = None, **iqkwargs):
         """Send an affiliation delta list.
 
@@ -685,7 +684,7 @@ class XEP_0045(BasePlugin):
         await iq.send(**iqkwargs)
 
     async def get_roles_list(self, room: JidStr, role: MucRole, *,
-                             ifrom: Optional[JidStr] = None, **iqkwargs) -> List[str]:
+                             ifrom: Optional[JidStr] = None, **iqkwargs) -> list[str]:
         """"Get a list of JIDs with the specified role
 
         :param room: Room to get roles from.
@@ -696,7 +695,7 @@ class XEP_0045(BasePlugin):
         result = await iq.send(**iqkwargs)
         return [item['nick'] for item in result['mucadmin_query']]
 
-    async def send_role_list(self, room: JidStr, roles: List[Tuple[str, MucRole]], *,
+    async def send_role_list(self, room: JidStr, roles: list[Tuple[str, MucRole]], *,
                              ifrom: Optional[JidStr] = None, **iqkwargs):
         """Send a role delta list.
 
@@ -867,7 +866,7 @@ class XEP_0045(BasePlugin):
             )
         return bare_match
 
-    def get_joined_rooms(self, pfrom: Optional[JID] = None) -> List[JID]:
+    def get_joined_rooms(self, pfrom: Optional[JID] = None) -> list[JID]:
         """Get the list of rooms we sent a join presence to
         and did not explicitly leave.
         """
@@ -894,7 +893,7 @@ class XEP_0045(BasePlugin):
         prop = nick_dict.get(jid_property)
         return prop or None
 
-    def get_roster(self, room: JID, pfrom: Optional[JID] = None) -> List[str]:
+    def get_roster(self, room: JID, pfrom: Optional[JID] = None) -> list[str]:
         """ Get the list of nicks in a room.
 
         :param room: Room to list nicks from.

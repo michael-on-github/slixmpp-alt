@@ -9,7 +9,7 @@ from slixmpp.stanza import Presence
 from slixmpp.roster import RosterItem
 from slixmpp.types import RosterState, RosterDBProtocol, JidStr, ResourceDict
 
-from typing import TYPE_CHECKING, Optional, List, Union, Iterator
+from typing import TYPE_CHECKING, Optional, Union, Iterator
 
 if TYPE_CHECKING:
     from slixmpp import BaseXMPP
@@ -126,7 +126,7 @@ class RosterNode:
         """Return the number of JIDs referenced by the roster."""
         return len(self._jids)
 
-    def keys(self) -> List[str]:
+    def keys(self) -> list[str]:
         """Return a list of all subscribed JIDs."""
         return list(self._jids.keys())
 
@@ -134,9 +134,9 @@ class RosterNode:
         """Returns whether the roster has a JID."""
         return jid in self._jids
 
-    def groups(self) -> dict[str, List[str]]:
+    def groups(self) -> dict[str, list[str]]:
         """Return a dictionary mapping group names to JIDs."""
-        result: dict[str, List[str]] = {}
+        result: dict[str, list[str]] = {}
         for jid in self._jids:
             groups = self._jids[jid]['groups']
             if not groups:
@@ -171,7 +171,7 @@ class RosterNode:
             for jid in new_entries - existing_entries:
                 self.add(jid)
 
-    def add(self, jid: JidStr, name: str = '', groups: Optional[List[str]] = None,
+    def add(self, jid: JidStr, name: str = '', groups: Optional[list[str]] = None,
             afrom: bool = False, ato: bool = False, pending_in: bool = False,
             pending_out: bool = False, whitelisted: bool = False,
             save: bool = False) -> None:
@@ -248,7 +248,7 @@ class RosterNode:
             return None
         return self.update(jid, subscription='remove')
 
-    def update(self, jid: JidStr, name: Optional[str] = None, subscription=None, groups: Optional[List[str]] = None,
+    def update(self, jid: JidStr, name: Optional[str] = None, subscription=None, groups: Optional[list[str]] = None,
                timeout: Optional[int] = None, callback=None) -> Future[Iq] | None:
         """
         Update a JID's subscription information.

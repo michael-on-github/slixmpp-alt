@@ -8,7 +8,7 @@ import time
 import logging
 
 from asyncio import Future
-from typing import Optional, Callable, List
+from typing import Optional, Callable
 
 from slixmpp.jid import JID
 from slixmpp.stanza import Iq
@@ -64,7 +64,7 @@ class XEP_0199(BasePlugin):
         """
         register_stanza_plugin(Iq, Ping)
 
-        self.__pending_futures: List[Future] = []
+        self.__pending_futures: list[Future] = []
 
         self.xmpp.register_handler(
                 Callback('Ping',
