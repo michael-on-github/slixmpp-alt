@@ -128,7 +128,7 @@ processing the same stanza twice.
         Triggered whenever a ``disco#items`` result stanza is received.
 
     disconnected
-        - **Data:** ``Union[str, Exception]``, the reason for the disconnect (if any). If a textual reason is not provided and an exception is the cause, it will be given to the event handler.
+        - **Data:** ``str | Exception``, the reason for the disconnect (if any). If a textual reason is not provided and an exception is the cause, it will be given to the event handler.
         - **Source:** :class:`~.XMLStream`
 
         Signal that the connection with the XMPP server has been lost.

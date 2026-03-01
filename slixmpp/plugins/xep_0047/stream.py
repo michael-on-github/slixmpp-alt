@@ -8,7 +8,6 @@ import logging
 from typing import (
     Optional,
     IO,
-    Union,
 )
 
 from slixmpp import JID
@@ -140,7 +139,7 @@ class IBBytestream(object):
                 break
             await self.send(data, timeout=timeout)
 
-    def _recv_data(self, stanza: Union[Message, Iq]):
+    def _recv_data(self, stanza: Message | Iq):
         new_seq = stanza['ibb_data']['seq']
         if new_seq != (self.recv_seq + 1) % 65536:
             self.close()

@@ -2,19 +2,19 @@ import builtins
 import sys
 import hashlib
 
-from typing import Optional, Union, Callable
+from typing import Optional, Callable
 
 bytes_ = builtins.bytes  # alias the stdlib type but ew
 
 
-def unicode(text: Union[bytes_, str]) -> str:
+def unicode(text: bytes_ | str) -> str:
     if not isinstance(text, str):
         return text.decode('utf-8')
     else:
         return text
 
 
-def bytes(text: Optional[Union[str, bytes_]]) -> bytes_:
+def bytes(text: Optional[str | bytes_]) -> bytes_:
     """
     Convert Unicode text to UTF-8 encoded bytes.
 
@@ -38,7 +38,7 @@ def bytes(text: Optional[Union[str, bytes_]]) -> bytes_:
         return builtins.bytes(text, encoding='utf-8')
 
 
-def quote(text: Union[str, bytes_]) -> bytes_:
+def quote(text: str | bytes_) -> bytes_:
     """
     Enclose in quotes and escape internal slashes and double quotes.
 

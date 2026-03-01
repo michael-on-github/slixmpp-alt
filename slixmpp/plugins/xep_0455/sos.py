@@ -4,7 +4,7 @@
 import json
 import logging
 from datetime import datetime
-from typing import Optional, Union
+from typing import Optional
 from urllib.parse import urlparse
 
 from slixmpp import JID
@@ -63,7 +63,7 @@ class XEP_0455(BasePlugin):
         return uris
 
     @classmethod
-    async def fetch_status(cls, addresses: Union[str, list[str]]) -> dict:
+    async def fetch_status(cls, addresses: str | list[str]) -> dict:
         """
         Get the external status from a list of addresses.
         Only works with http/https for now and stops on the first status

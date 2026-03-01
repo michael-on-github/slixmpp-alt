@@ -5,7 +5,7 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Optional, Union
+from typing import Optional
 from slixmpp import Iq, register_stanza_plugin, ElementBase
 from slixmpp.plugins.xep_0082 import parse, format_datetime
 
@@ -113,7 +113,7 @@ class Client(ElementBase):
             return ClientType(type_)
         return None
 
-    def set_type(self, type_: Union[str, ClientType]) -> None:
+    def set_type(self, type_: str | ClientType) -> None:
         if isinstance(type_, ClientType):
             value = type_.value
         else:
@@ -192,7 +192,7 @@ class Permission(ElementBase):
     def get_permission(self) -> Optional[PermissionEnum]:
         return PermissionEnum(self.xml.attrib.get('status'))
 
-    def set_permission(self, permission: Union[str, PermissionEnum]) -> None:
+    def set_permission(self, permission: str | PermissionEnum) -> None:
         if isinstance(permission, PermissionEnum):
             value = permission.value
         else:

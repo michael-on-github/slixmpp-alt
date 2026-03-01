@@ -8,7 +8,6 @@ import logging
 from asyncio import Future
 from typing import (
     Optional,
-    Union,
 )
 
 from slixmpp.stanza import Iq
@@ -21,11 +20,11 @@ from slixmpp.plugins.xep_0191 import stanza, Block, Unblock, BlockList, BlockIte
 
 log = logging.getLogger(__name__)
 
-BlockedJIDs = Union[
-    JID,
-    set[JID],
+BlockedJIDs = (
+    JID |
+    set[JID] |
     list[JID]
-]
+)
 
 
 class XEP_0191(BasePlugin):

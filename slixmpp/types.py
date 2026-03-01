@@ -10,7 +10,6 @@ This file contains boilerplate to define types relevant to slixmpp.
 from typing import (
     Any,
     Optional,
-    Union,
     Iterable,
     NamedTuple,
 )
@@ -62,8 +61,8 @@ MucAffiliation = Literal[
 ]
 
 OptJid = Optional[JID]
-JidStr = Union[str, JID]
-OptJidStr = Optional[Union[str, JID]]
+JidStr = str | JID
+OptJidStr = Optional[str | JID]
 
 
 class PresenceArgs(TypedDict, total=False):

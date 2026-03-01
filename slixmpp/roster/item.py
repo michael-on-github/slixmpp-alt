@@ -7,7 +7,7 @@
 from slixmpp.stanza import Presence
 from slixmpp.types import RosterState, ResourceDict, RosterDBProtocol, JidStr
 
-from typing import TYPE_CHECKING, Optional, Any, Union
+from typing import TYPE_CHECKING, Optional, Any
 
 if TYPE_CHECKING:
     from slixmpp import BaseXMPP
@@ -217,7 +217,7 @@ class RosterItem:
         else:
             raise KeyError
 
-    def __setitem__(self, key: str, value: Union[str, list[str], bool]) -> None:
+    def __setitem__(self, key: str, value: str | list[str] | bool) -> None:
         """
         Set the value of a state field.
 

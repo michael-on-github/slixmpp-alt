@@ -15,7 +15,6 @@ from typing import (
     Callable,
     Iterable,
     Optional,
-    Union,
     TypeVar,
     cast,
 )
@@ -76,7 +75,7 @@ class InvalidCABundle(Exception):
         Exception raised when the CA Bundle file hasn't been found.
     """
 
-    def __init__(self, path: Optional[Union[Path, Iterable[Path]]]):
+    def __init__(self, path: Optional[Path | Iterable[Path]]):
         self.path = path
 
 
@@ -87,17 +86,11 @@ SyncFilter = Callable[[StanzaBase], Optional[StanzaBase]]
 AsyncFilter = Callable[[StanzaBase], Awaitable[Optional[StanzaBase]]]
 
 
-Filter = Union[
-    SyncFilter,
-    AsyncFilter,
-]
+Filter = SyncFilter | AsyncFilter
 
 _FiltersDict = dict[str, list[Filter]]
 
-Handler = Callable[[Any], Union[
-    Any,
-    Coroutine[Any, Any, Any]
-]]
+Handler = Callable[[Any], Any | Coroutine[Any, Any, Any]]
 
 
 class XMLStream(asyncio.BaseProtocol):
@@ -164,7 +157,7 @@ class XMLStream(asyncio.BaseProtocol):
     #:
     #:     On Mac OS X, certificates in the system keyring will
     #:     be consulted, even if they are not in the provided file.
-    ca_certs: Optional[Union[Path, Iterable[Path]]]
+    ca_certs: Optional[Path | Iterable[Path]]
 
     #: Path to a file containing a client certificate to use for
     #: authenticating via SASL EXTERNAL. If set, there must also
@@ -270,7 +263,7 @@ class XMLStream(asyncio.BaseProtocol):
 
     _run_out_filters: Optional[Future]
     __slow_tasks: list[Task]
-    __queued_stanzas: list[tuple[Union[StanzaBase, str], bool]]
+    __queued_stanzas: list[tuple[StanzaBase | str, bool]]
 
     #: List of DNS SRV services records which map to TLS services
     tls_services: set[str]
@@ -687,7 +680,7 @@ class XMLStream(asyncio.BaseProtocol):
             self._current_connection_attempt.cancel()
             self._current_connection_attempt = None
 
-    def disconnect(self, wait: Union[float, int] = 2.0, reason: Optional[str] = None, ignore_send_queue: bool = False) -> Future:
+    def disconnect(self, wait: float | int = 2.0, reason: Optional[str] = None, ignore_send_queue: bool = False) -> Future:
         """Close the XML stream and wait for an acknowldgement from the server for
         at most `wait` seconds.  After the given number of seconds has
         passed without a response from the server, or when the server
@@ -742,7 +735,7 @@ class XMLStream(asyncio.BaseProtocol):
         self.disconnect_reason = reason
         await self._end_stream_wait(wait)
 
-    async def _end_stream_wait(self, wait: Union[int, float] = 2, reason: Optional[str] = None) -> None:
+    async def _end_stream_wait(self, wait: int | float = 2, reason: Optional[str] = None) -> None:
         """
         Run abort() if we do not received the disconnected event
         after a waiting time.
@@ -769,7 +762,7 @@ class XMLStream(asyncio.BaseProtocol):
             self.transport.abort()
             self.event("killed")
 
-    def reconnect(self, wait: Union[int, float] = 2.0, reason: str = "Reconnecting") -> None:
+    def reconnect(self, wait: int | float = 2.0, reason: str = "Reconnecting") -> None:
         """Calls disconnect(), and once we are disconnected (after the timeout, or
         when the server acknowledgement is received), call connect()
         """
@@ -1268,7 +1261,7 @@ class XMLStream(asyncio.BaseProtocol):
         Background loop that processes stanzas to send.
         """
         while True:
-            data: Optional[Union[StanzaBase, str]]
+            data: Optional[StanzaBase | str]
             (data, use_filters) = await self.waiting_queue.get()
             try:
                 if isinstance(data, StanzaBase):
@@ -1326,7 +1319,7 @@ class XMLStream(asyncio.BaseProtocol):
                 log.error('Exception raised in send queue:', exc_info=True)
             self.waiting_queue.task_done()
 
-    def send(self, data: Union[StanzaBase, str], use_filters: bool = True) -> None:
+    def send(self, data: StanzaBase | str, use_filters: bool = True) -> None:
         """A wrapper for :meth:`send_raw()` for sending stanza objects.
 
         :param data: The :class:`~slixmpp.xmlstream.stanzabase.StanzaBase`
@@ -1369,7 +1362,7 @@ class XMLStream(asyncio.BaseProtocol):
         """
         self.send(tostring(data))
 
-    def send_raw(self, data: Union[str, bytes]) -> None:
+    def send_raw(self, data: str | bytes) -> None:
         """Send raw data across the stream.
 
         :param string data: Any bytes or utf-8 string value.
@@ -1464,7 +1457,7 @@ class XMLStream(asyncio.BaseProtocol):
         """
         pass
 
-    async def wait_until(self, event: str, timeout: Union[int, float] = 30) -> Any:
+    async def wait_until(self, event: str, timeout: int | float = 30) -> Any:
         """Utility method to wake on the next firing of an event.
         (Registers a disposable handler on it)
 

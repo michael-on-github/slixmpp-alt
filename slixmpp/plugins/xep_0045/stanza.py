@@ -7,7 +7,6 @@
 from typing import (
     Iterable,
     Optional,
-    Union,
 )
 import logging
 from slixmpp.xmlstream import ElementBase, ET, JID
@@ -83,7 +82,7 @@ class MUCBase(ElementBase):
     def get_jid(self) -> JID:
         return JID(self.get_item_attr('jid', ''))
 
-    def set_jid(self, value: Union[JID, str]):
+    def set_jid(self, value: JID | str):
         if not isinstance(value, str):
             value = str(value)
         self.set_item_attr('jid', value)
@@ -191,7 +190,7 @@ class MUCInvite(ElementBase):
     def get_to(self) -> JID:
         return JID(self._get_attr('to'))
 
-    def set_to(self, value: Union[JID, str]):
+    def set_to(self, value: JID | str):
         if not isinstance(value, JID):
             value = JID(value)
         self._set_attr('to', value)
@@ -199,7 +198,7 @@ class MUCInvite(ElementBase):
     def get_from(self) -> JID:
         return JID(self._get_attr('from'))
 
-    def set_from(self, value: Union[JID, str]):
+    def set_from(self, value: JID | str):
         if not isinstance(value, JID):
             value = JID(value)
         self._set_attr('from', value)
@@ -215,7 +214,7 @@ class MUCDecline(ElementBase):
     def get_to(self) -> JID:
         return JID(self._get_attr('to'))
 
-    def set_to(self, value: Union[JID, str]):
+    def set_to(self, value: JID | str):
         if not isinstance(value, JID):
             value = JID(value)
         self._set_attr('to', value)
@@ -223,7 +222,7 @@ class MUCDecline(ElementBase):
     def get_from(self) -> JID:
         return JID(self._get_attr('from'))
 
-    def set_from(self, value: Union[JID, str]):
+    def set_from(self, value: JID | str):
         if not isinstance(value, JID):
             value = JID(value)
         self._set_attr('from', value)

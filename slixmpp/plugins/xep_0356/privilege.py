@@ -106,7 +106,7 @@ class XEP_0356(BasePlugin):
         wrapped["privilege"]["forwarded"].append(msg)
         return wrapped
 
-    def _make_get_roster(self, jid: typing.Union[JID, str], **iq_kwargs):
+    def _make_get_roster(self, jid: JID | str, **iq_kwargs):
         return self.xmpp.make_iq_get(
             queryxmlns="jabber:iq:roster",
             ifrom=self.xmpp.boundjid.bare,
@@ -116,7 +116,7 @@ class XEP_0356(BasePlugin):
 
     def _make_set_roster(
         self,
-        jid: typing.Union[JID, str],
+        jid: JID | str,
         roster_items: dict,
         **iq_kwargs,
     ):
@@ -128,7 +128,7 @@ class XEP_0356(BasePlugin):
         iq["roster"]["items"] = roster_items
         return iq
 
-    async def get_roster(self, jid: typing.Union[JID, str], **send_kwargs) -> Iq:
+    async def get_roster(self, jid: JID | str, **send_kwargs) -> Iq:
         """
         Return the roster of user on the server the component has privileged access to.
 
@@ -149,7 +149,7 @@ class XEP_0356(BasePlugin):
             return await self._make_get_roster(jid).send(**send_kwargs)
 
     async def set_roster(
-        self, jid: typing.Union[JID, str], roster_items: dict, **send_kwargs
+        self, jid: JID | str, roster_items: dict, **send_kwargs
     ) -> Iq:
         """
         Return the roster of user on the server the component has privileged access to.

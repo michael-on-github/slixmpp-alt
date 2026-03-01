@@ -232,7 +232,7 @@ class XEP_0100(BasePlugin):
 
     def transform_legacy_message(
         self,
-        jabber_user_jid: typing.Union[JID, str],
+        jabber_user_jid: JID | str,
         legacy_contact_id: str,
         body: str,
         mtype: typing.Optional[str] = None,

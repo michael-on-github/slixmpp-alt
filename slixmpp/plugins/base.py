@@ -13,7 +13,7 @@ import copy
 import logging
 import threading
 
-from typing import Any, ClassVar, Union, Optional, TYPE_CHECKING
+from typing import Any, ClassVar, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from slixmpp.clientxmpp import ClientXMPP, BaseXMPP
@@ -279,7 +279,7 @@ class BasePlugin(object):
     #: `plugin.config['foo']`.
     default_config: ClassVar[dict[str, Any]] = {}
 
-    def __init__(self, xmpp: Union[ClientXMPP,ComponentXMPP], config=None):
+    def __init__(self, xmpp: ClientXMPP | ComponentXMPP, config=None):
         self.xmpp = xmpp
         if self.xmpp:
             self.api = self.xmpp.api.wrap(self.name)

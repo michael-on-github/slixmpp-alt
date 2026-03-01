@@ -10,7 +10,6 @@ from typing import (
     Optional,
     Any,
     TYPE_CHECKING,
-    Union,
     Collection,
 )
 
@@ -449,7 +448,7 @@ class StaticDisco:
                     node=data.get('inode', None))
 
     def cache_info(self, jid: OptJid, node: Optional[str], ifrom: OptJid,
-                   data: Union[Iq, DiscoInfo]):
+                   data: Iq | DiscoInfo):
         """
         Cache disco information for an external JID.
 

@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import weakref
 from weakref import ReferenceType
-from typing import Optional, TYPE_CHECKING, Union
+from typing import Optional, TYPE_CHECKING
 from slixmpp.xmlstream.matcher.base import MatcherBase
 from xml.etree.ElementTree import Element
 

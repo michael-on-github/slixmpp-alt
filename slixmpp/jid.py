@@ -13,7 +13,6 @@ import socket
 from functools import lru_cache
 from typing import (
     Optional,
-    Union,
 )
 
 from slixmpp.stringprep import nodeprep, resourceprep, idna, StringprepError
@@ -241,7 +240,7 @@ class JID:
 
     __slots__ = ('_node', '_domain', '_resource', '_bare', '_full')
 
-    def __init__(self, jid: Optional[Union[str, 'JID']] = None, bare: bool = False):
+    def __init__(self, jid: Optional[str | 'JID'] = None, bare: bool = False):
         if not jid:
             self._node = ''
             self._domain = ''

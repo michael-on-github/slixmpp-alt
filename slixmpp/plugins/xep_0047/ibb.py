@@ -6,7 +6,6 @@ import logging
 
 from typing import (
     Optional,
-    Union,
 )
 
 from slixmpp import JID
@@ -205,7 +204,7 @@ class XEP_0047(BasePlugin):
         self.xmpp.event('ibb_stream_start', stream)
         self.xmpp.event('stream:%s:%s' % (sid, stream.peer_jid), stream)
 
-    async def _handle_data(self, stanza: Union[Iq, Message]):
+    async def _handle_data(self, stanza: Iq | Message):
         sid = stanza['ibb_data']['sid']
         stream = await self.api['get_stream'](stanza['to'], sid, stanza['from'])
         if stream is not None and stanza['from'] == stream.peer_jid:

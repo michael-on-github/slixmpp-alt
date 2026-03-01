@@ -7,7 +7,6 @@ from typing import (
     Any,
     Iterable,
     Optional,
-    Union,
 )
 
 from slixmpp.stanza import Message
@@ -84,7 +83,7 @@ class MAM(ElementBase):
             return xep_0082.parse(field['value'])
         return None
 
-    def set_start(self, value: Union[str, datetime]):
+    def set_start(self, value: str | datetime):
         self._setup_form()
         if isinstance(value, datetime):
             value = xep_0082.format_datetime(value)
@@ -97,7 +96,7 @@ class MAM(ElementBase):
             return xep_0082.parse(field['value'])
         return None
 
-    def set_end(self, value: Union[str, datetime]):
+    def set_end(self, value: str | datetime):
         if isinstance(value, datetime):
             value = xep_0082.format_datetime(value)
         self.set_custom_field('end', value)
@@ -286,7 +285,7 @@ class Start(ElementBase):
             return xep_0082.parse(stamp)
         return stamp
 
-    def set_timestamp(self, value: Union[datetime, str]):
+    def set_timestamp(self, value: datetime | str):
         """Set the timestamp.
 
         :param value: Value of the timestamp (either a datetime or a
@@ -331,7 +330,7 @@ class End(ElementBase):
             return xep_0082.parse(stamp)
         return stamp
 
-    def set_timestamp(self, value: Union[datetime, str]):
+    def set_timestamp(self, value: datetime | str):
         """Set the timestamp.
 
         :param value: Value of the timestamp (either a datetime or a

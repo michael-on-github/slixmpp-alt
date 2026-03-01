@@ -9,7 +9,6 @@ from asyncio import Future
 from typing import (
     Literal,
     Optional,
-    Union,
 )
 
 import slixmpp
@@ -25,11 +24,11 @@ from slixmpp.plugins.xep_0191 import BlockItem
 
 log = logging.getLogger(__name__)
 
-BlockedJIDs = Union[
-    JID,
-    set[JID],
-    list[JID],
-]
+BlockedJIDs = (
+    JID |
+    set[JID] |
+    list[JID]
+)
 
 class XEP_0377(BasePlugin):
     """XEP-0377: Spam reporting"""

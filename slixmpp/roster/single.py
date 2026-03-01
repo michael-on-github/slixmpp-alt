@@ -9,7 +9,7 @@ from slixmpp.stanza import Presence
 from slixmpp.roster import RosterItem
 from slixmpp.types import RosterState, RosterDBProtocol, JidStr, ResourceDict
 
-from typing import TYPE_CHECKING, Optional, Union, Iterator
+from typing import TYPE_CHECKING, Optional, Iterator
 
 if TYPE_CHECKING:
     from slixmpp import BaseXMPP
@@ -283,7 +283,7 @@ class RosterNode:
 
         return iq.send(timeout=timeout, callback=callback)
 
-    def presence(self, jid: JID, resource: Optional[str] = None) -> Union[ResourceDict, dict[str, ResourceDict]]:
+    def presence(self, jid: JID, resource: Optional[str] = None) -> ResourceDict | dict[str, ResourceDict]:
         """
         Retrieve the presence information of a JID.
 

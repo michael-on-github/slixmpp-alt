@@ -5,7 +5,6 @@
 from typing import (
     Iterable,
     Optional,
-    Union,
 )
 from slixmpp.xmlstream import ElementBase, ET
 
@@ -173,7 +172,7 @@ class DiscoInfo(ElementBase):
         :param dedupe: If True, de-duplicate identities, otherwise
                        return a list of all identities.
         """
-        identities: Union[list[IdentityType], set[IdentityType]]
+        identities: list[IdentityType] | set[IdentityType]
         if dedupe:
             identities = set()
         else:
@@ -262,7 +261,7 @@ class DiscoInfo(ElementBase):
 
     def get_features(self, dedupe: bool = True) -> Iterable[str]:
         """Return the set of all supported features."""
-        features: Union[list[str], set[str]]
+        features: list[str] | set[str]
         if dedupe:
             features = set()
         else:

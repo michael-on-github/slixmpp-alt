@@ -5,7 +5,7 @@
 import logging
 from asyncio import Event, Task, FIRST_COMPLETED, wait, CancelledError
 from enum import Enum
-from typing import Optional, Union
+from typing import Optional
 
 from slixmpp.stanza import Message, Presence
 from slixmpp.exceptions import IqError, IqTimeout
@@ -128,7 +128,7 @@ class XEP_0410(BasePlugin):
         "ping_interval": 900,
         "ping_timeout": 30,
     }
-    ping_interval: Union[int, float]
+    ping_interval: int | float
     # Cache of the last bound JID, to be able to recover if we bind to
     # another resource while running
     boundjid: Optional[JID] = None
@@ -262,7 +262,7 @@ class XEP_0410(BasePlugin):
         key = (muc_resource, orig_jid)
         return self.last_ping_results.get(key, PingStatus.UNTRIED)
 
-    def _on_muc_activity(self, event: Union[Presence, Message]):
+    def _on_muc_activity(self, event: Presence | Message):
         """Handle both messages and presences from mucs to see if we need to
         reset the timer"""
         if event['type'] == 'error':

@@ -12,7 +12,6 @@ import logging
 
 from typing import (
     Optional,
-    Union,
     TYPE_CHECKING,
 )
 
@@ -386,7 +385,7 @@ class BaseXMPP(XMLStream):
             iq['from'] = ifrom
         return iq
 
-    def make_iq_set(self, sub: Optional[Union[ElementBase, ET.Element]] = None,
+    def make_iq_set(self, sub: Optional[ElementBase | ET.Element] = None,
                     ito: OptJidStr = None, ifrom: OptJidStr = None,
                     iq: Optional[stanza.Iq] = None) -> stanza.Iq:
         """

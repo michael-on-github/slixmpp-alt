@@ -19,7 +19,6 @@ from typing import (
     Iterable,
     Optional,
     TYPE_CHECKING,
-    Union,
 )
 from weakref import ReferenceType
 from xml.etree import ElementTree as ET
@@ -189,7 +188,7 @@ def multifactory(stanza: type[ElementBase], plugin_attrib: str) -> type[ElementB
 
 
 def fix_ns(xpath: str, split: bool = False, propagate_ns: bool = True,
-           default_ns: str = '') -> Union[str, list[str]]:
+           default_ns: str = '') -> str | list[str]:
     """Apply the stanza's namespace to elements in an XPath expression.
 
     :param string xpath: The XPath expression to fix with namespaces.
@@ -431,7 +430,7 @@ class ElementBase(object):
     tag: str
     parent: Optional[ReferenceType[ElementBase]]
 
-    def __init__(self, xml: Optional[ET.Element] = None, parent: Union[Optional[ElementBase], ReferenceType[ElementBase]] = None):
+    def __init__(self, xml: Optional[ET.Element] = None, parent: Optional[ElementBase] | ReferenceType[ElementBase] = None):
         self._index = 0
 
         if xml is not None:
@@ -977,7 +976,7 @@ class ElementBase(object):
         return self.xml.attrib.get(name, default)
 
     def _get_sub_text(self, name: str, default: str = '',
-                      lang: Optional[str] = None) -> Union[str, dict[str, str]]:
+                      lang: Optional[str] = None) -> str | dict[str, str]:
         """Return the text contents of a sub element.
 
         In case the element does not exist, or it has no textual content,
@@ -1159,7 +1158,7 @@ class ElementBase(object):
                 # after deleting the first level of elements.
                 return
 
-    def match(self, xpath: Union[str, list[str]]) -> bool:
+    def match(self, xpath: str | list[str]) -> bool:
         """Compare a stanza object with an XPath-like expression.
 
         If the XPath matches the contents of the stanza object, the match
@@ -1256,7 +1255,7 @@ class ElementBase(object):
             out.append('substanzas')
         return out
 
-    def append(self, item: Union[ET.Element, ElementBase]) -> ElementBase:
+    def append(self, item: ET.Element | ElementBase) -> ElementBase:
         """Append either an XML object or a substanza to this stanza object.
 
         If a substanza object is appended, it will be added to the list
@@ -1359,7 +1358,7 @@ class ElementBase(object):
             del self.xml.attrib[attr]
 
     def _fix_ns(self, xpath: str, split: bool = False,
-                propagate_ns: bool = True) -> Union[str, list[str]]:
+                propagate_ns: bool = True) -> str | list[str]:
         return fix_ns(xpath, split=split,
                              propagate_ns=propagate_ns,
                              default_ns=self.namespace)
@@ -1574,7 +1573,7 @@ class StanzaBase(ElementBase):
         """Return a list of XML objects contained in the stanza."""
         return list(self.xml)
 
-    def set_payload(self, value: Union[list[ElementBase], ElementBase]) -> StanzaBase:
+    def set_payload(self, value: list[ElementBase] | ElementBase) -> StanzaBase:
         """Add XML content to the stanza.
 
         :param value: Either an XML or a stanza object, or a list

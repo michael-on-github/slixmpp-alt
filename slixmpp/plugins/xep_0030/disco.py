@@ -10,7 +10,6 @@ from asyncio import Future
 from typing import (
     Optional,
     Callable,
-    Union,
 )
 
 from slixmpp import JID
@@ -418,7 +417,7 @@ class XEP_0030(BasePlugin):
         return await iq.send(**kwargs)
 
     def set_info(self, jid: OptJid = None, node: Optional[str] = None,
-                 info: Optional[Union[Iq, DiscoInfo]] = None) -> Future:
+                 info: Optional[Iq | DiscoInfo] = None) -> Future:
         """
         Set the disco#info data for a JID/node based on an existing
         disco#info stanza.

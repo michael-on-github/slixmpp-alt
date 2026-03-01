@@ -6,7 +6,6 @@
 import logging
 from typing import (
     Optional,
-    Union,
 )
 from asyncio import Future
 
@@ -35,7 +34,7 @@ class XEP_0049(BasePlugin):
     def register(self, stanza):
         register_stanza_plugin(PrivateXML, stanza, iterable=True)
 
-    def store(self, data: Union[list[ElementBase], ElementBase], ifrom: Optional[JID] = None, **iqkwargs) -> Future:
+    def store(self, data: list[ElementBase] | ElementBase, ifrom: Optional[JID] = None, **iqkwargs) -> Future:
         """Store data in Private XML Storage.
 
         :param data: An XML element or list of xml element to store.

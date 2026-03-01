@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import logging
 from asyncio import Event, wait_for, TimeoutError
-from typing import Optional, TYPE_CHECKING, Union
+from typing import Optional, TYPE_CHECKING
 from xml.etree.ElementTree import Element
 
 import slixmpp
