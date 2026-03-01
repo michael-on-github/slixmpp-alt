@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 import stringprep
 
-from typing import Iterable, Callable, Any, Optional, Type
+from typing import Iterable, Callable, Any, Optional
 from slixmpp.util import hashes, bytes, stringprep_profiles
 
 
@@ -17,7 +17,7 @@ log = logging.getLogger(__name__)
 
 
 #: Global registry mapping mechanism names to implementation classes.
-MECHANISMS: dict[str, Type[Mech]] = {}
+MECHANISMS: dict[str, type[Mech]] = {}
 
 
 #: Global registry mapping mechanism names to security scores.
@@ -49,7 +49,7 @@ saslprep = stringprep_profiles.create(
 def sasl_mech(score: int):
     sec_score = score
 
-    def register(mech: Type[Mech]):
+    def register(mech: type[Mech]):
         n = 0
         mech.score = sec_score
         if mech.use_hashes:

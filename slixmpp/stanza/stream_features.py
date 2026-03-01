@@ -4,7 +4,7 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 from slixmpp.xmlstream import StanzaBase, ElementBase
-from typing import ClassVar, Type
+from typing import ClassVar
 
 
 class StreamFeatures(StanzaBase):
@@ -14,8 +14,8 @@ class StreamFeatures(StanzaBase):
     namespace = 'http://etherx.jabber.org/streams'
     interfaces = {'features', 'required', 'optional'}
     sub_interfaces = interfaces
-    plugin_attrib_map: ClassVar[dict[str, Type[ElementBase]]] = {}
-    plugin_tag_map: ClassVar[dict[str, Type[ElementBase]]] = {}
+    plugin_attrib_map: ClassVar[dict[str, type[ElementBase]]] = {}
+    plugin_tag_map: ClassVar[dict[str, type[ElementBase]]] = {}
 
     def setup(self, xml):
         StanzaBase.setup(self, xml)

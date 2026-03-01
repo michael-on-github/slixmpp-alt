@@ -18,7 +18,6 @@ from typing import (
     Coroutine,
     Iterable,
     Optional,
-    Type,
     TYPE_CHECKING,
     Union,
 )
@@ -47,7 +46,7 @@ XML_NS = 'http://www.w3.org/XML/1998/namespace'
 STRICT_INTERFACE = False
 
 
-def register_stanza_plugin(stanza: Type[ElementBase], plugin: Type[ElementBase],
+def register_stanza_plugin(stanza: type[ElementBase], plugin: type[ElementBase],
                            iterable: bool = False, overrides: bool = False) -> None:
     """
     Associate a stanza object as a plugin for another stanza.
@@ -115,7 +114,7 @@ def register_stanza_plugin(stanza: Type[ElementBase], plugin: Type[ElementBase],
             stanza.plugin_overrides[interface] = plugin.plugin_attrib
 
 
-def multifactory(stanza: Type[ElementBase], plugin_attrib: str) -> Type[ElementBase]:
+def multifactory(stanza: type[ElementBase], plugin_attrib: str) -> type[ElementBase]:
     """
     Returns a ElementBase class for handling reoccurring child stanzas
     """
@@ -131,7 +130,7 @@ def multifactory(stanza: Type[ElementBase], plugin_attrib: str) -> Type[ElementB
         """
         Template class for multifactory
         """
-        _multistanza: Type[ElementBase]
+        _multistanza: type[ElementBase]
 
         def setup(self, xml: Optional[ET.Element] = None) -> bool:
             self.xml = ET.Element('')
@@ -404,11 +403,11 @@ class ElementBase(object):
 
     #: A mapping of the :attr:`plugin_attrib` values of registered
     #: plugins to their respective classes.
-    plugin_attrib_map: ClassVar[dict[str, Type[ElementBase]]] = {}
+    plugin_attrib_map: ClassVar[dict[str, type[ElementBase]]] = {}
 
     #: A mapping of root element tag names (in ``'{namespace}elementname'``
     #: format) to the plugin classes responsible for them.
-    plugin_tag_map: ClassVar[dict[str, Type[ElementBase]]] = {}
+    plugin_tag_map: ClassVar[dict[str, type[ElementBase]]] = {}
 
     #: The set of stanza classes that can be iterated over using
     #: the 'substanzas' interface. Classes are added to this set
@@ -417,7 +416,7 @@ class ElementBase(object):
     #:     register_stanza_plugin(DiscoInfo, DiscoItem, iterable=True)
     #:
     #: .. versionadded:: 1.0-Beta5
-    plugin_iterables: ClassVar[set[Type[ElementBase]]] = set()
+    plugin_iterables: ClassVar[set[type[ElementBase]]] = set()
 
     #: The default XML namespace: ``http://www.w3.org/XML/1998/namespace``.
     xml_ns: ClassVar[str] = XML_NS

@@ -17,7 +17,6 @@ from typing import (
     Optional,
     Union,
     TypeVar,
-    Type,
     cast,
 )
 
@@ -250,7 +249,7 @@ class XMLStream(asyncio.BaseProtocol):
     #: A mapping of XML namespaces to well-known prefixes.
     namespace_map: dict
 
-    __root_stanza: list[Type[StanzaBase]]
+    __root_stanza: list[type[StanzaBase]]
     __handlers: list[BaseHandler]
     __event_handlers: dict[str, list[tuple[Handler, bool]]]
     __filters: _FiltersDict
@@ -911,7 +910,7 @@ class XMLStream(asyncio.BaseProtocol):
         """
         pass
 
-    def register_stanza(self, stanza_class: Type[StanzaBase]) -> None:
+    def register_stanza(self, stanza_class: type[StanzaBase]) -> None:
         """Add a stanza object class as a known root stanza.
 
         A root stanza is one that appears as a direct child of the stream's
@@ -929,7 +928,7 @@ class XMLStream(asyncio.BaseProtocol):
         """
         self.__root_stanza.append(stanza_class)
 
-    def remove_stanza(self, stanza_class: Type[StanzaBase]) -> None:
+    def remove_stanza(self, stanza_class: type[StanzaBase]) -> None:
         """Remove a stanza from being a known root stanza.
 
         A root stanza is one that appears as a direct child of the stream's

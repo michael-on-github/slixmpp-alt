@@ -13,7 +13,7 @@ import copy
 import logging
 import threading
 
-from typing import Any, ClassVar, Union, Optional, TYPE_CHECKING, Type
+from typing import Any, ClassVar, Union, Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from slixmpp.clientxmpp import ClientXMPP, BaseXMPP
@@ -39,7 +39,7 @@ class PluginNotFound(Exception):
     """Raised if an unknown plugin is accessed."""
 
 
-def register_plugin(impl: Type['BasePlugin'], name=None) -> None:
+def register_plugin(impl: type['BasePlugin'], name=None) -> None:
     """Add a new plugin implementation to the registry.
 
     :param class impl: The plugin class.
