@@ -16,7 +16,6 @@ from typing import (
     Callable,
     ClassVar,
     Coroutine,
-    Dict,
     List,
     Iterable,
     Optional,
@@ -404,15 +403,15 @@ class ElementBase(object):
     #:     {'set_body': <some function>}
     #:
     #: .. versionadded: 1.0-Beta5
-    plugin_overrides: ClassVar[Dict[str, str]] = {}
+    plugin_overrides: ClassVar[dict[str, str]] = {}
 
     #: A mapping of the :attr:`plugin_attrib` values of registered
     #: plugins to their respective classes.
-    plugin_attrib_map: ClassVar[Dict[str, Type[ElementBase]]] = {}
+    plugin_attrib_map: ClassVar[dict[str, Type[ElementBase]]] = {}
 
     #: A mapping of root element tag names (in ``'{namespace}elementname'``
     #: format) to the plugin classes responsible for them.
-    plugin_tag_map: ClassVar[Dict[str, Type[ElementBase]]] = {}
+    plugin_tag_map: ClassVar[dict[str, Type[ElementBase]]] = {}
 
     #: The set of stanza classes that can be iterated over using
     #: the 'substanzas' interface. Classes are added to this set
@@ -426,7 +425,7 @@ class ElementBase(object):
     #: The default XML namespace: ``http://www.w3.org/XML/1998/namespace``.
     xml_ns: ClassVar[str] = XML_NS
 
-    plugins: Dict[Tuple[str, Optional[str]], ElementBase]
+    plugins: dict[Tuple[str, Optional[str]], ElementBase]
     #: The underlying XML object for the stanza. It is a standard
     #: :class:`xml.etree.ElementTree` object.
     xml: ET.Element
@@ -600,7 +599,7 @@ class ElementBase(object):
 
         return plugin
 
-    def _get_stanza_values(self) -> Dict[str, Any]:
+    def _get_stanza_values(self) -> dict[str, Any]:
         """Return A JSON/dictionary version of the XML content
         exposed through the stanza's interfaces::
 
@@ -647,7 +646,7 @@ class ElementBase(object):
             values['substanzas'] = iterables
         return values
 
-    def _set_stanza_values(self, values: Dict[str, Any]) -> ElementBase:
+    def _set_stanza_values(self, values: dict[str, Any]) -> ElementBase:
         """Set multiple stanza interface values using a dictionary.
 
         Stanza plugin values may be set using nested dictionaries.
@@ -982,7 +981,7 @@ class ElementBase(object):
         return self.xml.attrib.get(name, default)
 
     def _get_sub_text(self, name: str, default: str = '',
-                      lang: Optional[str] = None) -> Union[str, Dict[str, str]]:
+                      lang: Optional[str] = None) -> Union[str, dict[str, str]]:
         """Return the text contents of a sub element.
 
         In case the element does not exist, or it has no textual content,
@@ -1018,7 +1017,7 @@ class ElementBase(object):
         return default
 
     def _get_all_sub_text(self, name: str, default: str = '',
-                          lang: Optional[str] = None) -> Dict[str, str]:
+                          lang: Optional[str] = None) -> dict[str, str]:
         name = cast(str, self._fix_ns(name))
 
         default_lang = self.get_lang()
@@ -1109,7 +1108,7 @@ class ElementBase(object):
         parent.append(element)
         return element
 
-    def _set_all_sub_text(self, name: str, values: Dict[str, str],
+    def _set_all_sub_text(self, name: str, values: dict[str, str],
                           keep: bool = False,
                           lang: Optional[str] = None) -> None:
         self._del_sub(name, lang=lang)

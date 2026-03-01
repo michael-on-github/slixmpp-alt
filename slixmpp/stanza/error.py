@@ -3,7 +3,7 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 from __future__ import annotations
-from typing import Optional, Dict, Type, ClassVar
+from typing import Optional, Type, ClassVar
 from slixmpp.xmlstream import ElementBase, ET
 
 
@@ -52,8 +52,8 @@ class Error(ElementBase):
     interfaces = {'code', 'condition', 'text', 'type',
                   'gone', 'redirect', 'by'}
     sub_interfaces = {'text'}
-    plugin_attrib_map: ClassVar[Dict[str, Type[ElementBase]]] = {}
-    plugin_tag_map: ClassVar[Dict[str, Type[ElementBase]]] = {}
+    plugin_attrib_map: ClassVar[dict[str, Type[ElementBase]]] = {}
+    plugin_tag_map: ClassVar[dict[str, Type[ElementBase]]] = {}
     conditions = {'bad-request', 'conflict', 'feature-not-implemented',
                   'forbidden', 'gone', 'internal-server-error',
                   'item-not-found', 'jid-malformed', 'not-acceptable',

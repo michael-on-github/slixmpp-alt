@@ -9,7 +9,6 @@ import logging
 from typing import (
     Optional,
     Any,
-    Dict,
     Tuple,
     TYPE_CHECKING,
     Union,
@@ -34,7 +33,7 @@ class NodeType(TypedDict):
     items: DiscoItems
 
 
-NodesType = Dict[
+NodesType = dict[
     Tuple[str, str, str],
     NodeType
 ]
@@ -190,7 +189,7 @@ class StaticDisco:
             return None
 
     async def has_identity(self, jid: OptJid, node: Optional[str],
-                           ifrom: OptJid, data: Dict[str, Any]
+                           ifrom: OptJid, data: dict[str, Any]
                            ) -> Optional[bool]:
         """
         Check if a JID has a given identity.
@@ -284,7 +283,7 @@ class StaticDisco:
             return self.get_node(jid, node)['items']
 
     def set_items(self, jid: OptJid, node: Optional[str], ifrom: OptJid,
-                  data: Dict[str, Collection[Tuple]]):
+                  data: dict[str, Collection[Tuple]]):
         """
         Replace the stored items data for a JID/node combination.
 
@@ -306,7 +305,7 @@ class StaticDisco:
             self.get_node(jid, node)['items'] = DiscoItems()
 
     def add_identity(self, jid: OptJid, node: Optional[str], ifrom: OptJid,
-                     data: Dict[str, Optional[str]]):
+                     data: dict[str, Optional[str]]):
         """
         Add a new identity to the JID/node combination.
 
@@ -325,7 +324,7 @@ class StaticDisco:
                 data.get('lang', None))
 
     def set_identities(self, jid: OptJid, node: Optional[str], ifrom: OptJid,
-                       data: Dict[str, Collection[str]]):
+                       data: dict[str, Collection[str]]):
         """
         Add or replace all identities for a JID/node combination.
 
@@ -339,7 +338,7 @@ class StaticDisco:
         new_node['info']['identities'] = identities
 
     def del_identity(self, jid: OptJid, node: Optional[str], ifrom: OptJid,
-                     data: Dict[str, Optional[str]]):
+                     data: dict[str, Optional[str]]):
         """
         Remove an identity from a JID/node combination.
 
@@ -368,7 +367,7 @@ class StaticDisco:
             del self.get_node(jid, node)['info']['identities']
 
     def add_feature(self, jid: OptJid, node: Optional[str], ifrom: OptJid,
-                    data: Dict[str, str]):
+                    data: dict[str, str]):
         """
         Add a feature to a JID/node combination.
 
@@ -381,7 +380,7 @@ class StaticDisco:
                 data.get('feature', ''))
 
     def set_features(self, jid: OptJid, node: Optional[str], ifrom: OptJid,
-                     data: Dict[str, Collection[str]]):
+                     data: dict[str, Collection[str]]):
         """
         Add or replace all features for a JID/node combination.
 
@@ -394,7 +393,7 @@ class StaticDisco:
         new_node['info']['features'] = features
 
     def del_feature(self, jid: OptJid, node: Optional[str], ifrom: OptJid,
-                    data: Dict[str, str]):
+                    data: dict[str, str]):
         """
         Remove a feature from a JID/node combination.
 
@@ -418,7 +417,7 @@ class StaticDisco:
         del self.get_node(jid, node)['info']['features']
 
     def add_item(self, jid: OptJid, node: Optional[str], ifrom: OptJid,
-                 data: Dict[str, str]):
+                 data: dict[str, str]):
         """
         Add an item to a JID/node combination.
 
@@ -436,7 +435,7 @@ class StaticDisco:
                 name=data.get('name', ''))
 
     def del_item(self, jid: OptJid, node: Optional[str], ifrom: OptJid,
-                 data: Dict[str, str]):
+                 data: dict[str, str]):
         """
         Remove an item from a JID/node combination.
 

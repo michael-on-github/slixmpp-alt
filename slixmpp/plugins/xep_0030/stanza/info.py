@@ -9,7 +9,6 @@ from typing import (
     Set,
     Tuple,
     Union,
-    Dict,
 )
 from slixmpp.xmlstream import ElementBase, ET
 
@@ -145,7 +144,7 @@ class DiscoInfo(ElementBase):
                     return True
         return False
 
-    def dict_identities(self, lang: Optional[str] = None) -> List[Dict[str, str]]:
+    def dict_identities(self, lang: Optional[str] = None) -> List[dict[str, str]]:
         """
         Return the list of all identities, each one as a dict with
         category, type, xml_lang, and name keys.

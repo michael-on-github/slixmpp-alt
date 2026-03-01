@@ -10,7 +10,7 @@ import asyncio
 import logging
 from asyncio import Future
 from inspect import iscoroutinefunction
-from typing import Optional, Any, Callable, Tuple, Dict, Set, List
+from typing import Optional, Any, Callable, Tuple, Set, List
 
 from slixmpp.jid import JID
 from slixmpp.stanza import StreamFeatures, Iq
@@ -69,7 +69,7 @@ class ClientXMPP(BaseXMPP):
         self.default_domain = self.boundjid.host
         self.default_lang = lang
 
-        self.credentials: Dict[str, str] = {}
+        self.credentials: dict[str, str] = {}
 
         self.password = password
 
@@ -82,7 +82,7 @@ class ClientXMPP(BaseXMPP):
         self.stream_footer = "</stream:stream>"
 
         self.features: Set[str] = set()
-        self._stream_feature_handlers: Dict[str, Tuple[Callable, bool]] = {}
+        self._stream_feature_handlers: dict[str, Tuple[Callable, bool]] = {}
         self._stream_feature_order: List[Tuple[int, str]] = []
 
         self.tls_services = {'xmpps-client'}

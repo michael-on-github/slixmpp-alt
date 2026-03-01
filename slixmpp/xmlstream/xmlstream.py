@@ -9,7 +9,6 @@
 # :license: MIT, see LICENSE for more details
 from typing import (
     Any,
-    Dict,
     Awaitable,
     Generator,
     Coroutine,
@@ -97,7 +96,7 @@ Filter = Union[
     AsyncFilter,
 ]
 
-_FiltersDict = Dict[str, List[Filter]]
+_FiltersDict = dict[str, List[Filter]]
 
 Handler = Callable[[Any], Union[
     Any,
@@ -148,7 +147,7 @@ class XMLStream(asyncio.BaseProtocol):
     waiting_queue: asyncio.Queue
 
     # A dict of {name: handle}
-    scheduled_events: Dict[str, TimerHandle]
+    scheduled_events: dict[str, TimerHandle]
 
     ssl_context: ssl.SSLContext
 
@@ -256,7 +255,7 @@ class XMLStream(asyncio.BaseProtocol):
 
     __root_stanza: List[Type[StanzaBase]]
     __handlers: List[BaseHandler]
-    __event_handlers: Dict[str, List[Tuple[Handler, bool]]]
+    __event_handlers: dict[str, List[Tuple[Handler, bool]]]
     __filters: _FiltersDict
 
     # Current connection attempt (Future)
@@ -1147,7 +1146,7 @@ class XMLStream(asyncio.BaseProtocol):
 
     def schedule(self, name: str, seconds: int, callback: Callable[..., None],
             args: Tuple[Any, ...] = tuple(),
-            kwargs: Dict[Any, Any] = {}, repeat: bool = False) -> None:
+            kwargs: dict[Any, Any] = {}, repeat: bool = False) -> None:
         """Schedule a callback function to execute after a given delay.
 
         :param name: A unique name for the scheduled callback.

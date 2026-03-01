@@ -10,7 +10,6 @@ from collections import defaultdict
 from datetime import datetime
 from typing import (
     Any,
-    Dict,
     List,
     Tuple,
     Optional,
@@ -89,8 +88,8 @@ class XEP_0045(BasePlugin):
         'multi_from': False,
     }
 
-    rooms: Dict[Optional[JID], Dict[JID, Dict[str, MucRoomItem]]]
-    our_nicks: Dict[Optional[JID], Dict[JID, str]]
+    rooms: dict[Optional[JID], dict[JID, dict[str, MucRoomItem]]]
+    our_nicks: dict[Optional[JID], dict[JID, str]]
 
     def plugin_init(self):
         self.rooms = defaultdict(lambda: defaultdict())

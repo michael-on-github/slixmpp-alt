@@ -9,7 +9,6 @@ from collections.abc import AsyncIterator
 from typing import (
     Any,
     Callable,
-    Dict,
     Optional,
 )
 
@@ -57,7 +56,7 @@ class ResultIterator(AsyncIterator):
     #: Callback to run after receiving the reply
     post_cb: Optional[Callable[[Iq], None]]
     #: Optional dict of Iq options (timeout, etc…) for Iq.send()
-    iq_options: Dict[str, Any]
+    iq_options: dict[str, Any]
 
     def __init__(self, query: Iq, interface: str, results: str = 'substanzas',
                  amount: int = 10,
@@ -65,7 +64,7 @@ class ResultIterator(AsyncIterator):
                  recv_interface: Optional[str] = None,
                  pre_cb: Optional[Callable[[Iq], None]] = None,
                  post_cb: Optional[Callable[[Iq], None]] = None,
-                 iq_options: Optional[Dict[str, Any]] = None):
+                 iq_options: Optional[dict[str, Any]] = None):
         """
         :param query: The template query
         :param interface: The substanza of the query to send, for example
@@ -184,7 +183,7 @@ class XEP_0059(BasePlugin):
                 recv_interface: Optional[str] = None,
                 pre_cb: Optional[Callable[[Iq], None]] = None,
                 post_cb: Optional[Callable[[Iq], None]] = None,
-                iq_options: Optional[Dict[str, Any]] = None
+                iq_options: Optional[dict[str, Any]] = None
                 ) -> ResultIterator:
         """
         Create a new result set iterator for a given stanza query.

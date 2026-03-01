@@ -13,7 +13,7 @@ import copy
 import logging
 import threading
 
-from typing import Any, Dict, Set, ClassVar, Union, Optional, TYPE_CHECKING, Type
+from typing import Any, Set, ClassVar, Union, Optional, TYPE_CHECKING, Type
 
 if TYPE_CHECKING:
     from slixmpp.clientxmpp import ClientXMPP, BaseXMPP
@@ -105,14 +105,14 @@ def load_plugin(name, module=None):
 
 
 class PluginManager(object):
-    def __init__(self, xmpp: 'BaseXMPP', config: Optional[Dict] = None):
+    def __init__(self, xmpp: 'BaseXMPP', config: Optional[dict] = None):
         #: We will track all enabled plugins in a set so that we
         #: can enable plugins in batches and pull in dependencies
         #: without problems.
         self._enabled: Set[str] = set()
 
         #: Maintain references to active plugins.
-        self._plugins: Dict[str, 'BasePlugin'] = {}
+        self._plugins: dict[str, 'BasePlugin'] = {}
 
         self._plugin_lock = threading.RLock()
 
@@ -277,7 +277,7 @@ class BasePlugin(object):
     #: the plugin. For example, including the configuration field 'foo'
     #: would mean accessing `plugin.foo` returns the current value of
     #: `plugin.config['foo']`.
-    default_config: ClassVar[Dict[str, Any]] = {}
+    default_config: ClassVar[dict[str, Any]] = {}
 
     def __init__(self, xmpp: Union[ClientXMPP,ComponentXMPP], config=None):
         self.xmpp = xmpp

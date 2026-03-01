@@ -8,7 +8,7 @@ from slixmpp.xmlstream import JID
 from slixmpp.roster import RosterNode
 from slixmpp.types import RosterDBProtocol, JidStr
 
-from typing import Iterable, Dict, Optional, TYPE_CHECKING, Iterator
+from typing import Iterable, Optional, TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
     from slixmpp import BaseXMPP
@@ -46,7 +46,7 @@ class Roster:
     db: Optional[RosterDBProtocol]
     _auto_authorize: bool
     _auto_subscribe: bool
-    _rosters: Dict[str, RosterNode]
+    _rosters: dict[str, RosterNode]
 
     def __init__(self, xmpp: 'BaseXMPP', db: Optional[RosterDBProtocol] = None) -> None:
         """

@@ -4,7 +4,6 @@
 # See the file LICENSE for copying permission.
 from typing import (
     Any,
-    Dict,
     List,
     Optional,
     Set,
@@ -33,7 +32,7 @@ try:
     )
 except ImportError:
     # Placeholder until we drop python < 3.8
-    InfoType = Dict[str, Any]
+    InfoType = dict[str, Any]
 
 
 BASE_NODES = [

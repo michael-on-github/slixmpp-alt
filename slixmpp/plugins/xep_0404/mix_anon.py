@@ -3,7 +3,6 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 from typing import (
-    Dict,
     Optional,
     Set,
     Tuple,
@@ -49,7 +48,7 @@ class XEP_0404(BasePlugin):
         )
 
     async def get_anon_by_jid(self, channel: JID, *,
-                              ifrom: Optional[JID] = None, **pubsubkwargs) -> Dict[JID, str]:
+                              ifrom: Optional[JID] = None, **pubsubkwargs) -> dict[JID, str]:
         """
         Get the jid-participant mapping, by JID
 
@@ -62,7 +61,7 @@ class XEP_0404(BasePlugin):
         return mapping
 
     async def get_anon_by_id(self, channel: JID, *,
-                             ifrom: Optional[JID] = None, **pubsubkwargs) -> Dict[str, JID]:
+                             ifrom: Optional[JID] = None, **pubsubkwargs) -> dict[str, JID]:
         """
         Get the jid-participant mapping, by participant id
 

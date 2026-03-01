@@ -5,7 +5,7 @@
 # See the file LICENSE for copying permission.
 from slixmpp.stanza.error import Error
 from slixmpp.xmlstream import StanzaBase, ET
-from typing import Optional, Dict, Union
+from typing import Optional, Union
 
 
 class StreamError(Error, StanzaBase):
@@ -65,7 +65,7 @@ class StreamError(Error, StanzaBase):
         'unsupported-version'}
     condition_ns: str = 'urn:ietf:params:xml:ns:xmpp-streams'
 
-    def get_see_other_host(self) -> Union[str, Dict[str, str]]:
+    def get_see_other_host(self) -> Union[str, dict[str, str]]:
         ns = self.condition_ns
         return self._get_sub_text('{%s}see-other-host' % ns, '')
 

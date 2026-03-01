@@ -12,7 +12,6 @@ from typing import (
     Any,
     Awaitable,
     Callable,
-    Dict,
     Optional,
     Tuple,
 )
@@ -69,7 +68,7 @@ class XEP_0313(BasePlugin):
             timeout: int = None,
             callback: Callable[[Iq], None] = None,
             iterator: bool = False,
-            rsm: Optional[Dict[str, Any]] = None
+            rsm: Optional[dict[str, Any]] = None
     ) -> Awaitable:
         """
         Send a MAM query and retrieve the results.
@@ -143,7 +142,7 @@ class XEP_0313(BasePlugin):
             with_jid: Optional[JID] = None,
             ifrom: Optional[JID] = None,
             reverse: bool = False,
-            rsm: Optional[Dict[str, Any]] = None,
+            rsm: Optional[dict[str, Any]] = None,
             total: Optional[int] = None,
     ) -> AsyncGenerator:
         """

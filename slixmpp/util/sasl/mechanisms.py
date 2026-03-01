@@ -11,7 +11,7 @@ import hmac
 import random
 
 from base64 import b64encode, b64decode
-from typing import List, Dict, Optional
+from typing import List, Optional
 
 bytes_ = bytes
 
@@ -228,7 +228,7 @@ class SCRAM(Mech):
                 escaped.append(char)
         return "".join(escaped).encode("utf-8")
 
-    def parse(self, challenge: bytes_) -> Dict[bytes_, bytes_]:
+    def parse(self, challenge: bytes_) -> dict[bytes_, bytes_]:
         items = {}
         for key, value in [item.split(b'=', 1) for item in challenge.split(b',')]:
             items[key] = value
@@ -352,7 +352,7 @@ class DIGEST(Mech):
         self.nonce_count = 1
 
     def parse(self, challenge:  bytes_ = b''):
-        data: Dict[str, bytes_] = {}
+        data: dict[str, bytes_] = {}
         var_name = b''
         var_value = b''
 

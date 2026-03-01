@@ -7,7 +7,6 @@ import hashlib
 import logging
 from asyncio import Future
 from typing import (
-    Dict,
     Optional,
 )
 
@@ -140,7 +139,7 @@ class XEP_0153(BasePlugin):
 
     # =================================================================
 
-    async def _reset_hash(self, jid: JID, node: str, ifrom: JID, args: Dict):
+    async def _reset_hash(self, jid: JID, node: str, ifrom: JID, args: dict):
         own_jid = (jid.bare == self.xmpp.boundjid.bare)
         if self.xmpp.is_component:
             own_jid = (jid.domain == self.xmpp.boundjid.domain)
@@ -166,8 +165,8 @@ class XEP_0153(BasePlugin):
 
         await self.api['set_hash'](jid, args=new_hash)
 
-    def _get_hash(self, jid: JID, node: str, ifrom: JID, args: Dict):
+    def _get_hash(self, jid: JID, node: str, ifrom: JID, args: dict):
         return self._hashes.get(jid.bare, None)
 
-    def _set_hash(self, jid: JID, node: str, ifrom: JID, args: Dict):
+    def _set_hash(self, jid: JID, node: str, ifrom: JID, args: dict):
         self._hashes[jid.bare] = args

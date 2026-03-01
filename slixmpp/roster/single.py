@@ -9,7 +9,7 @@ from slixmpp.stanza import Presence
 from slixmpp.roster import RosterItem
 from slixmpp.types import RosterState, RosterDBProtocol, JidStr, ResourceDict
 
-from typing import TYPE_CHECKING, Optional, Dict, List, Union, Iterator
+from typing import TYPE_CHECKING, Optional, List, Union, Iterator
 
 if TYPE_CHECKING:
     from slixmpp import BaseXMPP
@@ -134,9 +134,9 @@ class RosterNode:
         """Returns whether the roster has a JID."""
         return jid in self._jids
 
-    def groups(self) -> Dict[str, List[str]]:
+    def groups(self) -> dict[str, List[str]]:
         """Return a dictionary mapping group names to JIDs."""
-        result: Dict[str, List[str]] = {}
+        result: dict[str, List[str]] = {}
         for jid in self._jids:
             groups = self._jids[jid]['groups']
             if not groups:
@@ -283,7 +283,7 @@ class RosterNode:
 
         return iq.send(timeout=timeout, callback=callback)
 
-    def presence(self, jid: JID, resource: Optional[str] = None) -> Union[ResourceDict, Dict[str, ResourceDict]]:
+    def presence(self, jid: JID, resource: Optional[str] = None) -> Union[ResourceDict, dict[str, ResourceDict]]:
         """
         Retrieve the presence information of a JID.
 

@@ -13,7 +13,6 @@ import logging
 
 from asyncio import Future
 from typing import (
-    Dict,
     Iterable,
     List,
     Optional,

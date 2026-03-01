@@ -7,7 +7,6 @@ import logging
 from asyncio import Future
 from datetime import datetime, timedelta
 from typing import (
-    Dict,
     Optional
 )
 
@@ -141,7 +140,7 @@ class XEP_0012(BasePlugin):
     # Default in-memory implementations for storing last activity data.
     # =================================================================
 
-    def _default_set_last_activity(self, jid: JID, node: str, ifrom: JID, data: Dict):
+    def _default_set_last_activity(self, jid: JID, node: str, ifrom: JID, data: dict):
         seconds = data.get('seconds', None)
         if seconds is None:
             seconds = 0
@@ -154,7 +153,7 @@ class XEP_0012(BasePlugin):
             'seconds': datetime.now() - timedelta(seconds=seconds),
             'status': status}
 
-    def _default_del_last_activity(self, jid: JID, node: str, ifrom: JID, data: Dict):
+    def _default_del_last_activity(self, jid: JID, node: str, ifrom: JID, data: dict):
         if jid in self._last_activities:
             del self._last_activities[jid]
 

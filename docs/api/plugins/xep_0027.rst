@@ -48,7 +48,7 @@ The default API here is managing a JID→Keyid dict in-memory.
         - **node**: unused
         - **ifrom**: unused
         - **args**: unused
-        - **returns**: ``Dict[JID, str]`` the full internal mapping
+        - **returns**: ``dict[JID, str]`` the full internal mapping
 
         Get all currently stored KeyIDs.
 

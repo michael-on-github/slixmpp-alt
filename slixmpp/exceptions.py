@@ -5,7 +5,7 @@
 # :copyright: (c) 2011 Nathanael C. Fritz
 # :license: MIT, see LICENSE for more details
 
-from typing import Dict, Optional
+from typing import Optional
 
 from .types import ErrorConditions, ErrorTypes, JidStr
 
@@ -122,7 +122,7 @@ class PresenceError(XMPPError):
         self.presence = pres
 
 
-_DEFAULT_ERROR_TYPES: Dict[ErrorConditions, ErrorTypes] = {
+_DEFAULT_ERROR_TYPES: dict[ErrorConditions, ErrorTypes] = {
     "bad-request": "modify",
     "conflict": "cancel",
     "feature-not-implemented": "cancel",

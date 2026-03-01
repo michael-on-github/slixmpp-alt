@@ -9,7 +9,6 @@ This file contains boilerplate to define types relevant to slixmpp.
 
 from typing import (
     Any,
-    Dict,
     Optional,
     Union,
     Iterable,
@@ -109,11 +108,11 @@ RosterState = TypedDict(
 
 class RosterDBProtocol(Protocol):
     def load(self, owner: JidStr, jid: JidStr,
-             db_state: Dict[str, Any]) -> Optional[RosterState]:
+             db_state: dict[str, Any]) -> Optional[RosterState]:
         ...
 
     def save(self, owner: JidStr, jid: JidStr,
-             state: RosterState, db_state: Dict[str, Any]):
+             state: RosterState, db_state: dict[str, Any]):
         ...
 
     def entries(self, owner: OptJidStr,

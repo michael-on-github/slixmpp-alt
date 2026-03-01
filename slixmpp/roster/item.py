@@ -7,7 +7,7 @@
 from slixmpp.stanza import Presence
 from slixmpp.types import RosterState, ResourceDict, RosterDBProtocol, JidStr
 
-from typing import TYPE_CHECKING, Optional, Dict, Any, List, Union
+from typing import TYPE_CHECKING, Optional, Any, List, Union
 
 if TYPE_CHECKING:
     from slixmpp import BaseXMPP
@@ -115,8 +115,8 @@ class RosterItem:
     owner: JidStr
     db: Optional[RosterDBProtocol]
     _state: RosterState
-    resources: Dict[str, ResourceDict]
-    _db_state: Dict[str, Any]
+    resources: dict[str, ResourceDict]
+    _db_state: dict[str, Any]
     last_status: Optional[Presence]
 
     def __init__(self, xmpp: 'BaseXMPP', jid: JidStr, owner: Optional[JidStr] = None,

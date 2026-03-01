@@ -11,7 +11,6 @@ import asyncio
 import logging
 
 from typing import (
-    Dict,
     Optional,
     Union,
     TYPE_CHECKING,
@@ -245,7 +244,7 @@ class BaseXMPP(XMLStream):
                     self.plugin[name].post_init()
                 self.plugin[name].post_inited = True
 
-    def register_plugin(self, plugin: str, pconfig: Optional[Dict] = None, module=None):
+    def register_plugin(self, plugin: str, pconfig: Optional[dict] = None, module=None):
         """Register and configure  a plugin for use in this stream.
 
         :param plugin: The name of the plugin class. Plugin names must
