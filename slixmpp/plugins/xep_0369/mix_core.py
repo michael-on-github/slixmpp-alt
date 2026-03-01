@@ -5,7 +5,6 @@
 from typing import (
     Any,
     Optional,
-    Tuple,
 )
 
 from datetime import datetime
@@ -134,14 +133,14 @@ class XEP_0369(BasePlugin):
     async def update_subscription(self, channel: JID,
                                   subscribe: Optional[set[str]] = None,
                                   unsubscribe: Optional[set[str]] = None, *,
-                                  ifrom: Optional[JID] = None, **iqkwargs) -> Tuple[set[str], set[str]]:
+                                  ifrom: Optional[JID] = None, **iqkwargs) -> tuple[set[str], set[str]]:
         """
         Update a MIX channel subscription.
 
         :param JID channel: JID of the MIX channel
         :param set[str] subscribe: Set of notes to subscribe to additionally.
         :param set[str] unsubscribe: Set of notes to unsubscribe from.
-        :rtype: Tuple[set[str], set[str]]
+        :rtype: tuple[set[str], set[str]]
         :return: A tuple containing the set of nodes that failed to subscribe
             and the set of nodes that failed to unsubscribe.
         """
@@ -254,7 +253,7 @@ class XEP_0369(BasePlugin):
         return nodes
 
     async def list_participants(self, channel: JID, *,
-                                ifrom: Optional[JID] = None, **pubsubkwargs) -> list[Tuple[str, str, Optional[JID]]]:
+                                ifrom: Optional[JID] = None, **pubsubkwargs) -> list[tuple[str, str, Optional[JID]]]:
         """
         List the participants of a MIX channel
         :param JID channel: The MIX channel
@@ -278,7 +277,7 @@ class XEP_0369(BasePlugin):
         return participants
 
     async def list_channels(self, service: JID, *,
-                            ifrom: Optional[JID] =None, **discokwargs) -> list[Tuple[JID, str]]:
+                            ifrom: Optional[JID] =None, **discokwargs) -> list[tuple[JID, str]]:
         """
         List the channels on a MIX service
 

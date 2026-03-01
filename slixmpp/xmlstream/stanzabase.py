@@ -18,7 +18,6 @@ from typing import (
     Coroutine,
     Iterable,
     Optional,
-    Tuple,
     Type,
     TYPE_CHECKING,
     Union,
@@ -423,7 +422,7 @@ class ElementBase(object):
     #: The default XML namespace: ``http://www.w3.org/XML/1998/namespace``.
     xml_ns: ClassVar[str] = XML_NS
 
-    plugins: dict[Tuple[str, Optional[str]], ElementBase]
+    plugins: dict[tuple[str, Optional[str]], ElementBase]
     #: The underlying XML object for the stanza. It is a standard
     #: :class:`xml.etree.ElementTree` object.
     xml: ET.Element

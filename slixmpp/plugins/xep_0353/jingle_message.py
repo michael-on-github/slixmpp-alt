@@ -5,7 +5,7 @@
 # See the file LICENSE for copying permission.
 import logging
 
-from typing import Iterable, Tuple, Optional
+from typing import Iterable, Optional
 
 from slixmpp import JID, Message
 from slixmpp.plugins import BasePlugin
@@ -71,7 +71,7 @@ class XEP_0353(BasePlugin):
     def _handle_reject(self, message):
         self.xmpp.event('jingle_message_reject', message)
 
-    def propose(self, mto: JID, sid: str, descriptions: Iterable[Tuple[str, str]], *, mfrom: Optional[JID] = None):
+    def propose(self, mto: JID, sid: str, descriptions: Iterable[tuple[str, str]], *, mfrom: Optional[JID] = None):
         msg = self.xmpp.make_message(mto, mfrom=mfrom)
         msg['jingle_propose']['id'] = sid
         msg['jingle_propose']['descriptions'] = descriptions

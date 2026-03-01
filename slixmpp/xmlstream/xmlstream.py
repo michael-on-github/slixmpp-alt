@@ -16,7 +16,6 @@ from typing import (
     Iterable,
     Optional,
     Union,
-    Tuple,
     TypeVar,
     Type,
     cast,
@@ -194,7 +193,7 @@ class XMLStream(asyncio.BaseProtocol):
     #: using DNS lookups, this is not used. Once set, it will be re-used until
     #: connect() is called with no parameters (or both host and port set to
     #: None).
-    custom_address: Optional[Tuple[str, int]]
+    custom_address: Optional[tuple[str, int]]
 
     #: Enable connecting to the server directly over SSL, in
     #: particular when the service provides two ports: one for
@@ -253,7 +252,7 @@ class XMLStream(asyncio.BaseProtocol):
 
     __root_stanza: list[Type[StanzaBase]]
     __handlers: list[BaseHandler]
-    __event_handlers: dict[str, list[Tuple[Handler, bool]]]
+    __event_handlers: dict[str, list[tuple[Handler, bool]]]
     __filters: _FiltersDict
 
     # Current connection attempt (Future)
@@ -272,7 +271,7 @@ class XMLStream(asyncio.BaseProtocol):
 
     _run_out_filters: Optional[Future]
     __slow_tasks: list[Task]
-    __queued_stanzas: list[Tuple[Union[StanzaBase, str], bool]]
+    __queued_stanzas: list[tuple[Union[StanzaBase, str], bool]]
 
     #: List of DNS SRV services records which map to TLS services
     tls_services: set[str]
@@ -993,7 +992,7 @@ class XMLStream(asyncio.BaseProtocol):
             idx += 1
         return False
 
-    async def get_dns_records(self, domain: str, port: Optional[int] = None) -> list[Tuple[str, str, str, int]]:
+    async def get_dns_records(self, domain: str, port: Optional[int] = None) -> list[tuple[str, str, str, int]]:
         """Get the DNS records for a domain.
 
         :param domain: The domain in question.
@@ -1043,7 +1042,7 @@ class XMLStream(asyncio.BaseProtocol):
 
         # Need to keep handlers that do not use
         # the given function pointer
-        def filter_pointers(handler: Tuple[Callable[..., Any], bool]) -> bool:
+        def filter_pointers(handler: tuple[Callable[..., Any], bool]) -> bool:
             return handler[0] != pointer
 
         self.__event_handlers[name] = list(filter(
@@ -1143,7 +1142,7 @@ class XMLStream(asyncio.BaseProtocol):
                     pass
 
     def schedule(self, name: str, seconds: int, callback: Callable[..., None],
-            args: Tuple[Any, ...] = tuple(),
+            args: tuple[Any, ...] = tuple(),
             kwargs: dict[Any, Any] = {}, repeat: bool = False) -> None:
         """Schedule a callback function to execute after a given delay.
 

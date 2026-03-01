@@ -4,7 +4,6 @@
 # See the file LICENSE for copying permission.
 from typing import (
     Optional,
-    Tuple,
 )
 
 from slixmpp import JID, Iq
@@ -88,7 +87,7 @@ class XEP_0405(BasePlugin):
     async def get_mix_roster(self, *,
                             ito: Optional[JID] = None,
                             ifrom: Optional[JID] = None,
-                            **iqkwargs) -> Tuple[list[RosterItem], list[RosterItem]]:
+                            **iqkwargs) -> tuple[list[RosterItem], list[RosterItem]]:
         """
         Get the annotated roster, with MIX channels.
 

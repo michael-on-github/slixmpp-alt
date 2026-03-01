@@ -5,12 +5,11 @@
 from typing import (
     Iterable,
     Optional,
-    Tuple,
     Union,
 )
 from slixmpp.xmlstream import ElementBase, ET
 
-IdentityType = Tuple[str, str, Optional[str], Optional[str]]
+IdentityType = tuple[str, str, Optional[str], Optional[str]]
 
 
 class DiscoInfo(ElementBase):
@@ -71,7 +70,7 @@ class DiscoInfo(ElementBase):
     lang_interfaces = {'identities'}
 
     # Cache identities and features
-    _identities: set[Tuple[str, str, Optional[str]]]
+    _identities: set[tuple[str, str, Optional[str]]]
     _features: set[str]
 
     def setup(self, xml: Optional[ET.ElementTree] = None):

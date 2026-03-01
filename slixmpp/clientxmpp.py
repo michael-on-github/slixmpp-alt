@@ -10,7 +10,7 @@ import asyncio
 import logging
 from asyncio import Future
 from inspect import iscoroutinefunction
-from typing import Optional, Any, Callable, Tuple
+from typing import Optional, Any, Callable
 
 from slixmpp.jid import JID
 from slixmpp.stanza import StreamFeatures, Iq
@@ -82,8 +82,8 @@ class ClientXMPP(BaseXMPP):
         self.stream_footer = "</stream:stream>"
 
         self.features: set[str] = set()
-        self._stream_feature_handlers: dict[str, Tuple[Callable, bool]] = {}
-        self._stream_feature_order: list[Tuple[int, str]] = []
+        self._stream_feature_handlers: dict[str, tuple[Callable, bool]] = {}
+        self._stream_feature_order: list[tuple[int, str]] = []
 
         self.tls_services = {'xmpps-client'}
         self.starttls_services = {'xmpp-client'}

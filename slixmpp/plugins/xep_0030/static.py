@@ -9,7 +9,6 @@ import logging
 from typing import (
     Optional,
     Any,
-    Tuple,
     TYPE_CHECKING,
     Union,
     Collection,
@@ -34,7 +33,7 @@ class NodeType(TypedDict):
 
 
 NodesType = dict[
-    Tuple[str, str, str],
+    tuple[str, str, str],
     NodeType
 ]
 
@@ -283,7 +282,7 @@ class StaticDisco:
             return self.get_node(jid, node)['items']
 
     def set_items(self, jid: OptJid, node: Optional[str], ifrom: OptJid,
-                  data: dict[str, Collection[Tuple]]):
+                  data: dict[str, Collection[tuple]]):
         """
         Replace the stored items data for a JID/node combination.
 

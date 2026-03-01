@@ -5,7 +5,7 @@
 import logging
 from asyncio import Event, Task, FIRST_COMPLETED, wait, CancelledError
 from enum import Enum
-from typing import Optional, Tuple, Union
+from typing import Optional, Union
 
 from slixmpp.stanza import Message, Presence
 from slixmpp.exceptions import IqError, IqTimeout
@@ -134,9 +134,9 @@ class XEP_0410(BasePlugin):
     boundjid: Optional[JID] = None
     # Dictionary mapping a (muc resource, from jid) to an asyncio task in
     # the process of being executed
-    ping_timers: dict[Tuple[JID, JID], PingTask]
+    ping_timers: dict[tuple[JID, JID], PingTask]
     # Cache of the latest ping results
-    last_ping_results: dict[Tuple[JID, JID], PingStatus]
+    last_ping_results: dict[tuple[JID, JID], PingStatus]
 
     def plugin_init(self):
         self.ping_timers = dict()
@@ -311,7 +311,7 @@ class XEP_0410(BasePlugin):
             result = self._handle_condition(exc.condition)
         return result
 
-    def _update_ping_results(self, key: Tuple[JID, JID], result: PingStatus) -> None:
+    def _update_ping_results(self, key: tuple[JID, JID], result: PingStatus) -> None:
         """
         Internal use only: used to update the ping results dict from the timer.
         """

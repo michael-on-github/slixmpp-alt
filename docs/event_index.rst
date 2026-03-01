@@ -576,7 +576,7 @@ processing the same stanza twice.
         - **Source:** :py:class:`~.XEP_0482`
 
     muc_ping_changed
-        - **Data:** ``dict(key: Tuple[JID, JID], previous: PingStatus, result: PingStatus)``
+        - **Data:** ``dict(key: tuple[JID, JID], previous: PingStatus, result: PingStatus)``
         - **Source:** :py:class:`~.XEP_0410`
 
     legacy_login

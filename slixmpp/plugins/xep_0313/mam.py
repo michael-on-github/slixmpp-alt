@@ -13,7 +13,6 @@ from typing import (
     Awaitable,
     Callable,
     Optional,
-    Tuple,
 )
 
 from slixmpp import JID
@@ -215,7 +214,7 @@ class XEP_0313(BasePlugin):
             end: Optional[datetime] = None,
             with_jid: Optional[JID] = None,
             ifrom: Optional[JID] = None,
-    ) -> Tuple[Iq, Message]:
+    ) -> tuple[Iq, Message]:
         """Build the IQ and stanza mask for MAM results
         """
         iq = self.xmpp.make_iq_set(ito=jid, ifrom=ifrom)

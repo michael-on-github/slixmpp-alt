@@ -10,7 +10,6 @@ from collections import defaultdict
 from datetime import datetime
 from typing import (
     Any,
-    Tuple,
     Optional,
 )
 
@@ -55,7 +54,7 @@ from slixmpp.types import (
     PresenceShows,
 )
 
-JoinResult = Tuple[Presence, Message, list[Presence], list[Message]]
+JoinResult = tuple[Presence, Message, list[Presence], list[Message]]
 
 log = logging.getLogger(__name__)
 
@@ -646,7 +645,7 @@ class XEP_0045(BasePlugin):
         return [item['jid'] for item in result['mucadmin_query']]
 
     async def send_affiliation_list(self, room: JidStr,
-                                    affiliations: list[Tuple[JidStr, MucAffiliation]], *,
+                                    affiliations: list[tuple[JidStr, MucAffiliation]], *,
                                     ifrom: Optional[JidStr] = None, **iqkwargs):
         """Send an affiliation delta list.
 
@@ -695,7 +694,7 @@ class XEP_0045(BasePlugin):
         result = await iq.send(**iqkwargs)
         return [item['nick'] for item in result['mucadmin_query']]
 
-    async def send_role_list(self, room: JidStr, roles: list[Tuple[str, MucRole]], *,
+    async def send_role_list(self, room: JidStr, roles: list[tuple[str, MucRole]], *,
                              ifrom: Optional[JidStr] = None, **iqkwargs):
         """Send a role delta list.
 
