@@ -15,6 +15,7 @@ from asyncio import Future
 from typing import (
     Iterable,
     TYPE_CHECKING,
+    TypedDict
 )
 
 from slixmpp.stanza import Iq
@@ -24,11 +25,6 @@ from slixmpp.xmlstream.matcher import StanzaPath
 from slixmpp.xmlstream import register_stanza_plugin, JID
 from slixmpp.plugins.xep_0084.stanza import Data, MetaData, Pointer
 from slixmpp.plugins.xep_0084 import stanza
-
-try:
-    from typing import TypedDict
-except ImportError:
-    from typing_extensions import TypedDict
 
 
 class AvatarMetadataItem(TypedDict, total=False):

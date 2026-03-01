@@ -10,21 +10,11 @@ This file contains boilerplate to define types relevant to slixmpp.
 from typing import (
     Any,
     Iterable,
+    Literal,
     NamedTuple,
+    Protocol,
+    TypedDict,
 )
-
-try:
-    from typing import (
-        Literal,
-        TypedDict,
-        Protocol,
-    )
-except ImportError:
-    from typing_extensions import (
-        Literal,
-        TypedDict,
-        Protocol,
-    )
 
 from slixmpp.jid import JID
 

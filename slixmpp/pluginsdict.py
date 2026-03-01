@@ -3,10 +3,7 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 
-try:
-    from typing import TypedDict
-except ImportError:
-    from typing_extensions import TypedDict
+from typing import TypedDict
 
 # Plugins mega-dict
 
