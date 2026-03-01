@@ -2,9 +2,6 @@
 # Copyright (C) 2020 Mathieu Pasquet <mathieui@mathieui.net>
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
-from typing import (
-    Optional,
-)
 
 from slixmpp import JID, Iq
 from slixmpp.exceptions import IqError, IqTimeout
@@ -39,9 +36,9 @@ class XEP_0405(BasePlugin):
         features = result['disco_info']['features']
         return stanza.NS in features
 
-    async def join_channel(self, room: JID, nick: str, subscribe: Optional[set[str]] = None, *,
-                           ito: Optional[JID] = None,
-                           ifrom: Optional[JID] = None,
+    async def join_channel(self, room: JID, nick: str, subscribe: set[str] | None = None, *,
+                           ito: JID | None = None,
+                           ifrom: JID | None = None,
                            **iqkwargs) -> set[str]:
         """
         Join a MIX channel.
@@ -70,8 +67,8 @@ class XEP_0405(BasePlugin):
         return subscribe.difference(result_nodes)
 
     async def leave_channel(self, room: JID, *,
-                            ito: Optional[JID] = None,
-                            ifrom: Optional[JID] = None,
+                            ito: JID | None = None,
+                            ifrom: JID | None = None,
                             **iqkwargs) -> Iq:
         """"
         Leave a MIX channel
@@ -85,8 +82,8 @@ class XEP_0405(BasePlugin):
         return await iq.send(**iqkwargs)
 
     async def get_mix_roster(self, *,
-                            ito: Optional[JID] = None,
-                            ifrom: Optional[JID] = None,
+                            ito: JID | None = None,
+                            ifrom: JID | None = None,
                             **iqkwargs) -> tuple[list[RosterItem], list[RosterItem]]:
         """
         Get the annotated roster, with MIX channels.

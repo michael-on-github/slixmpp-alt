@@ -4,7 +4,6 @@
 # See the file LICENSE for copying permission.
 from typing import (
     Any,
-    Optional,
 )
 
 from datetime import datetime
@@ -22,7 +21,7 @@ try:
         {
             'Name': str,
             'Description': str,
-            'Contact': Optional[list[JID]],
+            'Contact': list[JID] | None,
             'modified': datetime
         },
         total=False,
@@ -105,8 +104,8 @@ class XEP_0369(BasePlugin):
                 fields['Contact'] = contact
             return fields
 
-    async def join_channel(self, channel: JID, nick: str, subscribe: Optional[set[str]] = None, *,
-                           ifrom: Optional[JID] = None, **iqkwargs) -> set[str]:
+    async def join_channel(self, channel: JID, nick: str, subscribe: set[str] | None = None, *,
+                           ifrom: JID | None = None, **iqkwargs) -> set[str]:
         """
         Join a MIX channel.
 
@@ -131,9 +130,9 @@ class XEP_0369(BasePlugin):
         return result_nodes.difference(subscribe)
 
     async def update_subscription(self, channel: JID,
-                                  subscribe: Optional[set[str]] = None,
-                                  unsubscribe: Optional[set[str]] = None, *,
-                                  ifrom: Optional[JID] = None, **iqkwargs) -> tuple[set[str], set[str]]:
+                                  subscribe: set[str] | None = None,
+                                  unsubscribe: set[str] | None = None, *,
+                                  ifrom: JID | None = None, **iqkwargs) -> tuple[set[str], set[str]]:
         """
         Update a MIX channel subscription.
 
@@ -167,7 +166,7 @@ class XEP_0369(BasePlugin):
         return (subscribe, unsubscribe)
 
     async def leave_channel(self, channel: JID, *,
-                            ifrom: Optional[JID] = None, **iqkwargs) -> None:
+                            ifrom: JID | None = None, **iqkwargs) -> None:
         """"
         Leave a MIX channel
         :param JID channel: JID of the channel to leave
@@ -177,7 +176,7 @@ class XEP_0369(BasePlugin):
         await iq.send(**iqkwargs)
 
     async def set_nick(self, channel: JID, nick: str, *,
-                       ifrom: Optional[JID] = None, **iqkwargs) -> str:
+                       ifrom: JID | None = None, **iqkwargs) -> str:
         """
         Set your nick on a channel. The returned nick MAY be different
         from the one provided, depending on service configuration.
@@ -204,13 +203,13 @@ class XEP_0369(BasePlugin):
         features = results_stanza['disco_info']['features']
         return 'urn:xmpp:mix:core:1#create-channel' in features
 
-    async def create_channel(self, service: JID, channel: Optional[str] = None, *,
-                             ifrom: Optional[JID] = None, **iqkwargs) -> str:
+    async def create_channel(self, service: JID, channel: str | None = None, *,
+                             ifrom: JID | None = None, **iqkwargs) -> str:
         """
         Create a MIX channel.
 
         :param JID service: MIX service JID
-        :param Optional[str] channel: Channel name (or leave empty to let
+        :param str | None channel: Channel name (or leave empty to let
             the service generate it)
         :returns: The channel name, as created by the service
         """
@@ -224,7 +223,7 @@ class XEP_0369(BasePlugin):
         return result['mix_create']['channel']
 
     async def destroy_channel(self, channel: JID, *,
-                              ifrom: Optional[JID] = None, **iqkwargs):
+                              ifrom: JID | None = None, **iqkwargs):
         """
         Destroy a MIX channel.
         :param JID channel: MIX channelJID
@@ -234,7 +233,7 @@ class XEP_0369(BasePlugin):
         await iq.send(**iqkwargs)
 
     async def list_mix_nodes(self, channel: JID,
-                             ifrom: Optional[JID] = None, **discokwargs) -> set[str]:
+                             ifrom: JID | None = None, **discokwargs) -> set[str]:
         """
         List mix nodes for a channel.
 
@@ -253,7 +252,7 @@ class XEP_0369(BasePlugin):
         return nodes
 
     async def list_participants(self, channel: JID, *,
-                                ifrom: Optional[JID] = None, **pubsubkwargs) -> list[tuple[str, str, Optional[JID]]]:
+                                ifrom: JID | None = None, **pubsubkwargs) -> list[tuple[str, str, JID | None]]:
         """
         List the participants of a MIX channel
         :param JID channel: The MIX channel
@@ -277,7 +276,7 @@ class XEP_0369(BasePlugin):
         return participants
 
     async def list_channels(self, service: JID, *,
-                            ifrom: Optional[JID] =None, **discokwargs) -> list[tuple[JID, str]]:
+                            ifrom: JID | None =None, **discokwargs) -> list[tuple[JID, str]]:
         """
         List the channels on a MIX service
 

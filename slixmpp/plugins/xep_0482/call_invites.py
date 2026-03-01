@@ -3,7 +3,6 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permissio
 import logging
-from typing import Optional
 
 from slixmpp.stanza import Message
 from slixmpp.jid import JID

@@ -17,7 +17,6 @@ from typing import (
     ClassVar,
     Coroutine,
     Iterable,
-    Optional,
     TYPE_CHECKING,
 )
 from weakref import ReferenceType
@@ -121,7 +120,7 @@ def multifactory(stanza: type[ElementBase], plugin_attrib: str) -> type[ElementB
     def plugin_filter(self: Multi) -> Callable[..., bool]:
         return lambda x: isinstance(x, self._multistanza)
 
-    def plugin_lang_filter(self: Multi, lang: Optional[str]) -> Callable[..., bool]:
+    def plugin_lang_filter(self: Multi, lang: str | None) -> Callable[..., bool]:
         return lambda x: isinstance(x, self._multistanza) and \
                          x['lang'] == lang
 
@@ -131,11 +130,11 @@ def multifactory(stanza: type[ElementBase], plugin_attrib: str) -> type[ElementB
         """
         _multistanza: type[ElementBase]
 
-        def setup(self, xml: Optional[ET.Element] = None) -> bool:
+        def setup(self, xml: ET.Element | None = None) -> bool:
             self.xml = ET.Element('')
             return False
 
-    def get_multi(self: Multi, lang: Optional[str] = None) -> list[ElementBase]:
+    def get_multi(self: Multi, lang: str | None = None) -> list[ElementBase]:
         parent = fail_without_parent(self)
         if not lang or lang == '*':
             res = filter(plugin_filter(self), parent)
@@ -143,7 +142,7 @@ def multifactory(stanza: type[ElementBase], plugin_attrib: str) -> type[ElementB
             res = filter(plugin_lang_filter(self, lang), parent)
         return list(res)
 
-    def set_multi(self: Multi, val: Iterable[ElementBase], lang: Optional[str] = None) -> None:
+    def set_multi(self: Multi, val: Iterable[ElementBase], lang: str | None = None) -> None:
         parent = fail_without_parent(self)
         del_multi = getattr(self, 'del_%s' % plugin_attrib)
         del_multi(lang)
@@ -158,7 +157,7 @@ def multifactory(stanza: type[ElementBase], plugin_attrib: str) -> type[ElementB
             raise ValueError('No stanza parent for multifactory')
         return parent
 
-    def del_multi(self: Multi, lang: Optional[str] = None) -> None:
+    def del_multi(self: Multi, lang: str | None = None) -> None:
         parent = fail_without_parent(self)
         if not lang or lang == '*':
             res = list(filter(plugin_filter(self), parent))
@@ -420,7 +419,7 @@ class ElementBase(object):
     #: The default XML namespace: ``http://www.w3.org/XML/1998/namespace``.
     xml_ns: ClassVar[str] = XML_NS
 
-    plugins: dict[tuple[str, Optional[str]], ElementBase]
+    plugins: dict[tuple[str, str | None], ElementBase]
     #: The underlying XML object for the stanza. It is a standard
     #: :class:`xml.etree.ElementTree` object.
     xml: ET.Element
@@ -428,9 +427,9 @@ class ElementBase(object):
     loaded_plugins: set[str]
     iterables: list[ElementBase]
     tag: str
-    parent: Optional[ReferenceType[ElementBase]]
+    parent: ReferenceType[ElementBase] | None
 
-    def __init__(self, xml: Optional[ET.Element] = None, parent: Optional[ElementBase] | ReferenceType[ElementBase] = None):
+    def __init__(self, xml: ET.Element | None = None, parent: ElementBase | ReferenceType[ElementBase] | None = None):
         self._index = 0
 
         if xml is not None:
@@ -471,7 +470,7 @@ class ElementBase(object):
                                  existing_xml=child,
                                  reuse=False)
 
-    def setup(self, xml: Optional[ET.Element] = None) -> bool:
+    def setup(self, xml: ET.Element | None = None) -> bool:
         """Initialize the stanza's XML contents.
 
         Will return ``True`` if XML was generated according to the stanza's
@@ -505,7 +504,7 @@ class ElementBase(object):
         # We had to generate XML
         return True
 
-    def enable(self, attrib: str, lang: Optional[str] = None) -> ElementBase:
+    def enable(self, attrib: str, lang: str | None = None) -> ElementBase:
         """Enable and initialize a stanza plugin.
 
         Alias for :meth:`init_plugin`.
@@ -527,7 +526,7 @@ class ElementBase(object):
             name, lang, *_ = name.split('|')
         return self.get_plugin(name, lang=lang, check=True) is not None
 
-    def get_plugin(self, name: str, lang: Optional[str] = None, check: bool = False) -> Optional[ElementBase]:
+    def get_plugin(self, name: str, lang: str | None = None, check: bool = False) -> ElementBase | None:
         """Retrieve a stanza plugin.
 
         :param check: Return None instead of creating the object if True.
@@ -553,10 +552,10 @@ class ElementBase(object):
             else:
                 return None if check else self.init_plugin(name, lang)
 
-    def init_plugin(self, attrib: str, lang: Optional[str] = None,
-                    existing_xml: Optional[ET.Element] = None,
+    def init_plugin(self, attrib: str, lang: str | None = None,
+                    existing_xml: ET.Element | None = None,
                     reuse: bool = True,
-                    element: Optional[ElementBase] = None) -> ElementBase:
+                    element: ElementBase | None = None) -> ElementBase:
         """Enable and initialize a stanza plugin.
 
         :param string attrib: The :attr:`plugin_attrib` value of the
@@ -937,7 +936,7 @@ class ElementBase(object):
                 pass
         return self
 
-    def _set_attr(self, name: str, value: Optional[JidStr]) -> None:
+    def _set_attr(self, name: str, value: JidStr | None) -> None:
         """Set the value of a top level attribute of the XML object.
 
         If the new value is None or an empty string, then the attribute will
@@ -976,7 +975,7 @@ class ElementBase(object):
         return self.xml.attrib.get(name, default)
 
     def _get_sub_text(self, name: str, default: str = '',
-                      lang: Optional[str] = None) -> str | dict[str, str]:
+                      lang: str | None = None) -> str | dict[str, str]:
         """Return the text contents of a sub element.
 
         In case the element does not exist, or it has no textual content,
@@ -1012,7 +1011,7 @@ class ElementBase(object):
         return default
 
     def _get_all_sub_text(self, name: str, default: str = '',
-                          lang: Optional[str] = None) -> dict[str, str]:
+                          lang: str | None = None) -> dict[str, str]:
         name = cast(str, self._fix_ns(name))
 
         default_lang = self.get_lang()
@@ -1030,9 +1029,9 @@ class ElementBase(object):
                     results[stanza_lang] = text
         return results
 
-    def _set_sub_text(self, name: str, text: Optional[str] = None,
+    def _set_sub_text(self, name: str, text: str | None = None,
                       keep: bool = False,
-                      lang: Optional[str] = None) -> Optional[ET.Element]:
+                      lang: str | None = None) -> ET.Element | None:
         """Set the text contents of a sub element.
 
         In case the element does not exist, a element will be created,
@@ -1058,7 +1057,7 @@ class ElementBase(object):
 
         path = cast(list[str], self._fix_ns(name, split=True))
         name = path[-1]
-        parent: Optional[ET.Element] = self.xml
+        parent: ET.Element | None = self.xml
 
         # The first goal is to find the parent of the subelement, or, if
         # we can't find that, the closest grandparent element.
@@ -1105,7 +1104,7 @@ class ElementBase(object):
 
     def _set_all_sub_text(self, name: str, values: dict[str, str],
                           keep: bool = False,
-                          lang: Optional[str] = None) -> None:
+                          lang: str | None = None) -> None:
         self._del_sub(name, lang=lang)
         for value_lang, value in values.items():
             if not lang or lang == '*' or value_lang == lang:
@@ -1113,7 +1112,7 @@ class ElementBase(object):
                                          keep=keep,
                                          lang=value_lang)
 
-    def _del_sub(self, name: str, all: bool = False, lang: Optional[str] = None) -> None:
+    def _del_sub(self, name: str, all: bool = False, lang: str | None = None) -> None:
         """Remove sub elements that match the given name or XPath.
 
         If the element is in a path, then any parent elements that become
@@ -1131,11 +1130,11 @@ class ElementBase(object):
         if not lang:
             lang = default_lang
 
-        parent: Optional[ET.Element] = self.xml
+        parent: ET.Element | None = self.xml
         for level, _ in enumerate(path):
             # Generate the paths to the target elements and their parent.
             element_path = "/".join(path[:len(path) - level])
-            parent_path: Optional[str] = "/".join(path[:len(path) - level - 1])
+            parent_path: str | None = "/".join(path[:len(path) - level - 1])
 
             elements = self.xml.findall(element_path)
             if parent_path == '':
@@ -1224,7 +1223,7 @@ class ElementBase(object):
         # Everything matched.
         return True
 
-    def get(self, key: str, default: Optional[Any] = None) -> Any:
+    def get(self, key: str, default: Any | None = None) -> Any:
         """Return the value of a stanza interface.
 
         If the found value is None or an empty string, return the supplied
@@ -1338,7 +1337,7 @@ class ElementBase(object):
         """
         return "{%s}%s" % (cls.namespace, cls.name)
 
-    def get_lang(self, lang: Optional[str] = None) -> str:
+    def get_lang(self, lang: str | None = None) -> str:
         result = self.xml.attrib.get('{%s}lang' % XML_NS, '')
         if not result and self.parent:
             parent = self.parent()
@@ -1346,7 +1345,7 @@ class ElementBase(object):
                 return cast(str, parent['lang'])
         return result
 
-    def set_lang(self, lang: Optional[str]) -> None:
+    def set_lang(self, lang: str | None) -> None:
         self.del_lang()
         attr = '{%s}lang' % XML_NS
         if lang:
@@ -1514,12 +1513,12 @@ class StanzaBase(ElementBase):
     namespace = 'jabber:client'
     types: ClassVar[set[str]] = set()
 
-    def __init__(self, stream: Optional[XMLStream] = None,
-                 xml: Optional[ET.Element] = None,
-                 stype: Optional[str] = None,
-                 sto: Optional[JidStr] = None, sfrom: Optional[JidStr] = None,
-                 sid: Optional[str] = None,
-                 parent: Optional[ElementBase] = None, recv: bool = False):
+    def __init__(self, stream: XMLStream | None = None,
+                 xml: ET.Element | None = None,
+                 stype: str | None = None,
+                 sto: JidStr | None = None, sfrom: JidStr | None = None,
+                 sid: str | None = None,
+                 parent: ElementBase | None = None, recv: bool = False):
         self.stream = stream
         if stream is not None:
             self.namespace = stream.default_ns

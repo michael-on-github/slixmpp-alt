@@ -3,7 +3,6 @@
 # This file is part of slixmpp.
 # See the file LICENSE for copying permission.
 import logging
-from typing import Optional
 
 from slixmpp import Message, JID
 from slixmpp.plugins import BasePlugin
@@ -59,7 +58,7 @@ class XEP_0333(BasePlugin):
         self.xmpp.event('marker', message)
 
     def send_marker(self, mto: JID, id: str, marker: str,
-                    thread: Optional[str] = None,
+                    thread: str | None = None,
                     **msg_kwargs):
         """
         Send a chat marker.

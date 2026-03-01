@@ -9,7 +9,6 @@ This file contains boilerplate to define types relevant to slixmpp.
 
 from typing import (
     Any,
-    Optional,
     Iterable,
     NamedTuple,
 )
@@ -60,24 +59,24 @@ MucAffiliation = Literal[
     'outcast', 'member', 'admin', 'owner', 'none'
 ]
 
-OptJid = Optional[JID]
+OptJid = JID | None
 JidStr = str | JID
-OptJidStr = Optional[str | JID]
+OptJidStr = str | JID | None
 
 
 class PresenceArgs(TypedDict, total=False):
     pfrom: JidStr
     pto: JidStr
     ptype: PresenceTypes
-    pshow: Optional[PresenceShows]
-    pstatus: Optional[str]
+    pshow: PresenceShows | None
+    pstatus: str | None
 
 
 class MucRoomItem(TypedDict, total=False):
     jid: str
     role: MucRole
     affiliation: MucAffiliation
-    show: Optional[PresenceShows]
+    show: PresenceShows | None
     status: str
     alt_nick: str
 
@@ -106,7 +105,7 @@ RosterState = TypedDict(
 
 class RosterDBProtocol(Protocol):
     def load(self, owner: JidStr, jid: JidStr,
-             db_state: dict[str, Any]) -> Optional[RosterState]:
+             db_state: dict[str, Any]) -> RosterState | None:
         ...
 
     def save(self, owner: JidStr, jid: JidStr,
@@ -114,7 +113,7 @@ class RosterDBProtocol(Protocol):
         ...
 
     def entries(self, owner: OptJidStr,
-                db_state: Optional[dict[str, Any]] = None) -> Iterable[str]:
+                db_state: dict[str, Any] | None = None) -> Iterable[str]:
         ...
 
 
@@ -171,7 +170,7 @@ ClientTypes = Literal[
 class HatTuple(NamedTuple):
     uri: str
     title: str
-    hue: Optional[float] = None
+    hue: float | None = None
 
 
 __all__ = [

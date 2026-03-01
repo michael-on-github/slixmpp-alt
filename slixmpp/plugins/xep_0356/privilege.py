@@ -1,5 +1,4 @@
 import logging
-import typing
 import uuid
 from collections import defaultdict
 from xml.etree import ElementTree as ET
@@ -191,7 +190,7 @@ class XEP_0356(BasePlugin):
             return await self._make_set_roster(jid, roster_items).send(**send_kwargs)
 
     async def send_privileged_iq(
-        self, encapsulated_iq: Iq, iq_id: typing.Optional[str] = None
+        self, encapsulated_iq: Iq, iq_id: str | None = None
     ):
         """
         Send an IQ on behalf of a user

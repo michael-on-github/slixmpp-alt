@@ -2,7 +2,6 @@
 # Copyright (C) 2020 Mathieu Pasquet <mathieui@mathieui.net>
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
-from typing import Optional
 from asyncio import Future
 
 from slixmpp import JID, Message, Iq
@@ -40,7 +39,7 @@ class XEP_0425(BasePlugin):
         self.xmpp.plugin['xep_0030'].del_feature(feature=stanza.NS)
 
     async def moderate(self, room: JID, id: str, reason: str = '', *,
-                       ifrom: Optional[JID] = None, **iqkwargs) -> Future[Iq]:
+                       ifrom: JID | None = None, **iqkwargs) -> Future[Iq]:
         """
         Moderate a message.
 

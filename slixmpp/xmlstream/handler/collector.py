@@ -7,7 +7,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING
 
 from slixmpp.xmlstream.stanzabase import StanzaBase
 from slixmpp.xmlstream.handler.base import BaseHandler
@@ -35,7 +35,7 @@ class Collector(BaseHandler):
     """
     _stanzas: list[StanzaBase]
 
-    def __init__(self, name: str, matcher: MatcherBase, stream: Optional[XMLStream] = None):
+    def __init__(self, name: str, matcher: MatcherBase, stream: XMLStream | None = None):
         BaseHandler.__init__(self, name, matcher, stream=stream)
         self._stanzas = []
 

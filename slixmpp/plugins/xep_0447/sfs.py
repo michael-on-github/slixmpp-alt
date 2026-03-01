@@ -1,7 +1,7 @@
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Iterable, Optional, Literal
+from typing import Iterable, Literal
 
 from slixmpp.plugins import BasePlugin
 from slixmpp.stanza import Message
@@ -37,10 +37,10 @@ class XEP_0447(BasePlugin):
     def get_sfs(
         self,
         path: Path,
-        uris: Optional[Iterable[str]] = None,
-        media_type: Optional[str] = None,
-        desc: Optional[str] = None,
-        disposition: Optional[Literal["inline", "attachment"]] = None
+        uris: Iterable[str] | None = None,
+        media_type: str | None = None,
+        desc: str | None = None,
+        disposition: Literal["inline", "attachment"] | None = None
     ):
         sfs = stanza.StatelessFileSharing()
         if disposition:

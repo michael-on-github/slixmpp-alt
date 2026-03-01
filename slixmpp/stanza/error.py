@@ -3,7 +3,7 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 from __future__ import annotations
-from typing import Optional, ClassVar
+from typing import ClassVar
 from slixmpp.xmlstream import ElementBase, ET
 
 
@@ -66,7 +66,7 @@ class Error(ElementBase):
     condition_ns: str = 'urn:ietf:params:xml:ns:xmpp-stanzas'
     types = {'cancel', 'continue', 'modify', 'auth', 'wait'}
 
-    def setup(self, xml: Optional[ET.Element] = None):
+    def setup(self, xml: ET.Element | None = None):
         """
         Populate the stanza object using an optional XML object.
 

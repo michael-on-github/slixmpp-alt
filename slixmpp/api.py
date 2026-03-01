@@ -1,10 +1,10 @@
-from typing import Any, Optional, Callable
+from typing import Any, Callable
 from asyncio import Future
 from inspect import iscoroutinefunction
 from slixmpp.xmlstream import JID
 
 APIHandler = Callable[
-    [Optional[JID], Optional[str], Optional[JID], Any],
+    [JID | None, str | None, JID | None, Any],
     Any
 ]
 
@@ -89,8 +89,8 @@ class APIRegistry(object):
         del self._handler_defaults[ctype]
         del self._handlers[ctype]
 
-    def run(self, ctype: str, op: str, jid: Optional[JID] = None,
-            node: Optional[str] = None, ifrom: Optional[JID] = None,
+    def run(self, ctype: str, op: str, jid: JID | None = None,
+            node: str | None = None, ifrom: JID | None = None,
             args: Any = None) -> Future:
         """Execute an API callback, based on specificity.
 
@@ -173,8 +173,8 @@ class APIRegistry(object):
         future.set_result(None)
         return future
 
-    def register(self, handler: Optional[APIHandler], ctype: str, op: str,
-                 jid: Optional[JID] = None, node: Optional[str] = None,
+    def register(self, handler: APIHandler | None, ctype: str, op: str,
+                 jid: JID | None = None, node: str | None = None,
                  default: bool = False):
         """Register an API callback, with JID+node specificity.
 
@@ -211,8 +211,8 @@ class APIRegistry(object):
         self._setup(ctype, op)
         self._handler_defaults[ctype][op] = handler
 
-    def unregister(self, ctype: str, op: str, jid: Optional[JID] = None,
-                   node: Optional[str] = None):
+    def unregister(self, ctype: str, op: str, jid: JID | None = None,
+                   node: str | None = None):
         """Remove an API callback.
 
         The API callback chosen for removal is based on the
@@ -228,8 +228,8 @@ class APIRegistry(object):
         self._setup(ctype, op)
         self.register(None, ctype, op, jid, node)
 
-    def restore_default(self, ctype: str, op: str, jid: Optional[JID] = None,
-                        node: Optional[str] = None):
+    def restore_default(self, ctype: str, op: str, jid: JID | None = None,
+                        node: str | None = None):
         """Reset an API callback to use a default handler.
 
         :param ctype: The name of the API to use.

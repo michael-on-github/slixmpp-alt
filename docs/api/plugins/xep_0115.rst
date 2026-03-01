@@ -24,7 +24,7 @@ in-memory cache of verstring→disco info, and fulljid→verstring.
         - **ifrom**: unused
         - **args**: a ``dict`` containing the verstring and
           :class:`~.DiscoInfo` payload (
-          ``{'verstring': Optional[str], 'info': Optional[DiscoInfo]}``)
+          ``{'verstring': str | None, 'info': DiscoInfo | None}``)
 
         Cache a verification string with its payload.
 

@@ -3,7 +3,6 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permissio
 import logging
-from typing import Optional
 
 from slixmpp.stanza import Message
 from slixmpp.jid import JID
@@ -52,7 +51,7 @@ class XEP_0308(BasePlugin):
         self.xmpp.event('message_correction', msg)
 
     def build_correction(self, id_to_replace: str, mto: JID,
-                         mfrom: Optional[JID] = None, mtype: str = 'chat',
+                         mfrom: JID | None = None, mtype: str = 'chat',
                          mbody: str = '') -> Message:
         """
         Build a corrected message.

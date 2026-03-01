@@ -2,7 +2,7 @@ import builtins
 import sys
 import hashlib
 
-from typing import Optional, Callable
+from typing import Callable
 
 bytes_ = builtins.bytes  # alias the stdlib type but ew
 
@@ -14,7 +14,7 @@ def unicode(text: bytes_ | str) -> str:
         return text
 
 
-def bytes(text: Optional[str | bytes_]) -> bytes_:
+def bytes(text: str | bytes_ | None) -> bytes_:
     """
     Convert Unicode text to UTF-8 encoded bytes.
 
@@ -89,7 +89,7 @@ def XOR(x: bytes_, y: bytes_) -> bytes_:
     return builtins.bytes([a ^ b for a, b in zip(x, y)])
 
 
-def hash(name: str) -> Optional[Callable]:
+def hash(name: str) -> Callable | None:
     """
     Return a hash function implementing the given algorithm.
 

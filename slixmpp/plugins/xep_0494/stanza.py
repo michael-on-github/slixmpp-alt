@@ -5,7 +5,6 @@
 
 from datetime import datetime
 from enum import Enum
-from typing import Optional
 from slixmpp import Iq, register_stanza_plugin, ElementBase
 from slixmpp.plugins.xep_0082 import parse, format_datetime
 
@@ -107,7 +106,7 @@ class Client(ElementBase):
         'permission', 'permission_extra',
     }
 
-    def get_type(self) -> Optional[str]:
+    def get_type(self) -> str | None:
         type_ = self.xml.attrib.get('type', None)
         if type_ is not None:
             return ClientType(type_)
@@ -121,7 +120,7 @@ class Client(ElementBase):
             value = type_
         self.xml.attrib['type'] = value
 
-    def get_connected(self) -> Optional[bool]:
+    def get_connected(self) -> bool | None:
         connected = self.xml.attrib.get('connected', None)
         if connected is None or connected.lower() not in ('true', 'false'):
             return None
@@ -130,13 +129,13 @@ class Client(ElementBase):
     def set_connected(self, connected: bool) -> None:
         self.xml.attrib['connected'] = str(connected).lower()
 
-    def get_first_seen(self) -> Optional[datetime]:
+    def get_first_seen(self) -> datetime | None:
         try:
             parse(self._get_sub_text('first-seen'))
         except:
             return None
 
-    def get_last_seen(self) -> Optional[datetime]:
+    def get_last_seen(self) -> datetime | None:
         try:
             parse(self._get_sub_text('last-seen'))
         except:
@@ -189,7 +188,7 @@ class Permission(ElementBase):
         'set_permission_extra', 'get_permission_extra', 'del_permission_extra',
     }
 
-    def get_permission(self) -> Optional[PermissionEnum]:
+    def get_permission(self) -> PermissionEnum | None:
         return PermissionEnum(self.xml.attrib.get('status'))
 
     def set_permission(self, permission: str | PermissionEnum) -> None:

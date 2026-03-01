@@ -11,7 +11,6 @@ import hmac
 import random
 
 from base64 import b64encode, b64decode
-from typing import Optional
 
 bytes_ = bytes
 
@@ -160,7 +159,7 @@ class CRAM(Mech):
             if not self.security_settings['unencrypted_cram']:
                 raise SASLCancelled('Unencrypted CRAM-%s' % self.hash_name)
 
-    def process(self, challenge: bytes_ = b'') -> Optional[bytes_]:
+    def process(self, challenge: bytes_ = b'') -> bytes_ | None:
         if not challenge:
             return None
 
@@ -474,7 +473,7 @@ class DIGEST(Mech):
                 resp += b',' + bytes(key) + b'=' + bytes(value)
         return resp[1:]
 
-    def process(self, challenge: bytes_ = b'') -> Optional[bytes_]:
+    def process(self, challenge: bytes_ = b'') -> bytes_ | None:
         if not challenge:
             if self.cnonce and self.nonce and self.nonce_count and self.qop:
                 self.nonce_count += 1

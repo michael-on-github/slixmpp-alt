@@ -2,7 +2,7 @@
 # Copyright (C) 2020 Mathieu Pasquet
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
-from typing import Iterable, Optional
+from typing import Iterable
 
 from slixmpp import JID
 from slixmpp.plugins import BasePlugin
@@ -43,7 +43,7 @@ class XEP_0437(BasePlugin):
         self.xmpp.event('room_activity', presence)
 
     def subscribe(self, service: JID, *,
-                  pfrom: Optional[JID] = None):
+                  pfrom: JID | None = None):
         """
         Subscribe to room activity on a MUC service.
         :param JID service: MUC service
@@ -53,7 +53,7 @@ class XEP_0437(BasePlugin):
         pres.send()
 
     def unsubscribe(self, service: JID, *,
-                    pfrom: Optional[JID] = None):
+                    pfrom: JID | None = None):
         """
         Unsubscribe from room activity on a MUC service.
         :param JID service: MUC service

@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 import stringprep
 
-from typing import Iterable, Callable, Any, Optional
+from typing import Iterable, Callable, Any
 from slixmpp.util import hashes, bytes, stringprep_profiles
 
 
@@ -126,8 +126,8 @@ SecurityCallback = Callable[[Iterable[str]], dict[str, Any]]
 
 def choose(mech_list: Iterable[str], credentials: CredentialsCallback,
            security_settings: SecurityCallback,
-           limit: Optional[Iterable[str]] = None,
-           min_mech: Optional[str] = None) -> Mech:
+           limit: Iterable[str] | None = None,
+           min_mech: str | None = None) -> Mech:
     available_mechs = set(MECHANISMS.keys())
     if limit is None:
         limit = set(mech_list)

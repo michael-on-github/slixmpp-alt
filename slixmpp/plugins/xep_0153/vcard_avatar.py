@@ -6,9 +6,6 @@
 import hashlib
 import logging
 from asyncio import Future
-from typing import (
-    Optional,
-)
 
 from slixmpp import JID
 from slixmpp.stanza import Presence
@@ -57,9 +54,9 @@ class XEP_0153(BasePlugin):
         self.xmpp.del_event_handler('presence_chat', self._recv_presence)
         self.xmpp.del_event_handler('presence_away', self._recv_presence)
 
-    def set_avatar(self, jid: Optional[JID] = None,
-                   avatar: Optional[bytes] = None,
-                   mtype: Optional[str] = None, **iqkwargs) -> Future:
+    def set_avatar(self, jid: JID | None = None,
+                   avatar: bytes | None = None,
+                   mtype: str | None = None, **iqkwargs) -> Future:
         """Set a VCard avatar.
 
         :param jid: The JID to set the avatar for.

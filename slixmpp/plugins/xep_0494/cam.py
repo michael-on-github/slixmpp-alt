@@ -4,7 +4,6 @@
 # See the file LICENSE for copying permission.
 
 from asyncio import Future
-from typing import Optional
 from slixmpp.plugins import BasePlugin
 from slixmpp.exceptions import IqError
 from . import stanza

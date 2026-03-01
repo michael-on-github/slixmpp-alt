@@ -3,7 +3,6 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission
 
-from typing import Optional
 from slixmpp import Message
 from slixmpp.jid import JID
 from slixmpp.xmlstream import ElementBase, register_stanza_plugin
@@ -26,7 +25,7 @@ class Jingle(ElementBase):
                 raise ValueError(f'"jid" must be a valid JID object')
         self.xml.attrib['jid'] = value.full
 
-    def get_jid(self) -> Optional[JID]:
+    def get_jid(self) -> JID | None:
         try:
             return JID(self.xml.attrib.get('jid', ''))
         except ValueError:

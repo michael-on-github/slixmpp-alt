@@ -6,7 +6,6 @@
 # See the file LICENSE for copying permission.
 from typing import (
     Iterable,
-    Optional,
 )
 import logging
 from slixmpp.xmlstream import ElementBase, ET, JID
@@ -280,7 +279,7 @@ class MUCUserItem(ElementBase):
     interfaces = {'role', 'affiliation', 'jid', 'reason', 'nick'}
     sub_interfaces = {'reason'}
 
-    def get_jid(self) -> Optional[JID]:
+    def get_jid(self) -> JID | None:
         jid = self.xml.attrib.get('jid', None)
         if jid:
             return JID(jid)
@@ -294,7 +293,7 @@ class MUCActor(ElementBase):
     plugin_attrib = 'actor'
     interfaces = {'jid', 'nick'}
 
-    def get_jid(self) -> Optional[JID]:
+    def get_jid(self) -> JID | None:
         jid = self.xml.attrib.get('jid', None)
         if jid:
             return JID(jid)

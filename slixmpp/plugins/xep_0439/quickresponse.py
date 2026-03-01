@@ -4,7 +4,6 @@
 # See the file LICENSE for copying permission.
 from typing import (
     Iterable,
-    Optional,
 )
 
 from slixmpp import JID, Message
@@ -58,8 +57,8 @@ class XEP_0439(BasePlugin):
 
     def ask_for_response(self, mto: JID, body: str,
                          responses: Iterable[tuple[str, str]],
-                         mtype: str = 'chat', lang: Optional[str] = None, *,
-                         mfrom: Optional[JID] = None):
+                         mtype: str = 'chat', lang: str | None = None, *,
+                         mfrom: JID | None = None):
         """
         Send a message with a set of responses.
 
@@ -89,8 +88,8 @@ class XEP_0439(BasePlugin):
 
     def ask_for_actions(self, mto: JID, body: str,
                         actions: Iterable[tuple[str, str]],
-                        mtype: str = 'chat', lang: Optional[str] = None, *,
-                        mfrom: Optional[JID] = None):
+                        mtype: str = 'chat', lang: str | None = None, *,
+                        mfrom: JID | None = None):
         """
         Send a message with a set of actions.
 

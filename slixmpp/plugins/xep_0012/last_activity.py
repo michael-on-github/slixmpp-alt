@@ -6,9 +6,6 @@
 import logging
 from asyncio import Future
 from datetime import datetime, timedelta
-from typing import (
-    Optional
-)
 
 from slixmpp.plugins import BasePlugin
 from slixmpp import JID
@@ -61,7 +58,7 @@ class XEP_0012(BasePlugin):
     def session_bind(self, jid):
         self.xmpp['xep_0030'].add_feature('jabber:iq:last')
 
-    def begin_idle(self, jid: Optional[JID] = None, status: Optional[str] = None) -> Future:
+    def begin_idle(self, jid: JID | None = None, status: str | None = None) -> Future:
         """Reset the last activity for the given JID.
 
         .. versionchanged:: 1.8.0
@@ -71,7 +68,7 @@ class XEP_0012(BasePlugin):
         """
         return self.set_last_activity(jid, 0, status)
 
-    def end_idle(self, jid: Optional[JID] = None) -> Future:
+    def end_idle(self, jid: JID | None = None) -> Future:
         """Remove the last activity of a JID.
 
         .. versionchanged:: 1.8.0
@@ -79,7 +76,7 @@ class XEP_0012(BasePlugin):
         """
         return self.del_last_activity(jid)
 
-    def start_uptime(self, status: Optional[str] = None) -> Future:
+    def start_uptime(self, status: str | None = None) -> Future:
         """
         .. versionchanged:: 1.8.0
             This function now returns a Future.
@@ -106,7 +103,7 @@ class XEP_0012(BasePlugin):
         return self.api['del_last_activity'](jid)
 
     def get_last_activity(self, jid: JID, local: bool = False,
-                          ifrom: Optional[JID] = None, **iqkwargs) -> Future:
+                          ifrom: JID | None = None, **iqkwargs) -> Future:
         """Get last activity for a specific JID.
 
         :param local: Fetch the value from the local cache.

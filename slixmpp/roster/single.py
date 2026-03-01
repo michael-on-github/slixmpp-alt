@@ -9,7 +9,7 @@ from slixmpp.stanza import Presence
 from slixmpp.roster import RosterItem
 from slixmpp.types import RosterState, RosterDBProtocol, JidStr, ResourceDict
 
-from typing import TYPE_CHECKING, Optional, Iterator
+from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
     from slixmpp import BaseXMPP
@@ -52,10 +52,10 @@ class RosterNode:
     auto_authorize: bool
     auto_subscribe: bool
     _jids: dict[str, RosterItem]
-    db: Optional[RosterDBProtocol]
-    last_status: Optional[Presence]
+    db: RosterDBProtocol | None
+    last_status: Presence | None
 
-    def __init__(self, xmpp: "BaseXMPP", jid: JidStr, db: Optional[RosterDBProtocol] = None) -> None:
+    def __init__(self, xmpp: "BaseXMPP", jid: JidStr, db: RosterDBProtocol | None = None) -> None:
         """
         Create a roster node for a JID.
 
@@ -153,7 +153,7 @@ class RosterNode:
         """Iterate over the roster items."""
         return self._jids.__iter__()
 
-    def set_backend(self, db: Optional[RosterDBProtocol] = None, save: bool = True) -> None:
+    def set_backend(self, db: RosterDBProtocol | None = None, save: bool = True) -> None:
         """
         Set the datastore interface object for the roster node.
 
@@ -171,7 +171,7 @@ class RosterNode:
             for jid in new_entries - existing_entries:
                 self.add(jid)
 
-    def add(self, jid: JidStr, name: str = '', groups: Optional[list[str]] = None,
+    def add(self, jid: JidStr, name: str = '', groups: list[str] | None = None,
             afrom: bool = False, ato: bool = False, pending_in: bool = False,
             pending_out: bool = False, whitelisted: bool = False,
             save: bool = False) -> None:
@@ -248,8 +248,8 @@ class RosterNode:
             return None
         return self.update(jid, subscription='remove')
 
-    def update(self, jid: JidStr, name: Optional[str] = None, subscription=None, groups: Optional[list[str]] = None,
-               timeout: Optional[int] = None, callback=None) -> Future[Iq] | None:
+    def update(self, jid: JidStr, name: str | None = None, subscription=None, groups: list[str] | None = None,
+               timeout: int | None = None, callback=None) -> Future[Iq] | None:
         """
         Update a JID's subscription information.
 
@@ -283,7 +283,7 @@ class RosterNode:
 
         return iq.send(timeout=timeout, callback=callback)
 
-    def presence(self, jid: JID, resource: Optional[str] = None) -> ResourceDict | dict[str, ResourceDict]:
+    def presence(self, jid: JID, resource: str | None = None) -> ResourceDict | dict[str, ResourceDict]:
         """
         Retrieve the presence information of a JID.
 

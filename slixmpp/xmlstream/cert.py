@@ -1,6 +1,5 @@
 import logging
 from datetime import datetime, timedelta
-from typing import Optional
 
 # Make a call to strptime before starting threads to
 # prevent thread safety issues.
@@ -97,7 +96,7 @@ def extract_names(raw_cert: bytes) -> dict[str, set[str]]:
     return results
 
 
-def extract_dates(raw_cert: bytes) -> tuple[Optional[datetime], Optional[datetime]]:
+def extract_dates(raw_cert: bytes) -> tuple[datetime | None, datetime | None]:
     if not HAVE_PYASN1:
         log.warning("Could not find pyasn1 and pyasn1_modules. " + \
                     "SSL certificate expiration COULD NOT BE VERIFIED.")
@@ -126,14 +125,14 @@ def extract_dates(raw_cert: bytes) -> tuple[Optional[datetime], Optional[datetim
     return not_before, not_after
 
 
-def get_ttl(raw_cert: bytes) -> Optional[timedelta]:
+def get_ttl(raw_cert: bytes) -> timedelta | None:
     not_before, not_after = extract_dates(raw_cert)
     if not_after is None or not_before is None:
         return None
     return not_after - datetime.utcnow()
 
 
-def verify(expected: str, raw_cert: bytes) -> Optional[bool]:
+def verify(expected: str, raw_cert: bytes) -> bool | None:
     if not HAVE_PYASN1:
         log.warning("Could not find pyasn1 and pyasn1_modules. " + \
                     "SSL certificate COULD NOT BE VERIFIED.")

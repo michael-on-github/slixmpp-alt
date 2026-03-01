@@ -5,8 +5,6 @@
 # :copyright: (c) 2011 Nathanael C. Fritz
 # :license: MIT, see LICENSE for more details
 
-from typing import Optional
-
 from .types import ErrorConditions, ErrorTypes, JidStr
 
 
@@ -43,8 +41,8 @@ class XMPPError(Exception):
     """
 
     def __init__(self, condition: ErrorConditions='undefined-condition', text='',
-                etype: Optional[ErrorTypes]=None, extension=None, extension_ns=None,
-                extension_args=None, clear=True, by: Optional[JidStr] = None):
+                etype: ErrorTypes | None=None, extension=None, extension_ns=None,
+                extension_args=None, clear=True, by: JidStr | None = None):
         if extension_args is None:
             extension_args = {}
         if condition not in _DEFAULT_ERROR_TYPES:

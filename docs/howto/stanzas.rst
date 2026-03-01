@@ -239,7 +239,7 @@ In the following example, we want the ``toto`` attribute to be an integer.
     class Example(Element):
         interfaces = {'toto', 'titi', 'tata'}
 
-        def get_toto(self) -> Optional[int]:
+        def get_toto(self) -> int | None:
             try:
                 return int(self.xml.attrib.get('toto', ''))
             except ValueError:

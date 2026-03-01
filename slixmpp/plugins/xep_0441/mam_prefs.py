@@ -5,9 +5,6 @@
 import logging
 
 from asyncio import Future
-from typing import (
-    Optional,
-)
 
 from slixmpp import JID
 from slixmpp.types import MAMDefault
@@ -53,10 +50,10 @@ class XEP_0441(BasePlugin):
             result['mam_prefs']['never']
         )
 
-    def set_preferences(self, default: Optional[MAMDefault] = 'roster',
-                        always: Optional[list[JID]] = None,
-                        never: Optional[list[JID]] = None, *,
-                        ito: Optional[JID] = None, ifrom: Optional[JID] = None,
+    def set_preferences(self, default: MAMDefault | None = 'roster',
+                        always: list[JID] | None = None,
+                        never: list[JID] | None = None, *,
+                        ito: JID | None = None, ifrom: JID | None = None,
                         **iqkwargs) -> Future:
         """Set MAM Preferences.
 

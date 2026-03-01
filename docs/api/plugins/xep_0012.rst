@@ -34,7 +34,7 @@ received and sent last activities.
         - **node**: unused
         - **ifrom**: unused
         - **args**: A dict containing ``'seconds'`` and ``'status'``
-          ``{'seconds': Optional[int], 'status': Optional[str]}``
+          ``{'seconds': int | None, 'status': str | None}``
 
         Set the last activity of a JID in the storage.
 

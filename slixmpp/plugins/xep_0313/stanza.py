@@ -6,7 +6,6 @@ from datetime import datetime
 from typing import (
     Any,
     Iterable,
-    Optional,
 )
 
 from slixmpp.stanza import Message
@@ -76,7 +75,7 @@ class MAM(ElementBase):
             return {}
         return form.get_fields()
 
-    def get_start(self) -> Optional[datetime]:
+    def get_start(self) -> datetime | None:
         fields = self.get_fields()
         field = fields.get('start')
         if field and field["value"]:
@@ -89,7 +88,7 @@ class MAM(ElementBase):
             value = xep_0082.format_datetime(value)
         self.set_custom_field('start', value)
 
-    def get_end(self) -> Optional[datetime]:
+    def get_end(self) -> datetime | None:
         fields = self.get_fields()
         field = fields.get('end')
         if field and field["value"]:
@@ -101,7 +100,7 @@ class MAM(ElementBase):
             value = xep_0082.format_datetime(value)
         self.set_custom_field('end', value)
 
-    def get_with(self) -> Optional[JID]:
+    def get_with(self) -> JID | None:
         fields = self.get_fields()
         field = fields.get('with')
         if field:
@@ -121,7 +120,7 @@ class MAM(ElementBase):
             field = self['form'].add_field(var=fieldname)
             field['value'] = str(value)
 
-    def get_custom_field(self, fieldname: str) -> Optional[str]:
+    def get_custom_field(self, fieldname: str) -> str | None:
         fields = self.get_fields()
         field = fields.get(fieldname)
         if field:
@@ -275,7 +274,7 @@ class Start(ElementBase):
     #:   archive
     interfaces = {'id', 'timestamp'}
 
-    def get_timestamp(self) -> Optional[datetime]:
+    def get_timestamp(self) -> datetime | None:
         """Get the timestamp.
 
         :returns: The timestamp.
@@ -320,7 +319,7 @@ class End(ElementBase):
     #:   archive
     interfaces = {'id', 'timestamp'}
 
-    def get_timestamp(self) -> Optional[datetime]:
+    def get_timestamp(self) -> datetime | None:
         """Get the timestamp.
 
         :returns: The timestamp.

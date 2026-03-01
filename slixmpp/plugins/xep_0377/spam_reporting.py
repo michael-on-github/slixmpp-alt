@@ -8,7 +8,6 @@ import logging
 from asyncio import Future
 from typing import (
     Literal,
-    Optional,
 )
 
 import slixmpp
@@ -54,7 +53,7 @@ class XEP_0377(BasePlugin):
     def report(self,
         jids: BlockedJIDs,
         reason: Literal['spam', 'abuse'] = 'spam',
-        ifrom: Optional[JID] = None,
+        ifrom: JID | None = None,
         **iqkwargs,
     ) -> Future:
         """Report a JID or a list of JIDs.

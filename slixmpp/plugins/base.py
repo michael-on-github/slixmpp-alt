@@ -13,7 +13,7 @@ import copy
 import logging
 import threading
 
-from typing import Any, ClassVar, Optional, TYPE_CHECKING
+from typing import Any, ClassVar, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from slixmpp.clientxmpp import ClientXMPP, BaseXMPP
@@ -105,7 +105,7 @@ def load_plugin(name, module=None):
 
 
 class PluginManager(object):
-    def __init__(self, xmpp: 'BaseXMPP', config: Optional[dict] = None):
+    def __init__(self, xmpp: 'BaseXMPP', config: dict | None = None):
         #: We will track all enabled plugins in a set so that we
         #: can enable plugins in batches and pull in dependencies
         #: without problems.
@@ -243,7 +243,7 @@ class PluginManager(object):
             raise PluginNotFound(name)
         return plugin
 
-    def get(self, name: str, default: Optional['BasePlugin']) -> Optional['BasePlugin']:
+    def get(self, name: str, default: 'BasePlugin' | None) -> 'BasePlugin' | None:
         return self._plugins.get(name, default)
 
     def __iter__(self):

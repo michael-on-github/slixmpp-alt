@@ -23,7 +23,7 @@ The default API here is managing a JID→Keyid dict in-memory.
         - **node**: unused
         - **ifrom**: unused
         - **args**: unused
-        - **returns**: ``Optional[str]``, the keyid or None
+        - **returns**: ``str | None``, the keyid or None
 
         Get the KeyiD for a JID, None if it is not found.
 

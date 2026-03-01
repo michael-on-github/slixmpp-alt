@@ -11,9 +11,6 @@ import re
 import socket
 
 from functools import lru_cache
-from typing import (
-    Optional,
-)
 
 from slixmpp.stringprep import nodeprep, resourceprep, idna, StringprepError
 
@@ -69,7 +66,7 @@ def _parse_jid(data: str):
     return node, domain, resource
 
 
-def _validate_node(node: Optional[str]):
+def _validate_node(node: str | None):
     """Validate the local, or username, portion of a JID.
 
     :raises InvalidJID:
@@ -150,7 +147,7 @@ def _validate_domain(domain: str):
     return domain
 
 
-def _validate_resource(resource: Optional[str]):
+def _validate_resource(resource: str | None):
     """Validate the resource portion of a JID.
 
     :raises InvalidJID:
@@ -240,7 +237,7 @@ class JID:
 
     __slots__ = ('_node', '_domain', '_resource', '_bare', '_full')
 
-    def __init__(self, jid: Optional[str | 'JID'] = None, bare: bool = False):
+    def __init__(self, jid: str | 'JID' | None = None, bare: bool = False):
         if not jid:
             self._node = ''
             self._domain = ''
@@ -290,7 +287,7 @@ class JID:
         return self._node
 
     @node.setter
-    def node(self, value: Optional[str]):
+    def node(self, value: str | None):
         self._node = _validate_node(value)
         self._update_bare_full()
 
@@ -308,7 +305,7 @@ class JID:
         return self._resource
 
     @resource.setter
-    def resource(self, value: Optional[str]):
+    def resource(self, value: str | None):
         self._resource = _validate_resource(value)
         self._update_bare_full()
 

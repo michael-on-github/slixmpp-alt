@@ -42,7 +42,7 @@ cache.
         - **node**: unused
         - **ifrom**: unused
         - **args**: unused
-        - **returns**: ``Optional[str]``, the avatar hash
+        - **returns**: ``str | None``, the avatar hash
 
         Get the avatar hash for a JID.
 

@@ -14,7 +14,6 @@ import logging
 from asyncio import Future
 from typing import (
     Iterable,
-    Optional,
     TYPE_CHECKING,
 )
 
@@ -100,8 +99,8 @@ class XEP_0084(BasePlugin):
             **pubsubkwargs
         )
 
-    def publish_avatar_metadata(self, items: Optional[MetadataItems] = None,
-                                pointers: Optional[Iterable[Pointer]] = None,
+    def publish_avatar_metadata(self, items: MetadataItems | None = None,
+                                pointers: Iterable[Pointer] | None = None,
                                 **pubsubkwargs) -> Future:
         """Publish avatar metadata.
 

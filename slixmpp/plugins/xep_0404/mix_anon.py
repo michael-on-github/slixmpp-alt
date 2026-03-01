@@ -2,9 +2,6 @@
 # Copyright (C) 2020 Mathieu Pasquet <mathieui@mathieui.net>
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
-from typing import (
-    Optional,
-)
 
 from slixmpp import JID, Message, Iq
 from slixmpp.exceptions import IqError, IqTimeout
@@ -34,7 +31,7 @@ class XEP_0404(BasePlugin):
         stanza.register_plugins()
 
     async def get_anon_raw(self, channel: JID, *,
-                            ifrom: Optional[JID] = None, **pubsubkwargs) -> Iq:
+                            ifrom: JID | None = None, **pubsubkwargs) -> Iq:
         """
         Get the jid-participant mapping result (raw).
         :param JID channel: MIX channel JID
@@ -46,7 +43,7 @@ class XEP_0404(BasePlugin):
         )
 
     async def get_anon_by_jid(self, channel: JID, *,
-                              ifrom: Optional[JID] = None, **pubsubkwargs) -> dict[JID, str]:
+                              ifrom: JID | None = None, **pubsubkwargs) -> dict[JID, str]:
         """
         Get the jid-participant mapping, by JID
 
@@ -59,7 +56,7 @@ class XEP_0404(BasePlugin):
         return mapping
 
     async def get_anon_by_id(self, channel: JID, *,
-                             ifrom: Optional[JID] = None, **pubsubkwargs) -> dict[str, JID]:
+                             ifrom: JID | None = None, **pubsubkwargs) -> dict[str, JID]:
         """
         Get the jid-participant mapping, by participant id
 
@@ -72,7 +69,7 @@ class XEP_0404(BasePlugin):
         return mapping
 
     async def get_preferences(self, channel: JID, *,
-                              ifrom: Optional[JID] = None, **iqkwargs) -> Form:
+                              ifrom: JID | None = None, **iqkwargs) -> Form:
         """
         Get channel preferences with default values.
         :param JID channel: MIX channel JID
@@ -83,7 +80,7 @@ class XEP_0404(BasePlugin):
         return prefs_stanza['user_preference']['form']
 
     async def set_preferences(self, channel: JID, form: Form, *,
-                              ifrom: Optional[JID] = None, **iqkwargs) -> Form:
+                              ifrom: JID | None = None, **iqkwargs) -> Form:
         """
         Set channel preferences
         :param JID channel: MIX channel JID

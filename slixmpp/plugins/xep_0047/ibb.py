@@ -4,10 +4,6 @@
 import uuid
 import logging
 
-from typing import (
-    Optional,
-)
-
 from slixmpp import JID
 from slixmpp.stanza import Message, Iq
 from slixmpp.exceptions import XMPPError
@@ -136,9 +132,9 @@ class XEP_0047(BasePlugin):
     def _preauthorize_sid(self, jid, sid, ifrom, data):
         self._preauthed_sids[(jid, sid, ifrom)] = True
 
-    async def open_stream(self, jid: JID, *, block_size: Optional[int] = None,
-                          sid: Optional[str] = None, use_messages: bool = False,
-                          ifrom: Optional[JID] = None,
+    async def open_stream(self, jid: JID, *, block_size: int | None = None,
+                          sid: str | None = None, use_messages: bool = False,
+                          ifrom: JID | None = None,
                           **iqkwargs) -> IBBytestream:
         """Open an IBB stream with a peer JID.
 

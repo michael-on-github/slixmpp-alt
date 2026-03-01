@@ -28,8 +28,8 @@ Description of a generic API call
     self.xmpp.plugin['xep_XXXX'].api.register(handler, 'get_toto')
 
 Each API call will receive 4 parameters (which can be ``None`` if data
-is not relevant to the operation), which are ``jid`` (``Optional[JID]``),
-``node`` (``Optional[str]``), ``ifrom`` (``Optional[JID]``), and ``args``
+is not relevant to the operation), which are ``jid`` (``JID | None``),
+``node`` (``str | None``), ``ifrom`` (``JID | None``), and ``args``
 (``Any``).
 
 - ``jid``, if relevant, represents the JID targeted by that operation

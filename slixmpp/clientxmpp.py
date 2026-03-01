@@ -10,7 +10,7 @@ import asyncio
 import logging
 from asyncio import Future
 from inspect import iscoroutinefunction
-from typing import Optional, Any, Callable
+from typing import Any, Callable
 
 from slixmpp.jid import JID
 from slixmpp.stanza import StreamFeatures, Iq
@@ -143,7 +143,7 @@ class ClientXMPP(BaseXMPP):
     def password(self, value: str) -> None:
         self.credentials['password'] = value
 
-    def connect(self, host: Optional[str] = None, port: Optional[int] = None) -> asyncio.Future:
+    def connect(self, host: str | None = None, port: int | None = None) -> asyncio.Future:
         """Connect to the XMPP server.
 
         When no address is given, a SRV lookup for the server will
@@ -247,7 +247,7 @@ class ClientXMPP(BaseXMPP):
 
         return iq.send(callback, timeout)
 
-    def _reset_connection_state(self, event: Optional[Any] = None) -> None:
+    def _reset_connection_state(self, event: Any | None = None) -> None:
         #TODO: Use stream state here
         self.authenticated = False
         self.sessionstarted = False
@@ -255,7 +255,7 @@ class ClientXMPP(BaseXMPP):
         self.bindfail = False
         self.features = set()
 
-    async def _handle_stream_features(self, features: StreamFeatures) -> Optional[bool]:
+    async def _handle_stream_features(self, features: StreamFeatures) -> bool | None:
         """Process the received stream features.
 
         :param features: The features stanza.

@@ -7,7 +7,7 @@ import socket
 import logging
 import random
 from asyncio import Future, AbstractEventLoop, gather
-from typing import Optional, cast, Literal, Protocol, TYPE_CHECKING
+from typing import cast, Literal, Protocol, TYPE_CHECKING
 from dataclasses import dataclass
 
 
@@ -66,11 +66,11 @@ class ResolverProtocol(Protocol):
         ...
 
     def query(
-        self, host: str, qtype: Literal['SRV'], qclass: Optional[str] = None
+        self, host: str, qtype: Literal['SRV'], qclass: str | None = None
     ) -> Future[list["aiodns.AresQuerySRVResult"]]: ...
 
 
-def default_resolver(loop: AbstractEventLoop) -> Optional[ResolverProtocol]:
+def default_resolver(loop: AbstractEventLoop) -> ResolverProtocol | None:
     """Return a basic DNS resolver object.
 
     :returns: A :class:`aiodns.DNSResolver` object if aiodns
@@ -84,8 +84,8 @@ def default_resolver(loop: AbstractEventLoop) -> Optional[ResolverProtocol]:
 
 
 async def resolve(host: str, port: int, *, loop: AbstractEventLoop,
-                  services: Optional[list[str]] = None, proto: str = 'tcp',
-                  resolver: Optional[ResolverProtocol] = None,
+                  services: list[str] | None = None, proto: str = 'tcp',
+                  resolver: ResolverProtocol | None = None,
                   use_ipv6: bool = True,
                   use_aiodns: bool = True) -> list[tuple[str, str, str, int]]:
     """Perform DNS resolution for a given hostname.
@@ -190,7 +190,7 @@ async def resolve(host: str, port: int, *, loop: AbstractEventLoop,
 
 
 async def get_A(host: str, *, loop: AbstractEventLoop,
-                resolver: Optional[ResolverProtocol] = None,
+                resolver: ResolverProtocol | None = None,
                 use_aiodns: bool = True) -> list[str]:
     """Lookup DNS A records for a given host.
 
@@ -234,7 +234,7 @@ async def get_A(host: str, *, loop: AbstractEventLoop,
 
 
 async def get_AAAA(host: str, *, loop: AbstractEventLoop,
-                   resolver: Optional[ResolverProtocol] = None,
+                   resolver: ResolverProtocol | None = None,
                    use_aiodns: bool = True) -> list[str]:
     """Lookup DNS AAAA records for a given host.
 
@@ -283,7 +283,7 @@ async def get_AAAA(host: str, *, loop: AbstractEventLoop,
 
 async def get_SRV(host: str, port: int, services: list[str],
                   proto: str = 'tcp',
-                  resolver: Optional[ResolverProtocol] = None,
+                  resolver: ResolverProtocol | None = None,
                   use_aiodns: bool = True) -> list[tuple[str, str, int]]:
     """Perform SRV record resolution for a given host.
 
