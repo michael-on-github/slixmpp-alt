@@ -22,6 +22,7 @@ from slixmpp.xmlstream import XMLStream
 from slixmpp.xmlstream.stanzabase import StanzaBase
 from slixmpp.xmlstream.matcher import StanzaPath, MatchXPath
 from slixmpp.xmlstream.handler import Callback, CoroutineCallback
+from slixmpp.features.feature_limits.limits import Limits
 
 
 log = logging.getLogger(__name__)
@@ -40,6 +41,9 @@ class ClientXMPP(BaseXMPP):
         # ... Register plugins and event handlers ...
         xmpp.connect()
         asyncio.get_event_loop().run_forever()
+
+    If the server supports XEP-0478, then ``self.limits.max_bytes`` and
+    ``self.limits.idle_seconds`` will be populated accordingly.
 
     :param jid: The JID of the XMPP user account.
     :param password: The password for the XMPP user account.
@@ -131,6 +135,9 @@ class ClientXMPP(BaseXMPP):
         self.register_plugin('feature_rosterver')
         self.register_plugin('feature_preapproval')
         self.register_plugin('feature_mechanisms')
+        self.register_plugin('feature_limits')
+
+        self.limits = Limits()
 
         if sasl_mech:
             self['feature_mechanisms'].use_mech = sasl_mech
