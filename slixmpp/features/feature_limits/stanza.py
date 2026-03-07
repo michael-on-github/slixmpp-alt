@@ -10,5 +10,5 @@ class Limits(ElementBase):
     name = 'limits'
     plugin_attrib = 'limits'
     namespace = 'urn:xmpp:stream-limits:0'
-    interfaces = {'max_bytes', 'idle_seconds'}
+    interfaces = {'max-bytes', 'idle-seconds'}
     sub_interfaces = interfaces
