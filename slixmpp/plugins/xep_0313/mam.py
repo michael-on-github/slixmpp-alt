@@ -63,11 +63,11 @@ class XEP_0313(BasePlugin):
             with_jid: JID | None = None,
             ifrom: JID | None = None,
             reverse: bool = False,
-            timeout: int = None,
-            callback: Callable[[Iq], None] = None,
+            timeout: int | None = None,
+            callback: Callable[[Iq], None] | None = None,
             iterator: bool = False,
             rsm: dict[str, Any] | None = None
-    ) -> Awaitable:
+    ) -> Awaitable[Iq]:
         """
         Send a MAM query and retrieve the results.
 
@@ -142,7 +142,7 @@ class XEP_0313(BasePlugin):
             reverse: bool = False,
             rsm: dict[str, Any] | None = None,
             total: int | None = None,
-    ) -> AsyncGenerator:
+    ) -> AsyncGenerator[Message, None]:
         """
         Iterate over each message of MAM query.
 
@@ -249,8 +249,8 @@ class XEP_0313(BasePlugin):
         result = await iq.send(**iqkwargs)
         return result['mam']['form']
 
-    async def get_configuration_commands(self, jid: JID | None,
-                                         **discokwargs) -> Future:
+    async def get_configuration_commands(self, jid: JID | str | None,
+                                         **discokwargs) -> Future[Iq]:
         """Get the list of MAM advanced configuration commands.
 
         .. versionchanged:: 1.8.0
@@ -266,7 +266,7 @@ class XEP_0313(BasePlugin):
         )
 
     def get_archive_metadata(self, jid: JID | None = None,
-                             **iqkwargs) -> Future:
+                             **iqkwargs) -> Future[Iq]:
         """Get the archive metadata from a JID.
 
         :param jid: JID to get the metadata from.
