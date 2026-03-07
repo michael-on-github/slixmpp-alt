@@ -44,7 +44,13 @@ class XEP_0308(BasePlugin):
     def session_bind(self, jid):
         self.xmpp.plugin['xep_0030'].add_feature(Replace.namespace)
 
-    def is_correction(self, msg: Message):
+    def is_correction(self, msg: Message) -> bool:
+        """
+        Check if a message contains a correction.
+
+        :param msg: Message to check.
+        :returns: True if the message contains a correction.
+        """
         return msg.xml.find('{%s}replace' % Replace.namespace) is not None
 
     def _handle_correction(self, msg: Message):
