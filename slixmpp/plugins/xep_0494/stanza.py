@@ -106,7 +106,7 @@ class Client(ElementBase):
         'permission', 'permission_extra',
     }
 
-    def get_type(self) -> str | None:
+    def get_type(self) -> ClientType | None:
         type_ = self.xml.attrib.get('type', None)
         if type_ is not None:
             return ClientType(type_)
