@@ -2,12 +2,16 @@
 # Copyright (C) 2021 Mathieu Pasquet
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permissio
+from collections import abc
+import logging
 from typing import (
     Iterable,
 )
 
 from slixmpp.jid import JID
 from slixmpp.xmlstream import ElementBase, ET
+
+log = logging.getLogger(__name__)
 
 
 class Preferences(ElementBase):
@@ -42,7 +46,9 @@ class Preferences(ElementBase):
     sub_interfaces = {'always', 'never'}
 
     def get_always(self) -> set[JID]:
-        results = set()
+        """
+        Get a usable set of JIDs the server always stores conversations for.
+        """
 
         jids = self.xml.findall('{%s}always/{%s}jid' % (
             self.namespace, self.namespace))
@@ -53,12 +59,25 @@ class Preferences(ElementBase):
         return results
 
     def set_always(self, value: Iterable[JID]):
+        """
+        Set the MAM policy to always archive for the specified JIDs.
+
+        :param value: List of JIDs.
+        """
+        if not isinstance(value, abc.Iterable):
+            if isinstance(value, JID):
+                log.warning("Wrong type provided to set_always(): %s", value)
+                value = [value]
+            else:
+                raise ValueError(f'Wrong type for "value" ({value}).')
+        elif isinstance(value, str):
+            raise ValueError('Wrong type for "value" (str).')
+
         self._set_sub_text('always', '', keep=True)
         always = self.xml.find('{%s}always' % self.namespace)
+        if always is None:
+            raise ValueError("<always/> was not found, it should not happen")
         always.clear()
-
-        if not isinstance(value, (list, set)):
-            value = [value]
 
         for jid in value:
             jid_xml = ET.Element('{%s}jid' % self.namespace)
@@ -66,6 +85,9 @@ class Preferences(ElementBase):
             always.append(jid_xml)
 
     def get_never(self) -> set[JID]:
+        """
+        Get a usable set of JIDs the server never stores conversations for.
+        """
         results = set()
 
         jids = self.xml.findall('{%s}never/{%s}jid' % (
@@ -77,13 +99,23 @@ class Preferences(ElementBase):
         return results
 
     def set_never(self, value: Iterable[JID]):
+        """
+        Set the MAM policy to never archive for the specified JIDs.
+
+        :param value: List of JIDs.
+        """
+        if not isinstance(value, abc.Iterable):
+            if isinstance(value, JID):
+                log.warning("Wrong type provided to set_never(): %s", value)
+                value = [value]
+            else:
+                raise ValueError(f'Wrong type for "value" ({value}).')
+        elif isinstance(value, str):
+            raise ValueError('Wrong type for "value" (str).')
+
         self._set_sub_text('never', '', keep=True)
         never = self.xml.find('{%s}never' % self.namespace)
         never.clear()
-
-        if not isinstance(value, (list, set)):
-            value = [value]
-
         for jid in value:
             jid_xml = ET.Element('{%s}jid' % self.namespace)
             jid_xml.text = str(jid)

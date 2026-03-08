@@ -35,6 +35,8 @@ class XEP_0441(BasePlugin):
                               ) -> tuple[MAMDefault, list[JID], list[JID]]:
         """Get the current MAM preferences.
 
+        Takes all parameters from ``iq.send()``.
+
         :returns: A tuple of MAM preferences with (default, always, never)
         """
         ifrom = iqkwargs.pop('ifrom', None)
@@ -54,7 +56,7 @@ class XEP_0441(BasePlugin):
                         always: list[JID] | None = None,
                         never: list[JID] | None = None, *,
                         ito: JID | None = None, ifrom: JID | None = None,
-                        **iqkwargs) -> Future:
+                        **iqkwargs) -> Future[Iq]:
         """Set MAM Preferences.
 
         The server answer MAY contain different items.
