@@ -36,6 +36,9 @@ class Reply(ElementBase):
         msg.append(fallback_elem)
 
     def get_fallback_body(self) -> str:
+        """
+        Get the string containing the fallback body from the parent.
+        """
         msg = self.parent()
         for fallback in msg["fallbacks"]:
             if fallback["for"] == NS:
@@ -49,9 +52,12 @@ class Reply(ElementBase):
             return body[start:end]
         else:
             return ""
-        
+
     def strip_fallback_content(self) -> str:
-        msg = self.parent() 
+        """
+        Remove the fallback contents from the parent body.
+        """
+        msg = self.parent()
         for fallback in msg["fallbacks"]:
             if fallback["for"] == NS:
                 break
