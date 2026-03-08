@@ -14,6 +14,15 @@ from slixmpp.plugins.xep_0437 import stanza
 
 
 class XEP_0437(BasePlugin):
+    """
+    XEP-0437: Room Activity Indicators plugin
+
+
+    Defines two events:
+
+    - ``room_activity_bare``: useful for components receiving a subscription request.
+    - ``room_activity``: when receiving a room activity.
+    """
     name = 'xep_0437'
     description = 'XEP-0437: Room Activity Indicators'
     stanza = stanza
@@ -46,7 +55,9 @@ class XEP_0437(BasePlugin):
                   pfrom: JID | None = None):
         """
         Subscribe to room activity on a MUC service.
+
         :param JID service: MUC service
+        :param pfrom: JID the subscribe request is sent from (for components).
         """
         pres = self.xmpp.make_presence(pto=service, pfrom=pfrom)
         pres.enable('rai')
@@ -56,7 +67,9 @@ class XEP_0437(BasePlugin):
                     pfrom: JID | None = None):
         """
         Unsubscribe from room activity on a MUC service.
-        :param JID service: MUC service
+
+        :param service: MUC service.
+        :param pfrom: JID the unsubscribe request is sent from (for components).
         """
         pres = self.xmpp.make_presence(
             pto=service, pfrom=pfrom, ptype='unavailable',
