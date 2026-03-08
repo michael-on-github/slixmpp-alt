@@ -9,9 +9,9 @@ from typing import (
 from slixmpp import JID, Message
 from slixmpp.plugins import BasePlugin
 from slixmpp.plugins.xep_0439 import stanza
+from slixmpp.types import MessageTypes
 from slixmpp.xmlstream.matcher import StanzaPath
 from slixmpp.xmlstream.handler import Callback
-
 
 
 class XEP_0439(BasePlugin):
@@ -57,7 +57,8 @@ class XEP_0439(BasePlugin):
 
     def ask_for_response(self, mto: JID, body: str,
                          responses: Iterable[tuple[str, str]],
-                         mtype: str = 'chat', lang: str | None = None, *,
+                         mtype: MessageTypes = 'chat',
+                         lang: str | None = None, *,
                          mfrom: JID | None = None):
         """
         Send a message with a set of responses.
@@ -88,7 +89,8 @@ class XEP_0439(BasePlugin):
 
     def ask_for_actions(self, mto: JID, body: str,
                         actions: Iterable[tuple[str, str]],
-                        mtype: str = 'chat', lang: str | None = None, *,
+                        mtype: MessageTypes = 'chat',
+                        lang: str | None = None, *,
                         mfrom: JID | None = None):
         """
         Send a message with a set of actions.
