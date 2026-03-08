@@ -14,7 +14,18 @@ except ImportError:
 
 NS = 'urn:xmpp:reactions:0'
 
+
 class Reactions(ElementBase):
+    """
+    Reactions element.
+
+    .. code-block:: xml
+
+        <reactions id='744f6e18-a57a-11e9-a656-4889e7820c76' xmlns='urn:xmpp:reactions:0'>
+          <reaction>👋</reaction>
+          <reaction>🐢</reaction>
+        </reactions>
+    """
     name = 'reactions'
     plugin_attrib = 'reactions'
     namespace = NS
@@ -42,6 +53,13 @@ class Reactions(ElementBase):
 
 
 class Reaction(ElementBase):
+    """
+    Single reaction element.
+
+    .. code-block:: xml
+
+        <reaction>💜</reaction>
+    """
     name = 'reaction'
     namespace = NS
     interfaces = {'value'}
@@ -53,4 +71,3 @@ class Reaction(ElementBase):
         if not all_chars and not is_emoji(value):
             raise ValueError("%s is not a valid emoji" % value)
         self.xml.text = value
-
