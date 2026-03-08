@@ -9,6 +9,20 @@ NS = "urn:xmpp:file:metadata:0"
 
 
 class File(ElementBase):
+    """
+    File metadata element
+
+    .. code-block:: xml
+
+        <file xmlns='urn:xmpp:file:metadata:0'>
+            <media-type>text/plain</media-type>
+            <name>test.txt</name>
+            <date>2015-07-26T21:46:00+01:00</date>
+            <size>6144</size>
+            <hash xmlns='urn:xmpp:hashes:2'
+                  algo='sha-1'>w0mcJylzCn+AfvuGdqkty2+KP48=</hash>
+        </file>
+    """
     name = "file"
     namespace = NS
     plugin_attrib = "file"
@@ -70,6 +84,7 @@ def _positive_int_or_none(v: str) -> int | None:
         return int(v)
     except ValueError:
         return None
+
 
 def register_plugins():
     register_stanza_plugin(File, Hash)
