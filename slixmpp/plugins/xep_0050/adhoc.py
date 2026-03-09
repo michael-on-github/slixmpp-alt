@@ -3,6 +3,7 @@
 # Copyright (C) 2011 Nathanael C. Fritz, Lance J.T. Stout
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
+from slixmpp.types import OptJidStr
 import asyncio
 import functools
 import logging
@@ -25,6 +26,7 @@ log = logging.getLogger(__name__)
 
 
 SessionDict = dict[str, typing.Any]
+HandlerType = typing.Callable[[Iq, SessionDict], typing.Awaitable[SessionDict] | SessionDict]
 TimeoutHandlerType = typing.Callable[[SessionDict], typing.Awaitable[None]]
 
 
@@ -64,7 +66,7 @@ class XEP_0050(BasePlugin):
     default_config = {
         'session_db': None
     }
-    commands: dict[tuple[str, str], tuple[str, typing.Callable, TimeoutHandlerType | None, float]]
+    commands: dict[tuple[str , str | None], tuple[str, HandlerType | None, TimeoutHandlerType | None, float]]
     _timeout_tasks: dict[str, asyncio.Task]
 
     def plugin_init(self):
@@ -122,7 +124,11 @@ class XEP_0050(BasePlugin):
     # =================================================================
     # Server side (command provider) API
 
-    def add_command(self, jid=None, node=None, name='', handler=None,
+    def add_command(self,
+                    jid:OptJidStr = None,
+                    node:str | None = None,
+                    name='',
+                    handler: HandlerType | None=None,
                     *,
                     timeout: float = 0,
                     timeout_handler: TimeoutHandlerType | None = None):
@@ -441,7 +447,10 @@ class XEP_0050(BasePlugin):
         else:
             raise XMPPError('item-not-found')
 
-    def _reset_timeout_task(self, session: SessionDict, iq: Iq) -> None:
+    def _reset_timeout_task(self, session: SessionDict | None, iq: Iq) -> None:
+        if not session:
+            return
+
         key = (iq['to'].full, iq['command']['node'])
         _, _, handler, timeout = self.commands.get(key, ("Not found", None, None, 0))
 
