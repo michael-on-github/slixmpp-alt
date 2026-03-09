@@ -689,8 +689,8 @@ async def _await_if_needed(handler, *args):
     if handler is None:
         raise XMPPError("bad-request", text="The command is completed")
     if _iscoroutine_or_partial_coroutine(handler):
-        log.debug(f"%s is async", handler)
+        log.debug("%s is async", handler)
         return await handler(*args)
     else:
-        log.debug(f"%s is sync", handler)
+        log.debug("%s is sync", handler)
         return handler(*args)
