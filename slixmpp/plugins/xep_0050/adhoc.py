@@ -222,8 +222,8 @@ class XEP_0050(BasePlugin):
             raise XMPPError('item-not-found')
 
         payload = []
-        for stanza in iq['command']['substanzas']:
-            payload.append(stanza)
+        for stanza_ in iq['command']['substanzas']:
+            payload.append(stanza_)
 
         if len(payload) == 1:
             payload = payload[0]
