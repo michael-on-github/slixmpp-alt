@@ -15,6 +15,7 @@ import threading
 
 from typing import Any, ClassVar, TYPE_CHECKING
 
+from slixmpp.api import APIWrapper
 if TYPE_CHECKING:
     from slixmpp.clientxmpp import ClientXMPP, BaseXMPP
     from slixmpp.componentxmpp import ComponentXMPP
@@ -278,6 +279,8 @@ class BasePlugin(object):
     #: would mean accessing `plugin.foo` returns the current value of
     #: `plugin.config['foo']`.
     default_config: ClassVar[dict[str, Any]] = {}
+
+    api: APIWrapper
 
     def __init__(self, xmpp: ClientXMPP | ComponentXMPP, config=None):
         self.xmpp = xmpp

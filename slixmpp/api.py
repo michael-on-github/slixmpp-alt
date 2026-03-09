@@ -16,36 +16,64 @@ class APIWrapper(object):
     :class:`~.APIRegistry`.
     """
 
-    def __init__(self, api, name):
+    def __init__(self, api: "APIRegistry", name: str) -> None:
         self.api = api
         self.name = name
         if name not in self.api.settings:
             self.api.settings[name] = {}
 
-    def __getattr__(self, attr: str):
-        """Curry API management commands with the API name."""
-        if attr == 'name':
-            return self.name
-        elif attr == 'settings':
-            return self.api.settings[self.name]
-        elif attr == 'register':
-            def partial(handler, op, jid=None, node=None, default=False):
-                register = getattr(self.api, attr)
-                return register(handler, self.name, op, jid, node, default)
-            return partial
-        elif attr == 'register_default':
-            def partial1(handler, op, jid=None, node=None):
-                return getattr(self.api, attr)(handler, self.name, op)
-            return partial1
-        elif attr in ('run', 'restore_default', 'unregister'):
-            def partial2(*args, **kwargs):
-                return getattr(self.api, attr)(self.name, *args, **kwargs)
-            return partial2
-        return None
+    @property
+    def settings(self) -> dict:
+        return self.api.settings[self.name]
 
-    def __getitem__(self, attr):
-        def partial(jid=None, node=None, ifrom=None, args=None):
-            return self.api.run(self.name, attr, jid, node, ifrom, args)
+    def register(
+        self,
+        handler: APIHandler | None,
+        op: str,
+        jid: JID | None = None,
+        node: str | None = None,
+        default: bool = False,
+    ) -> None:
+        return self.api.register(handler, self.name, op, jid, node, default)
+
+    def register_default(
+        self,
+        handler: APIHandler | None,
+        op: str,
+        jid: JID | None = None,
+        node: str | None = None,
+    ) -> None:
+        return self.api.register_default(handler, self.name, op)
+
+    def run(
+        self,
+        op: str,
+        jid: JID | None = None,
+        node: str | None = None,
+        ifrom: JID | None = None,
+        args: Any = None,
+    ) -> Future:
+        return self.api.run(self.name, op, jid, node, ifrom, args)
+
+    def restore_default(
+        self,
+        op: str,
+        jid: JID | None = None,
+        node: str | None = None,
+    ) -> None:
+        return self.api.restore_default(self.name, op, jid, node)
+
+    def unregister(
+        self,
+        op: str,
+        jid: JID | None = None,
+        node: str | None = None,
+    ) -> None:
+        return self.api.unregister(self.name, op, jid, node)
+
+    def __getitem__(self, op: str) -> APIHandler:
+        def partial(jid=None, node=None, ifrom=None, args=None) -> Future:
+            return self.api.run(self.name, op, jid, node, ifrom, args)
         return partial
 
 
