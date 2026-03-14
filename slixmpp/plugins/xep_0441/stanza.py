@@ -49,6 +49,7 @@ class Preferences(ElementBase):
         """
         Get a usable set of JIDs the server always stores conversations for.
         """
+        results = set()
 
         jids = self.xml.findall('{%s}always/{%s}jid' % (
             self.namespace, self.namespace))
