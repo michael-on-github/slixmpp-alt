@@ -16,7 +16,7 @@ Slixmpp
     **Reporting bugs**
         You can report bugs at http://codeberg.org/poezio/slixmpp/issues.
 
-Slixmpp is an :ref:`MIT licensed <license>` XMPP library for Python 3.7+,
+Slixmpp is an :ref:`MIT licensed <license>` XMPP library for Python 3.11+,
 
 Slixmpp's design goals and philosophy are:
 

@@ -3,8 +3,8 @@
 Differences from SleekXMPP
 ==========================
 
-**Python 3.7+ only**
-    slixmpp will work on python 3.7 and above. It may work with previous
+**Python 3.11+ only**
+    slixmpp will work on python 3.11 and above. It may work with previous
     versions but we provide no guarantees.
 
 **Stanza copies**
