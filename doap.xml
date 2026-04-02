@@ -1022,6 +1022,15 @@
             <xmpp:since>1.14</xmpp:since>
         </xmpp:SupportedXep>
     </implements>
+    <implements>
+        <xmpp:SupportedXep>
+            <xmpp:xep rdf:resource="https://xmpp.org/extensions/xep-0513.html"/>
+            <xmpp:status>partial</xmpp:status>
+            <xmpp:version>0.1.0</xmpp:version>
+            <xmpp:note>No helper for anything related to MUC permissions, the rest is implemented.</xmpp:note>
+            <xmpp:since>1.15</xmpp:since>
+        </xmpp:SupportedXep>
+    </implements>
 
     <release>
         <Version>
