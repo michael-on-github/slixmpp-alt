@@ -5,7 +5,15 @@ FROM debian:trixie-slim AS ci
 ENV UV_LINK_MODE=copy
 ENV PATH=.venv/bin:$PATH
 
-RUN apt update && apt install cargo gpg git -y && rm -rf /var/lib/apt/lists/*
+RUN echo "Types: deb deb-src\nURIs: http://deb.debian.org/debian\nSuites: trixie-backports\nComponents: main\nEnabled: yes\nSigned-By: /usr/share/keyrings/debian-archive-keyring.gpg" \
+    > /etc/apt/sources.list.d/debian-backports.sources
+RUN apt update && \
+    apt install \
+        rustc/trixie-backports \
+        cargo/trixie-backports \
+        gpg \
+        git -y && \
+    rm -rf /var/lib/apt/lists/*
 
 COPY ./itests/prosody.crt /usr/local/share/ca-certificates/
 RUN update-ca-certificates
