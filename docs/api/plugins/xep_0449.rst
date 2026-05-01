@@ -1,0 +1,15 @@
+XEP-0449: Stickers
+==================
+
+.. module:: slixmpp.plugins.xep_0449
+
+.. autoclass:: XEP_0449
+    :members:
+    :exclude-members: session_bind, plugin_init, plugin_end, dependencies, description, name
+
+Stanza elements
+---------------
+
+.. automodule:: slixmpp.plugins.xep_0449.stanza
+    :members:
+    :undoc-members:
