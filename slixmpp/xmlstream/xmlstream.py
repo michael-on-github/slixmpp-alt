@@ -1436,6 +1436,16 @@ class XMLStream(asyncio.BaseProtocol):
         if stanza is None:
             return
 
+        self.recv_stanza(stanza)
+
+    def recv_stanza(self, stanza: StanzaBase) -> None:
+        """
+        Process a stanza that was just received or decrypted. Queue stream
+        events to be processed by matching handlers.
+
+        :param stanza: The :class:`~slixmpp.xmlstream.stanzabase.StanzaBase`
+                       stanza to process.
+        """
         log.debug("RECV: %s", stanza)
 
         # Match the stanza against registered handlers. Handlers marked
