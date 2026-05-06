@@ -124,6 +124,7 @@ PLUGINS = [
     'xep_0455',  # Service Outage Status
     'xep_0461',  # Message Replies
     'xep_0462',  # PubSub Type Filtering
+    'xep_0463',  # MUC Affiliation Versioning
     'xep_0469',  # Bookmarks Pinning
     'xep_0482',  # Call Invites
     'xep_0490',  # Message Displayed Synchronization

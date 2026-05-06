@@ -1,0 +1,15 @@
+XEP-0463: MUC Affiliation Versioning
+===========================
+
+.. module:: slixmpp.plugins.xep_0463
+
+.. autoclass:: XEP_0463
+    :members:
+    :exclude-members: session_bind, plugin_init, plugin_end, dependencies, description, name
+
+Stanza elements
+---------------
+
+.. automodule:: slixmpp.plugins.xep_0463.stanza
+    :members:
+    :undoc-members:
