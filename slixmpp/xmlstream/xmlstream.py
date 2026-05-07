@@ -1429,10 +1429,6 @@ class XMLStream(asyncio.BaseProtocol):
         except Exception as exc:
             log.exception("Unable to parse stanza: %s,\n%s", exc, xml)
             stanza = None
-        for filter in self.__filters['in']:
-            if stanza is not None:
-                filter = cast(SyncFilter, filter)
-                stanza = filter(stanza)
         if stanza is None:
             return
 
@@ -1446,6 +1442,13 @@ class XMLStream(asyncio.BaseProtocol):
         :param stanza: The :class:`~slixmpp.xmlstream.stanzabase.StanzaBase`
                        stanza to process.
         """
+        for filter in self.__filters['in']:
+            filter = cast(SyncFilter, filter)
+            stanza_filtered = filter(stanza)
+            if stanza_filtered is None:
+                return
+            stanza = stanza_filtered
+
         log.debug("RECV: %s", stanza)
 
         # Match the stanza against registered handlers. Handlers marked
