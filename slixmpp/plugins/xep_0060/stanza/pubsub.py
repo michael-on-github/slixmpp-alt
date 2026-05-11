@@ -67,6 +67,7 @@ class Item(ElementBase):
     namespace = 'http://jabber.org/protocol/pubsub'
     name = 'item'
     plugin_attrib = name
+    plugin_multi_attrib = "items"
     interfaces = {'id', 'payload'}
 
     def set_payload(self, value):
