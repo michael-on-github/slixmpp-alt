@@ -7,3 +7,5 @@ from slixmpp.plugins.base import register_plugin
 from .stickers import XEP_0449
 
 register_plugin(XEP_0449)
+
+__all__ = ['XEP_0449']
