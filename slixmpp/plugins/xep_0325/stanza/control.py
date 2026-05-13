@@ -6,8 +6,7 @@
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 from slixmpp import Iq, Message
-from slixmpp.xmlstream import register_stanza_plugin, ElementBase, ET, JID
-from re import match
+from slixmpp.xmlstream import register_stanza_plugin, ElementBase
 
 class Control(ElementBase):
     """ Placeholder for the namespace, not used as a stanza """

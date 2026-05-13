@@ -1018,7 +1018,7 @@ class XMLStream(asyncio.BaseProtocol):
         :param disposable: If set to ``True``, the handler will be
                            discarded after one use. Defaults to ``False``.
         """
-        if not name in self.__event_handlers:
+        if name not in self.__event_handlers:
             self.__event_handlers[name] = []
         self.__event_handlers[name].append((pointer, disposable))
 
@@ -1028,7 +1028,7 @@ class XMLStream(asyncio.BaseProtocol):
         :param name: The name of the event.
         :param pointer: The function to remove as a handler.
         """
-        if not name in self.__event_handlers:
+        if name not in self.__event_handlers:
             return
 
         # Need to keep handlers that do not use

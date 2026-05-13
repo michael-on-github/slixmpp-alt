@@ -821,8 +821,8 @@ class BaseXMPP(XMLStream):
                                 'unsubscribe', 'unsubscribed'):
             self.event('changed_subscription', presence)
             return
-        elif not presence['type'] in ('available', 'unavailable') and \
-             not presence['type'] in presence.showtypes:
+        elif presence['type'] not in ('available', 'unavailable') and \
+             presence['type'] not in presence.showtypes:
             return
 
     def exception(self, exception):

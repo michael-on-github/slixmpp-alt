@@ -5,7 +5,6 @@
 # See the file LICENSE for copying permission.
 import atexit
 import unittest
-from queue import Queue
 from xml.parsers.expat import ExpatError
 
 from slixmpp.test import TestTransport

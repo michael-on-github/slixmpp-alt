@@ -43,7 +43,6 @@ except ImportError:
     from cStringIO import StringIO
 
 import codecs
-import locale
 import logging
 import os
 import socket

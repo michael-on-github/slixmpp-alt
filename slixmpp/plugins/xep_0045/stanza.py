@@ -8,7 +8,7 @@ from typing import (
     Iterable,
 )
 import logging
-from slixmpp.xmlstream import ElementBase, ET, JID
+from slixmpp.xmlstream import ElementBase, JID
 
 
 log = logging.getLogger(__name__)
