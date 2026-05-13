@@ -184,4 +184,3 @@ realtime web and XMPP applications.
     - Remko Tronçon (`remko <http://github.com/remko>`_, http://el-tramo.be)
     - Te-jé Rogers (`te-je <http://github.com/te-je>`_)
     - Thom Nichols (`tomstrummer <http://github.com/tomstrummer>`_)
-

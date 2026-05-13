@@ -16,4 +16,3 @@ Stanza elements
     :members:
     :member-order: bysource
     :undoc-members:
-

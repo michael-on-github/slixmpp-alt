@@ -6,4 +6,3 @@ IQ Stanza
 
 .. autoclass:: Iq
     :members:
-

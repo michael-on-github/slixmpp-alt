@@ -1217,4 +1217,3 @@ class TestStreamSensorData(SlixTest):
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestStreamSensorData)
-

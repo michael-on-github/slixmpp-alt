@@ -5,4 +5,3 @@ Presence Stanza
 
 .. autoclass:: Presence
     :members:
-

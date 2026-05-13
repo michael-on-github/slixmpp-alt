@@ -30,4 +30,3 @@ class XEP_0033(BasePlugin):
 
     def session_bind(self, jid):
         self.xmpp['xep_0030'].add_feature(Addresses.namespace)
-

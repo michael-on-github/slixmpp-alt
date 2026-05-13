@@ -519,4 +519,3 @@ register_stanza_plugin(Iq, ControlSetResponse)
 register_stanza_plugin(ControlSetResponse, Error)
 register_stanza_plugin(ControlSetResponse, RequestNode, iterable=True)
 register_stanza_plugin(ControlSetResponse, ResponseParameter, iterable=True)
-

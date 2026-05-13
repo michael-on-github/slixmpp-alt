@@ -85,4 +85,3 @@ should be all you need.
     :members:
 
 .. autoclass:: APIWrapper
-

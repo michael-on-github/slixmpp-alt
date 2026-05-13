@@ -350,4 +350,3 @@ class TestStreamControl(SlixTest):
 
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestStreamControl)
-

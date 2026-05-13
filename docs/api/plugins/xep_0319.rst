@@ -42,4 +42,3 @@ Stanza elements
 .. automodule:: slixmpp.plugins.xep_0319.stanza
     :members:
     :undoc-members:
-

@@ -252,4 +252,3 @@ class Device(object):
         This function is only for unit testing to produce predictable results.
         """
         self.momentary_timestamp = timestamp
-

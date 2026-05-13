@@ -162,5 +162,3 @@ JID indicating its findings.
     client = ExampleClient('jid@example', 'password')
     client.connect()
     asyncio.get_event_loop().run_forever()
-
-

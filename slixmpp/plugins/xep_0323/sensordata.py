@@ -704,5 +704,3 @@ class XEP_0323(BasePlugin):
         seqnr = msg['started']['seqnr']
         callback = self.sessions[seqnr]["callback"]
         callback(from_jid=msg['from'], result="started")
-
-

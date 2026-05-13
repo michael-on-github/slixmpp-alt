@@ -304,4 +304,3 @@ class TestJabberRPC(SlixTest):
                          "XML to struct conversion")
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestJabberRPC)
-

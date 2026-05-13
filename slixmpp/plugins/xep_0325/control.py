@@ -540,4 +540,3 @@ class XEP_0325(BasePlugin):
 
         callback = self.sessions[seqnr]["callback"]
         callback(from_jid=from_jid, result=result, nodeIds=nodeIds, fields=fields, error_msg=error_msg)
-
