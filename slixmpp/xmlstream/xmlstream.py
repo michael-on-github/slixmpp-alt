@@ -568,7 +568,7 @@ class XMLStream(asyncio.BaseProtocol):
         self.init_parser()
         self.send_raw(self.stream_header)
 
-    def data_received(self, data: bytes) -> None:
+    def data_received(self, data: bytes | str) -> None:
         """Called when incoming data is received on the socket.
 
         We feed that data to the parser and the see if this produced any XML

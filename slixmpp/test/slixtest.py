@@ -4,13 +4,18 @@
 # See the file LICENSE for copying permission.
 import asyncio
 import atexit
+import contextlib
 import unittest
+from collections.abc import Awaitable, Iterable
+from typing import Literal, TypeVar
 from xml.parsers.expat import ExpatError
 
-from slixmpp import ClientXMPP, ComponentXMPP
+from slixmpp import JID, ClientXMPP, ComponentXMPP
 from slixmpp.stanza import Iq, Message, Presence
 from slixmpp.stanza.error import Error
 from slixmpp.test import TestTransport
+from slixmpp.test.mocksocket import TestSocket
+from slixmpp.types import JidStr, OptJidStr
 from slixmpp.xmlstream import ET, ElementBase
 from slixmpp.xmlstream.matcher import (
     MatcherId,
@@ -21,6 +26,9 @@ from slixmpp.xmlstream.matcher import (
 )
 from slixmpp.xmlstream.stanzabase import register_stanza_plugin
 from slixmpp.xmlstream.tostring import highlight, tostring
+
+TestMethod = Literal["exact", "mask", "id", "xpath", "stanzapath"]
+T = TypeVar("T")
 
 
 class SlixTest(unittest.TestCase):
@@ -52,16 +60,14 @@ class SlixTest(unittest.TestCase):
         compare              -- Compare XML objects against each other.
     """
 
-    def __init__(self, *args, **kwargs) -> None:
-        unittest.TestCase.__init__(self, *args, **kwargs)
-        self.xmpp = None
+    xmpp: ClientXMPP | ComponentXMPP = None  # type:ignore
 
-    def parse_xml(self, xml_string):
+    def parse_xml(self, xml_string: str) -> ET.Element:
         try:
             xml = ET.fromstring(xml_string)
             return xml
         except (SyntaxError, ExpatError) as e:
-            msg = e.msg if hasattr(e, "msg") else e.message
+            msg = e.msg if hasattr(e, "msg") else e.message  # type:ignore[attr-defined]
             if "unbound" in msg:
                 known_prefixes = {"stream": "http://etherx.jabber.org/streams"}
 
@@ -77,7 +83,7 @@ class SlixTest(unittest.TestCase):
     # ------------------------------------------------------------------
     # Shortcut methods for creating stanza objects
 
-    def Message(self, *args, **kwargs):
+    def Message(self, *args: object, **kwargs: object) -> Message:
         """
         Create a Message stanza.
 
@@ -88,7 +94,7 @@ class SlixTest(unittest.TestCase):
         """
         return Message(self.xmpp, *args, **kwargs)
 
-    def Iq(self, *args, **kwargs):
+    def Iq(self, *args: object, **kwargs: object) -> Iq:
         """
         Create an Iq stanza.
 
@@ -99,7 +105,7 @@ class SlixTest(unittest.TestCase):
         """
         return Iq(self.xmpp, *args, **kwargs)
 
-    def Presence(self, *args, **kwargs):
+    def Presence(self, *args: object, **kwargs: object) -> Presence:
         """
         Create a Presence stanza.
 
@@ -108,17 +114,17 @@ class SlixTest(unittest.TestCase):
         Arguments:
             xml -- An XML object to use for the Iq's values.
         """
-        return Presence(self.xmpp, *args, **kwargs)
+        return Presence(self.xmpp, *args, **kwargs)  # type:ignore
 
     def check_jid(
         self,
-        jid,
-        user=None,
-        domain=None,
-        resource=None,
-        bare=None,
-        full=None,
-        string=None,
+        jid: JID,
+        user: str | None = None,
+        domain: str | None = None,
+        resource: str | None = None,
+        bare: str | None = None,
+        full: str | None = None,
+        string: str | None = None,
     ) -> None:
         """
         Verify the components of a JID.
@@ -149,15 +155,15 @@ class SlixTest(unittest.TestCase):
 
     def check_roster(
         self,
-        owner,
-        jid,
-        name=None,
-        subscription=None,
-        afrom=None,
-        ato=None,
-        pending_out=None,
-        pending_in=None,
-        groups=None,
+        owner: JidStr,
+        jid: JID,
+        name: str | None = None,
+        subscription: str | None = None,
+        afrom: OptJidStr = None,
+        ato: OptJidStr = None,
+        pending_out: str | None = None,
+        pending_in: str | None = None,
+        groups: str | None = None,
     ) -> None:
         roster = self.xmpp.roster[owner][jid]
         if name is not None:
@@ -201,7 +207,12 @@ class SlixTest(unittest.TestCase):
     # Methods for comparing stanza objects to XML strings
 
     def check(
-        self, stanza, criteria, method="exact", defaults=None, use_values=True
+        self,
+        stanza: ElementBase,
+        criteria: str | ElementBase,
+        method: TestMethod = "exact",
+        defaults: list[str] | None = None,
+        use_values: bool = True,
     ) -> None:
         """
         Create and compare several stanza objects to a correct XML string.
@@ -246,9 +257,9 @@ class SlixTest(unittest.TestCase):
             Matcher = matchers.get(method)
             if Matcher is None:
                 raise ValueError("Unknown matching method.")
-            test = Matcher(criteria)
+            test = Matcher(criteria)  # type:ignore
             self.assertTrue(
-                test.match(stanza),
+                test.match(stanza),  # type:ignore
                 f"Stanza did not match using {method} method:\n"
                 + f"Criteria:\n{criteria!s}\n"
                 + f"Stanza:\n{stanza!s}",
@@ -278,18 +289,24 @@ class SlixTest(unittest.TestCase):
                 # correctly.
                 default_stanza = stanza_class()
                 if defaults is None:
-                    known_defaults = {Message: ["type"], Presence: ["priority"]}
-                    defaults = known_defaults.get(stanza_class, [])
+                    if stanza_class is Message:
+                        defaults = ["type"]
+                    elif stanza_class is Presence:
+                        defaults = ["priority"]
+                    else:
+                        defaults = []
                 for interface in defaults:
                     stanza[interface] = stanza[interface]
                     stanza2[interface] = stanza2[interface]
                     # Can really only automatically add defaults for top
                     # level attribute values. Anything else must be accounted
                     # for in the provided XML string.
-                    if interface not in xml.attrib:
-                        if interface in default_stanza.xml.attrib:
-                            value = default_stanza.xml.attrib[interface]
-                            xml.attrib[interface] = value
+                    if (
+                        interface not in xml.attrib
+                        and interface in default_stanza.xml.attrib
+                    ):
+                        value = default_stanza.xml.attrib[interface]
+                        xml.attrib[interface] = value
 
                 values = stanza2.values
                 stanza3 = stanza_class()
@@ -299,7 +316,9 @@ class SlixTest(unittest.TestCase):
                 debug += f"Given XML:\n{highlight(tostring(xml))}\n"
                 debug += f"Given stanza:\n{highlight(tostring(stanza.xml))}\n"
                 debug += f"Generated stanza:\n{highlight(tostring(stanza2.xml))}\n"
-                debug += f"Second generated stanza:\n{highlight(tostring(stanza3.xml))}\n"
+                debug += (
+                    f"Second generated stanza:\n{highlight(tostring(stanza3.xml))}\n"
+                )
                 result = self.compare(xml, stanza.xml, stanza2.xml, stanza3.xml)
             else:
                 debug = "Two methods for creating stanzas do not match.\n"
@@ -318,22 +337,22 @@ class SlixTest(unittest.TestCase):
         """
         Simulate a stream disconnection.
         """
-        if self.xmpp:
-            self.xmpp.socket.disconnect_error()
+        if self.xmpp and self.xmpp.socket is not None:
+            self.xmpp.socket.disconnect_error()  # type:ignore
 
     def stream_start(
         self,
-        mode="client",
-        skip=True,
-        header=None,
-        socket="mock",
-        jid="tester@localhost/resource",
-        password="test",
-        server="localhost",
-        port=5222,
-        sasl_mech=None,
-        plugins=None,
-        plugin_config={},
+        mode: str = "client",
+        skip: bool = True,
+        header: str | None = None,
+        socket: str = "mock",
+        jid: str = "tester@localhost/resource",
+        password: str = "test",
+        server: str = "localhost",
+        port: int = 5222,
+        sasl_mech: Iterable[str] | None = None,
+        plugins: Iterable[str] | None = None,
+        plugin_config: dict[str, dict[str, object]] = {},
     ) -> None:
         """
         Initialize an XMPP client or component using a dummy XML stream.
@@ -373,19 +392,20 @@ class SlixTest(unittest.TestCase):
             raise ValueError("Unknown XMPP connection mode.")
         self.xmpp._always_send_everything = True
 
-        self.xmpp.connection_made(TestTransport(self.xmpp))
+        self.xmpp.connection_made(TestTransport(self.xmpp))  # type:ignore[arg-type]
         self.xmpp.session_bind_event.set()
         # Remove unique ID prefix to make it easier to test
-        self.xmpp._id_prefix = ""
         self.xmpp.default_lang = None
         self.xmpp.peer_default_lang = None
 
-        def new_id():
-            self.xmpp._id += 1
-            return str(self.xmpp._id)
+        _id = 0
 
-        self.xmpp._id = 0
-        self.xmpp.new_id = new_id
+        def new_id() -> str:
+            nonlocal _id
+            _id += 1
+            return str(_id)
+
+        self.xmpp.new_id = new_id  # type:ignore
 
         # Must have the stream header ready for the asyncio loop to work.
         if not header:
@@ -395,6 +415,7 @@ class SlixTest(unittest.TestCase):
         self.wait_for_send_queue()
 
         if skip:
+            assert isinstance(self.xmpp.socket, TestSocket)
             self.xmpp.socket.next_sent()
             if mode == "component":
                 self.xmpp.socket.next_sent()
@@ -412,15 +433,15 @@ class SlixTest(unittest.TestCase):
 
     def make_header(
         self,
-        sto="",
-        sfrom="",
-        sid="",
-        stream_ns="http://etherx.jabber.org/streams",
-        default_ns="jabber:client",
-        default_lang="en",
-        version="1.0",
-        xml_header=True,
-    ):
+        sto: JidStr = "",
+        sfrom: JidStr = "",
+        sid: str = "",
+        stream_ns: str = "http://etherx.jabber.org/streams",
+        default_ns: str = "jabber:client",
+        default_lang: str = "en",
+        version: str = "1.0",
+        xml_header: bool = True,
+    ) -> str:
         """
         Create a stream header to be received by the test XMPP agent.
 
@@ -454,7 +475,12 @@ class SlixTest(unittest.TestCase):
         return header % " ".join(parts)
 
     def recv(
-        self, data, defaults=None, method="exact", use_values=True, timeout=1
+        self,
+        data: str | bytes,
+        defaults: list[str] | None = None,
+        method: TestMethod = "exact",
+        use_values: bool = True,
+        timeout: float = 1,
     ) -> None:
         """
         Pass data to the dummy XMPP client as if it came from an XMPP server.
@@ -482,14 +508,14 @@ class SlixTest(unittest.TestCase):
 
     def recv_header(
         self,
-        sto="",
-        sfrom="",
-        sid="",
-        stream_ns="http://etherx.jabber.org/streams",
-        default_ns="jabber:client",
-        version="1.0",
-        xml_header=False,
-        timeout=1,
+        sto: JidStr = "",
+        sfrom: JidStr = "",
+        sid: str = "",
+        stream_ns: str = "http://etherx.jabber.org/streams",
+        default_ns: str = "jabber:client",
+        version: str = "1.0",
+        xml_header: bool = False,
+        timeout: float = 1,
     ) -> None:
         """
         Check that a given stream header was received.
@@ -515,6 +541,7 @@ class SlixTest(unittest.TestCase):
             version=version,
             xml_header=xml_header,
         )
+        assert isinstance(self.xmpp.socket, TestTransport)
         recv_header = self.xmpp.socket.next_recv(timeout)
         if recv_header is None:
             raise ValueError("Socket did not return data.")
@@ -527,11 +554,10 @@ class SlixTest(unittest.TestCase):
         xml = self.parse_xml(header2)
         recv_xml = self.parse_xml(recv_header2)
 
-        if sid is None:
+        if sid is None and "id" in recv_xml.attrib:
             # Ignore the id sent by the server since
             # we can't know in advance what it will be.
-            if "id" in recv_xml.attrib:
-                del recv_xml.attrib["id"]
+            del recv_xml.attrib["id"]
 
         # Ignore the xml:lang attribute for now.
         if "xml:lang" in recv_xml.attrib:
@@ -557,24 +583,31 @@ class SlixTest(unittest.TestCase):
             ),
         )
 
-    def recv_feature(self, data, method="mask", use_values=True, timeout=1) -> None:
+    def recv_feature(
+        self,
+        data: str | bytes,
+        method: TestMethod | None = "mask",
+        use_values: bool = True,
+        timeout: float = 1,
+    ) -> None:
         """ """
         if method is None and hasattr(self, "match_method"):
             method = getattr(self, "match_method")
+        assert isinstance(self.xmpp.socket, TestTransport)
 
         self.xmpp.socket.data_received(data)
 
     def send_header(
         self,
-        sto="",
-        sfrom="",
-        sid="",
-        stream_ns="http://etherx.jabber.org/streams",
-        default_ns="jabber:client",
-        default_lang="en",
-        version="1.0",
-        xml_header=False,
-        timeout=1,
+        sto: JidStr = "",
+        sfrom: JidStr = "",
+        sid: str = "",
+        stream_ns: str = "http://etherx.jabber.org/streams",
+        default_ns: str = "jabber:client",
+        default_lang: str = "en",
+        version: str = "1.0",
+        xml_header: bool = False,
+        timeout: float = 1,
     ) -> None:
         """
         Check that a given stream header was sent.
@@ -601,6 +634,7 @@ class SlixTest(unittest.TestCase):
             version=version,
             xml_header=xml_header,
         )
+        assert isinstance(self.xmpp.socket, TestSocket)
         sent_header = self.xmpp.socket.next_sent(timeout)
         if sent_header is None:
             raise ValueError("Socket did not return data.")
@@ -618,8 +652,15 @@ class SlixTest(unittest.TestCase):
             f"Stream headers do not match:\nDesired:\n{header}\nSent:\n{sent_header}",
         )
 
-    def send_feature(self, data, method="mask", use_values=True, timeout=1) -> None:
+    def send_feature(
+        self,
+        data: str,
+        method: TestMethod = "mask",
+        use_values: bool = True,
+        timeout: float = 1,
+    ) -> None:
         """ """
+        assert isinstance(self.xmpp.socket, TestTransport)
         sent_data = self.xmpp.socket.next_sent(timeout)
         xml = self.parse_xml(data)
         sent_xml = self.parse_xml(sent_data)
@@ -631,9 +672,9 @@ class SlixTest(unittest.TestCase):
                 f"Features do not match.\nDesired:\n{highlight(tostring(xml))}\nReceived:\n{highlight(tostring(sent_xml))}",
             )
         elif method == "mask":
-            matcher = MatchXMLMask(xml)
+            matcher = MatchXMLMask(xml)  # type:ignore
             self.assertTrue(
-                matcher.match(sent_xml),
+                matcher.match(sent_xml),  # type:ignore
                 f"Stanza did not match using {method} method:\n"
                 + f"Criteria:\n{highlight(tostring(xml))}\n"
                 + f"Stanza:\n{highlight(tostring(sent_xml))}",
@@ -642,7 +683,12 @@ class SlixTest(unittest.TestCase):
             raise ValueError(f"Unknown matching method: {method}")
 
     def send(
-        self, data, defaults=None, use_values=True, timeout=0.5, method="exact"
+        self,
+        data: str,
+        defaults: list[str] | None = None,
+        use_values: bool = True,
+        timeout: float = 0.5,
+        method: TestMethod = "exact",
     ) -> None:
         """
         Check that the XMPP client sent the given stanza XML.
@@ -665,6 +711,7 @@ class SlixTest(unittest.TestCase):
                             Defaults to the value of self.match_method.
         """
         self.wait_for_send_queue()
+        assert isinstance(self.xmpp.socket, TestSocket)
         sent = self.xmpp.socket.next_sent(timeout)
         if data is None and sent is None:
             return
@@ -696,7 +743,7 @@ class SlixTest(unittest.TestCase):
         else:
             loop.run_until_complete(yield_some())
 
-    def run_coro(self, coro):
+    def run_coro(self, coro: Awaitable[T]) -> T:
         loop = asyncio.get_event_loop()
         return loop.run_until_complete(coro)
 
@@ -717,7 +764,7 @@ class SlixTest(unittest.TestCase):
     # ------------------------------------------------------------------
     # XML Comparison and Cleanup
 
-    def fix_namespaces(self, xml, ns=None) -> None:
+    def fix_namespaces(self, xml: ET.Element, ns: str | None = None) -> None:
         """
         Assign a namespace to an element and any children that
         don't have a namespace.
@@ -736,7 +783,7 @@ class SlixTest(unittest.TestCase):
         for child in xml:
             self.fix_namespaces(child, ns)
 
-    def compare(self, xml, *other) -> bool:
+    def compare(self, xml: ET.Element, *others: ET.Element) -> bool:
         """
         Compare XML objects.
 
@@ -744,14 +791,14 @@ class SlixTest(unittest.TestCase):
             xml    -- The XML object to compare against.
             *other -- The list of XML objects to compare.
         """
-        if not other:
+        if not others:
             return False
 
         # Compare multiple objects
-        if len(other) > 1:
-            return all(self.compare(xml, xml2) for xml2 in other)
+        if len(others) > 1:
+            return all(self.compare(xml, xml2) for xml2 in others)
 
-        other = other[0]
+        other = others[0]
 
         # Step 1: Check tags
         if xml.tag != other.tag:
@@ -811,8 +858,6 @@ class SlixTest(unittest.TestCase):
 
 @atexit.register
 def cleanup() -> None:
-    try:
+    with contextlib.suppress(BaseException):
         loop = asyncio.get_event_loop()
         loop.close()
-    except:
-        pass
