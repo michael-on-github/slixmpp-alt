@@ -1495,8 +1495,9 @@ class XMLStream(asyncio.BaseProtocol):
         finally:
             self.del_event_handler(event, handler)
 
-    def wrap(self, coroutine: Coroutine[None, None, T]) -> Future:
-        """Make a Future out of a coroutine with the current loop.
+    def wrap(self, coroutine: Awaitable[T]) -> Future[T]:
+        """Make a Future out of a coroutine or another awaitable
+        with the current loop.
 
         :param coroutine: The coroutine to wrap.
         """
