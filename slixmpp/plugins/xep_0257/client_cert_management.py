@@ -1,15 +1,14 @@
-
 # Slixmpp: The Slick XMPP Library
 # Copyright (C) 2012 Nathanael C. Fritz, Lance J.T. Stout
 # This file is part of Slixmpp.
 # See the file LICENSE for copying permission.
 import logging
 
-from slixmpp import Iq
+from typing import Awaitable
+
+from slixmpp import Iq, JID
 from slixmpp.plugins import BasePlugin
-from slixmpp.xmlstream import register_stanza_plugin
-from slixmpp.plugins.xep_0257 import stanza, Certs
-from slixmpp.plugins.xep_0257 import AppendCert, DisableCert, RevokeCert
+from slixmpp.plugins.xep_0257 import stanza
 
 
 log = logging.getLogger(__name__)
@@ -22,11 +21,8 @@ class XEP_0257(BasePlugin):
     dependencies = {'xep_0030'}
     stanza = stanza
 
-    def plugin_init(self):
-        register_stanza_plugin(Iq, Certs)
-        register_stanza_plugin(Iq, AppendCert)
-        register_stanza_plugin(Iq, DisableCert)
-        register_stanza_plugin(Iq, RevokeCert)
+    def plugin_init(self) -> None:
+        stanza.register_plugins()
 
     def get_certs(self, ifrom=None, timeout=None, callback=None):
         iq = self.xmpp.Iq()
