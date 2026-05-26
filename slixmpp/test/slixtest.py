@@ -25,7 +25,7 @@ from slixmpp.xmlstream.matcher import (
     StanzaPath,
 )
 from slixmpp.xmlstream.stanzabase import register_stanza_plugin
-from slixmpp.xmlstream.tostring import highlight, tostring
+from slixmpp.xmlstream.tostring import highlight, tostring, tostring_fmt
 
 TestMethod = Literal["exact", "mask", "id", "xpath", "stanzapath"]
 T = TypeVar("T")
@@ -313,18 +313,16 @@ class SlixTest(unittest.TestCase):
                 stanza3.values = values
 
                 debug = "Three methods for creating stanzas do not match.\n"
-                debug += f"Given XML:\n{highlight(tostring(xml))}\n"
-                debug += f"Given stanza:\n{highlight(tostring(stanza.xml))}\n"
-                debug += f"Generated stanza:\n{highlight(tostring(stanza2.xml))}\n"
-                debug += (
-                    f"Second generated stanza:\n{highlight(tostring(stanza3.xml))}\n"
-                )
+                debug += f"Given XML:\n{highlight(tostring_fmt(xml))}\n"
+                debug += f"Given stanza:\n{highlight(tostring_fmt(stanza.xml))}\n"
+                debug += f"Generated stanza:\n{highlight(tostring_fmt(stanza2.xml))}\n"
+                debug += f"Second generated stanza:\n{highlight(tostring_fmt(stanza3.xml))}\n"
                 result = self.compare(xml, stanza.xml, stanza2.xml, stanza3.xml)
             else:
                 debug = "Two methods for creating stanzas do not match.\n"
-                debug += f"Given XML:\n{highlight(tostring(xml))}\n"
-                debug += f"Given stanza:\n{highlight(tostring(stanza.xml))}\n"
-                debug += f"Generated stanza:\n{highlight(tostring(stanza2.xml))}\n"
+                debug += f"Given XML:\n{highlight(tostring_fmt(xml))}\n"
+                debug += f"Given stanza:\n{highlight(tostring_fmt(stanza.xml))}\n"
+                debug += f"Generated stanza:\n{highlight(tostring_fmt(stanza2.xml))}\n"
                 result = self.compare(xml, stanza.xml, stanza2.xml)
             stanza_class.namespace = old_ns
 
