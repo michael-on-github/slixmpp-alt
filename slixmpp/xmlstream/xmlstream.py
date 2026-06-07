@@ -932,7 +932,7 @@ class XMLStream(asyncio.BaseProtocol):
         """
         self.__root_stanza.remove(stanza_class)
 
-    def add_filter(self, mode: FilterString, handler: Callable[[StanzaBase], StanzaBase | None], order: int | None = None) -> None:
+    def add_filter(self, mode: FilterString, handler: Filter, order: int | None = None) -> None:
         """Add a filter for incoming or outgoing stanzas.
 
         These filters are applied before incoming stanzas are
