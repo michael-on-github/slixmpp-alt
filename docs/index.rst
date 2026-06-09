@@ -121,6 +121,7 @@ Additional Info
 
     glossary
     license
+    projects
 
 * :ref:`license`
 * :ref:`glossary`
