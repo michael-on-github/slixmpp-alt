@@ -12,6 +12,6 @@ XEP-0009: Jabber-RPC
 Stanza elements
 ---------------
 
-.. automodule:: slixmpp.plugins.xep_0009.stanza.RPC
+.. automodule:: slixmpp.plugins.xep_0009.stanza
     :members:
     :undoc-members:
