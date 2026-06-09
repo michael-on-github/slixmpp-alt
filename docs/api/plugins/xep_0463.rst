@@ -1,5 +1,5 @@
 XEP-0463: MUC Affiliation Versioning
-===========================
+====================================
 
 .. module:: slixmpp.plugins.xep_0463
 
