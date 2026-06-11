@@ -7,6 +7,13 @@ from typing import TypedDict
 
 # Plugins mega-dict
 
+from slixmpp.features.feature_bind import FeatureBind
+from slixmpp.features.feature_limits import FeatureLimits
+from slixmpp.features.feature_mechanisms import FeatureMechanisms
+from slixmpp.features.feature_preapproval import FeaturePreApproval
+from slixmpp.features.feature_rosterver import FeatureRosterVer
+from slixmpp.features.feature_session import FeatureSession
+from slixmpp.features.feature_starttls import FeatureSTARTTLS
 from slixmpp.plugins.xep_0004 import XEP_0004
 from slixmpp.plugins.xep_0009 import XEP_0009
 from slixmpp.plugins.xep_0012 import XEP_0012
@@ -122,6 +129,13 @@ from slixmpp.plugins.xep_0513 import XEP_0513
 
 
 class PluginsDict(TypedDict):
+    feature_bind: FeatureBind
+    feature_limits: FeatureLimits
+    feature_mechanisms: FeatureMechanisms
+    feature_preapproval: FeaturePreApproval
+    feature_rosterver: FeatureRosterVer
+    feature_session: FeatureSession
+    feature_starttls: FeatureSTARTTLS
     xep_0004: XEP_0004
     xep_0009: XEP_0009
     xep_0012: XEP_0012
