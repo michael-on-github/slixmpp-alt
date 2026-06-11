@@ -30,7 +30,7 @@ class XEP_0447(BasePlugin):
 
         register_stanza_plugin(stanza.StatelessFileSharing, stanza.Sources)
         register_stanza_plugin(
-            stanza.StatelessFileSharing, self.xmpp["xep_0446"].stanza.File
+            stanza.StatelessFileSharing, self.xmpp.plugin["xep_0446"].stanza.File
         )
         register_stanza_plugin(stanza.Sources, stanza.UrlData, iterable=True)
 

@@ -117,7 +117,7 @@ the same order as expected using positional arguments.
 
 .. code-block:: python
 
-    xmpp['xep_0030'].add_identity(category='client',
+    xmpp.plugin['xep_0030'].add_identity(category='client',
                                   itype='bot',
                                   name='Slixmpp',
                                   node='foo',
@@ -138,7 +138,7 @@ handler will be used to perform the ``add_feature`` action.
 
 .. code-block:: python
 
-    xmpp['xep_0030'].add_feature(feature='jabber:x:data',
+    xmpp.plugin['xep_0030'].add_feature(feature='jabber:x:data',
                                  node='foo',
                                  jid=xmpp.boundjid.full)
 
@@ -150,7 +150,7 @@ item itself, and the JID and node that will own the item.
 
 .. code-block:: python
 
-    xmpp['xep_0030'].add_item(jid='myitemjid@example.com',
+    xmpp.plugin['xep_0030'].add_item(jid='myitemjid@example.com',
                               name='An Item!',
                               node='owner_node',
                               subnode='item_node',

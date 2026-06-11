@@ -28,7 +28,7 @@ The same changes from the SleekXMPP API apply, so you can do:
 
 .. code-block:: python
 
-    iq_info = await self.xmpp['xep_0030'].get_info(jid)
+    iq_info = await self.xmpp.plugin['xep_0030'].get_info(jid)
 
 
 Callbacks, Event Handlers, and Stream Handlers

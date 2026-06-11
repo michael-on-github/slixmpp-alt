@@ -57,17 +57,17 @@ class XEP_0300(BasePlugin):
                 self.enabled_hashes.append(namespace % algo)
 
     def session_bind(self, jid):
-        self.xmpp['xep_0030'].add_feature(Hash.namespace)
+        self.xmpp.plugin['xep_0030'].add_feature(Hash.namespace)
 
         for namespace in self.enabled_hashes:
-            self.xmpp['xep_0030'].add_feature(namespace)
+            self.xmpp.plugin['xep_0030'].add_feature(namespace)
 
     def plugin_end(self):
         for namespace in self.enabled_hashes:
-            self.xmpp['xep_0030'].del_feature(feature=namespace)
+            self.xmpp.plugin['xep_0030'].del_feature(feature=namespace)
         self.enabled_hashes.clear()
 
-        self.xmpp['xep_0030'].del_feature(feature=Hash.namespace)
+        self.xmpp.plugin['xep_0030'].del_feature(feature=Hash.namespace)
 
     def compute_hash(self, filename: str | Path,
                      function: str | None = None) -> Hash:

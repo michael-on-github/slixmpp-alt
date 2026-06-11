@@ -140,7 +140,7 @@ class ClientXMPP(BaseXMPP):
         self.limits = Limits()
 
         if sasl_mech:
-            self['feature_mechanisms'].use_mech = sasl_mech
+            self.plugin['feature_mechanisms'].use_mech = sasl_mech
 
     @property
     def password(self) -> str:

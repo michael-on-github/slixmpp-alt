@@ -115,7 +115,7 @@ class XEP_0363(BasePlugin):
     def plugin_end(self):
         if self.handle_upload_requests:
             self.xmpp.remove_handler('HTTP Upload Request')
-            self.xmpp['xep_0030'].del_feature(feature=Request.namespace)
+            self.xmpp.plugin['xep_0030'].del_feature(feature=Request.namespace)
 
     def session_bind(self, jid):
         if self.handle_upload_requests:
@@ -132,7 +132,7 @@ class XEP_0363(BasePlugin):
         if domain is None and self.xmpp.is_component:
             domain = self.xmpp.server_host
 
-        results = await self.xmpp['xep_0030'].get_info_from_domain(
+        results = await self.xmpp.plugin['xep_0030'].get_info_from_domain(
             domain=domain, **iqkwargs
         )
 

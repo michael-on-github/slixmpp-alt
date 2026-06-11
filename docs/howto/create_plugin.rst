@@ -95,7 +95,7 @@ does not automatically load plugin dependencies for you.
 
     def post_init(self):
         BasePlugin.post_init(self)
-        self.xmpp['xep_0030'].add_feature("jabber:iq:register")
+        self.xmpp.plugin['xep_0030'].add_feature("jabber:iq:register")
 
 Creating Custom Stanza Objects
 ------------------------------
@@ -609,7 +609,7 @@ with some additional registration fields implemented.
 
         def post_init(self):
             BasePlugin.post_init(self)
-            self.xmpp['xep_0030'].add_feature("jabber:iq:register")
+            self.xmpp.plugin['xep_0030'].add_feature("jabber:iq:register")
 
         def __handleRegistration(self, iq):
             if iq['type'] == 'get':

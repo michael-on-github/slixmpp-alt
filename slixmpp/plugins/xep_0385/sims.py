@@ -26,14 +26,14 @@ class XEP_0385(BasePlugin):
     stanza = stanza
 
     def plugin_init(self):
-        register_stanza_plugin(self.xmpp["xep_0372"].stanza.Reference, stanza.Sims)
+        register_stanza_plugin(self.xmpp.plugin["xep_0372"].stanza.Reference, stanza.Sims)
         register_stanza_plugin(Message, stanza.Sims)
 
         register_stanza_plugin(stanza.Sims, stanza.Sources)
-        register_stanza_plugin(stanza.Sims, self.xmpp["xep_0234"].stanza.File)
+        register_stanza_plugin(stanza.Sims, self.xmpp.plugin["xep_0234"].stanza.File)
         register_stanza_plugin(
             stanza.Sources,
-            self.xmpp["xep_0372"].stanza.Reference,
+            self.xmpp.plugin["xep_0372"].stanza.Reference,
             iterable=True,
         )
 
@@ -46,7 +46,7 @@ class XEP_0385(BasePlugin):
     ):
         sims = stanza.Sims()
         for uri in uris:
-            ref = self.xmpp["xep_0372"].stanza.Reference()
+            ref = self.xmpp.plugin["xep_0372"].stanza.Reference()
             ref["uri"] = uri
             ref["type"] = "data"
             sims["sources"].append(ref)
@@ -64,7 +64,7 @@ class XEP_0385(BasePlugin):
         h["value"] = h["value"].decode()
         sims["file"].append(h)
 
-        ref = self.xmpp["xep_0372"].stanza.Reference()
+        ref = self.xmpp.plugin["xep_0372"].stanza.Reference()
         ref.append(sims)
         ref["type"] = "data"
         return ref
