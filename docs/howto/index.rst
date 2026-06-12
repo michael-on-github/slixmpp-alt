@@ -12,4 +12,5 @@ Tutorials, FAQs, and How To Guides
     remove_process
     handlersmatchers
     guide_xep_0030
+    use_encryption
     xmpp_tdg
