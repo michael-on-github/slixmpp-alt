@@ -11,6 +11,7 @@
 
 import datetime
 import time
+import unittest
 
 from slixmpp.test import *
 from slixmpp.plugins.xep_0325.device import Device
