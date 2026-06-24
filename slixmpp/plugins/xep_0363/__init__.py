@@ -3,18 +3,26 @@
 # This file is part of slixmpp.
 # See the file LICENSE for copying permission.
 from slixmpp.plugins.base import register_plugin
-
-from slixmpp.plugins.xep_0363.stanza import Request, Slot, Put, Get, Header
 from slixmpp.plugins.xep_0363.http_upload import (
     XEP_0363,
-    UploadServiceNotFound,
     FileTooBig,
-    HTTPError,
     FileUploadError,
+    HTTPError,
+    UploadServiceNotFound,
 )
+from slixmpp.plugins.xep_0363.stanza import Get, Header, Put, Request, Slot
 
 register_plugin(XEP_0363)
 
-__all__ = ['Request', 'Slot', 'Put', 'Get', 'Header', 'XEP_0363',
-           'UploadServiceNotFound', 'FileTooBig', 'HTTPError',
-           'FileUploadError']
+__all__ = [
+    "XEP_0363",
+    "FileTooBig",
+    "FileUploadError",
+    "Get",
+    "HTTPError",
+    "Header",
+    "Put",
+    "Request",
+    "Slot",
+    "UploadServiceNotFound",
+]
