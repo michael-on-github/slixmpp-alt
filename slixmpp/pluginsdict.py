@@ -6,7 +6,6 @@
 from typing import TypedDict
 
 # Plugins mega-dict
-
 from slixmpp.features.feature_bind import FeatureBind
 from slixmpp.features.feature_limits import FeatureLimits
 from slixmpp.features.feature_mechanisms import FeatureMechanisms
@@ -88,6 +87,7 @@ from slixmpp.plugins.xep_0334 import XEP_0334
 from slixmpp.plugins.xep_0335 import XEP_0335
 from slixmpp.plugins.xep_0352 import XEP_0352
 from slixmpp.plugins.xep_0353 import XEP_0353
+from slixmpp.plugins.xep_0356 import XEP_0356
 from slixmpp.plugins.xep_0359 import XEP_0359
 from slixmpp.plugins.xep_0363 import XEP_0363
 from slixmpp.plugins.xep_0369 import XEP_0369
@@ -210,6 +210,7 @@ class PluginsDict(TypedDict):
     xep_0335: XEP_0335
     xep_0352: XEP_0352
     xep_0353: XEP_0353
+    xep_0356: XEP_0356
     xep_0359: XEP_0359
     xep_0363: XEP_0363
     xep_0369: XEP_0369
