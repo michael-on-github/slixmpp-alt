@@ -9,7 +9,7 @@ from asyncio import Future
 from collections.abc import Callable
 from mimetypes import guess_type
 from pathlib import Path
-from typing import IO, ClassVar
+from typing import IO, ClassVar, Literal
 
 from aiohttp import ClientSession
 
@@ -24,6 +24,9 @@ from . import stanza
 from .stanza import Get, Header, Put, Request, Slot
 
 log = logging.getLogger(__name__)
+
+
+PurposeLiteral = Literal["message", "profile", "ephemeral", "permanent"]
 
 
 class FileUploadError(Exception):
@@ -77,6 +80,21 @@ class HTTPError(FileUploadError):
         return f"Could not upload file: {self.args[0]} ({self.args[1]})"
 
 
+class PurposeNotSupported(FileUploadError):
+    """
+    Raised when the upload service does not support the requested purpose,
+    cf https://xmpp.org/extensions/xep-0363.html#purpose
+
+    args:
+
+    - service: JID
+    - purpose: str
+    """
+
+    def __str__(self) -> str:
+        return f"Could not upload file: '{self.args[0]}' does not support the '{self.args[1]}' purpose"
+
+
 class XEP_0363(BasePlugin):
     """
     XEP-0363: HTTP File Upload
@@ -104,6 +122,7 @@ class XEP_0363(BasePlugin):
     }
 
     handle_upload_requests: bool
+    _upload_service_purposes: set[str] | None
 
     def plugin_init(self) -> None:
         register_stanza_plugin(Iq, Request)
@@ -111,6 +130,14 @@ class XEP_0363(BasePlugin):
         register_stanza_plugin(Slot, Put)
         register_stanza_plugin(Slot, Get)
         register_stanza_plugin(Put, Header, iterable=True)
+        for purpose in (
+            stanza.MessagePurpose,
+            stanza.EphemeralPurpose,
+            stanza.PermanentPurpose,
+            stanza.ProfilePurpose,
+        ):
+            register_stanza_plugin(stanza.Request, purpose)
+        self._upload_service_purposes = None
 
         if self.handle_upload_requests:
             self.xmpp.register_handler(
@@ -170,6 +197,7 @@ class XEP_0363(BasePlugin):
         size: int,
         content_type: str | None = None,
         *,
+        purpose: PurposeLiteral | None = None,
         ifrom: JID | None = None,
         callback: Callable | None = None,
         timeout: float | None = None,
@@ -186,16 +214,27 @@ class XEP_0363(BasePlugin):
         request["filename"] = str(filename)
         request["size"] = str(size)
         request["content-type"] = content_type or self.default_content_type
+        if purpose is not None:
+            request.enable(purpose)
         return iq.send(callback=callback, timeout=timeout)
+
+    def _update_upload_service_purposes(self, iq: Iq) -> None:
+        self._upload_service_purposes = set()
+        for feature in iq["disco_info"]["features"]:
+            if feature.startswith(stanza.PURPOSE_NAMESPACE):
+                self._upload_service_purposes.add(
+                    feature.removeprefix(stanza.PURPOSE_NAMESPACE)[1:].lower()
+                )
 
     async def upload_file(
         self,
-        filename: Path,
+        filename: Path | str,
         size: int | None = None,
         content_type: str | None = None,
         *,
         input_file: IO[bytes] | None = None,
         domain: JID | None = None,
+        purpose: PurposeLiteral | None = None,
         callback: Callable | None = None,
         timeout: float | None = None,
     ) -> str:
@@ -215,6 +254,7 @@ class XEP_0363(BasePlugin):
         :raises .HTTPError: If there is an error in the HTTP operation.
         :returns: The URL of the uploaded file.
         """
+        filename = Path(filename)
         if self.upload_service is None:
             info_iq = await self.find_upload_service(
                 domain=domain, callback=callback, timeout=timeout
@@ -233,6 +273,21 @@ class XEP_0363(BasePlugin):
                         )
                         self.max_file_size = float("+inf")
                     break
+            self._update_upload_service_purposes(info_iq)
+
+        # From the XEP:
+        # > As the 'message' purpose is the default, explicitly announcing the
+        # > feature and including this purpose in the slot request is technically
+        # > redundant and is done solely for the sake of completeness.
+        if purpose is not None and purpose != "message":
+            if self._upload_service_purposes is None:
+                info_iq = await self.xmpp.plugin["xep_0030"].get_info(
+                    self.upload_service
+                )
+                self._update_upload_service_purposes(info_iq)
+            assert self._upload_service_purposes is not None
+            if purpose not in self._upload_service_purposes:
+                raise PurposeNotSupported(self.upload_service, purpose)
 
         if input_file is None:
             input_file = open(filename, "rb")  # noqa
@@ -255,6 +310,7 @@ class XEP_0363(BasePlugin):
             basename,
             size,
             content_type,
+            purpose=purpose,
             timeout=timeout,
             callback=callback,
         )

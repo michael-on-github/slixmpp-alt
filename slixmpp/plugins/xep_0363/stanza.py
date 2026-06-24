@@ -49,3 +49,26 @@ class Header(ElementBase):
 
     def del_value(self) -> None:
         self.xml.text = ""
+
+
+PURPOSE_NAMESPACE = "urn:xmpp:http:upload:purpose:0"
+
+
+class MessagePurpose(ElementBase):
+    namespace = PURPOSE_NAMESPACE
+    plugin_attrib = name = "message"
+
+
+class ProfilePurpose(ElementBase):
+    namespace = PURPOSE_NAMESPACE
+    plugin_attrib = name = "profile"
+
+
+class EphemeralPurpose(ElementBase):
+    namespace = PURPOSE_NAMESPACE
+    plugin_attrib = name = "ephemeral"
+
+
+class PermanentPurpose(ElementBase):
+    namespace = PURPOSE_NAMESPACE
+    plugin_attrib = name = "permanent"
