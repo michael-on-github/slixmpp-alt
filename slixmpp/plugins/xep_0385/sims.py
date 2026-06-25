@@ -1,9 +1,11 @@
 import logging
+from collections.abc import Iterable
 from datetime import datetime
 from pathlib import Path
-from typing import Iterable
+from typing import ClassVar
 
 from slixmpp.plugins import BasePlugin
+from slixmpp.plugins.xep_0372.stanza import Reference
 from slixmpp.stanza import Message
 from slixmpp.xmlstream import register_stanza_plugin
 
@@ -13,7 +15,6 @@ log = logging.getLogger(__name__)
 
 
 class XEP_0385(BasePlugin):
-
     """
     XEP-0385: Stateless Inline Media Sharing (SIMS)
 
@@ -22,11 +23,13 @@ class XEP_0385(BasePlugin):
 
     name = "xep_0385"
     description = "XEP-0385: Stateless Inline Media Sharing (SIMS)"
-    dependencies = {"xep_0234", "xep_0300", "xep_0372"}
+    dependencies: ClassVar[set[str]] = {"xep_0234", "xep_0300", "xep_0372"}
     stanza = stanza
 
-    def plugin_init(self):
-        register_stanza_plugin(self.xmpp.plugin["xep_0372"].stanza.Reference, stanza.Sims)
+    def plugin_init(self) -> None:
+        register_stanza_plugin(
+            self.xmpp.plugin["xep_0372"].stanza.Reference, stanza.Sims
+        )
         register_stanza_plugin(Message, stanza.Sims)
 
         register_stanza_plugin(stanza.Sims, stanza.Sources)
@@ -43,7 +46,7 @@ class XEP_0385(BasePlugin):
         uris: Iterable[str],
         media_type: str | None,
         desc: str | None,
-    ):
+    ) -> Reference:
         sims = stanza.Sims()
         for uri in uris:
             ref = self.xmpp.plugin["xep_0372"].stanza.Reference()
