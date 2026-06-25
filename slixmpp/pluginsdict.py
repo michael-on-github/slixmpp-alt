@@ -67,6 +67,7 @@ from slixmpp.plugins.xep_0222 import XEP_0222
 from slixmpp.plugins.xep_0223 import XEP_0223
 from slixmpp.plugins.xep_0224 import XEP_0224
 from slixmpp.plugins.xep_0231 import XEP_0231
+from slixmpp.plugins.xep_0234 import XEP_0234
 from slixmpp.plugins.xep_0235 import XEP_0235
 from slixmpp.plugins.xep_0249 import XEP_0249
 from slixmpp.plugins.xep_0256 import XEP_0256
@@ -190,6 +191,7 @@ class PluginsDict(TypedDict):
     xep_0223: XEP_0223
     xep_0224: XEP_0224
     xep_0231: XEP_0231
+    xep_0234: XEP_0234
     xep_0235: XEP_0235
     xep_0249: XEP_0249
     xep_0256: XEP_0256
