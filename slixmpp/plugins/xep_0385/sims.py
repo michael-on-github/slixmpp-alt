@@ -64,7 +64,6 @@ class XEP_0385(BasePlugin):
         sims["file"]["date"] = datetime.fromtimestamp(stat.st_mtime)
 
         h = self.xmpp.plugin["xep_0300"].compute_hash(path)
-        h["value"] = h["value"].decode()
         sims["file"].append(h)
 
         ref = self.xmpp.plugin["xep_0372"].stanza.Reference()

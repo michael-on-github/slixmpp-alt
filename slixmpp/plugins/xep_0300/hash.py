@@ -97,5 +97,5 @@ class XEP_0300(BasePlugin):
                 h.update(block)
         hash_elem = Hash()
         hash_elem["algo"] = function
-        hash_elem["value"] = b64encode(h.digest())
+        hash_elem["value"] = b64encode(h.digest()).decode()
         return hash_elem

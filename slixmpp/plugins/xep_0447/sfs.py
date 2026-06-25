@@ -71,7 +71,6 @@ class XEP_0447(BasePlugin):
         sfs["file"]["date"] = datetime.fromtimestamp(stat.st_mtime)
 
         h = self.xmpp.plugin["xep_0300"].compute_hash(path)
-        h["value"] = h["value"].decode()
         sfs["file"].append(h)
 
         return sfs
