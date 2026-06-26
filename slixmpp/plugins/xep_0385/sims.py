@@ -1,8 +1,9 @@
+import io
 import logging
 from collections.abc import Iterable
 from datetime import datetime
 from pathlib import Path
-from typing import ClassVar
+from typing import IO, ClassVar
 
 from slixmpp.plugins import BasePlugin
 from slixmpp.plugins.xep_0372.stanza import Reference
@@ -42,10 +43,12 @@ class XEP_0385(BasePlugin):
 
     def get_sims(
         self,
-        path: Path,
-        uris: Iterable[str],
-        media_type: str | None,
-        desc: str | None,
+        path: Path | None = None,
+        uris: Iterable[str] = (),
+        media_type: str | None = None,
+        desc: str | None = None,
+        data: bytes | None = None,
+        file: IO[bytes] | None = None,
     ) -> Reference:
         sims = stanza.Sims()
         for uri in uris:
@@ -57,13 +60,20 @@ class XEP_0385(BasePlugin):
             sims["file"]["media-type"] = media_type
         if desc:
             sims["file"]["desc"] = desc
-        sims["file"]["name"] = path.name
+        if path:
+            sims["file"]["name"] = path.name
+            stat = path.stat()
+            sims["file"]["size"] = stat.st_size
+            sims["file"]["date"] = datetime.fromtimestamp(stat.st_mtime)
+        elif file:
+            file.seek(0, io.SEEK_END)
+            sims["file"]["size"] = file.tell()
+        elif data:
+            sims["file"]["size"] = len(data)
 
-        stat = path.stat()
-        sims["file"]["size"] = stat.st_size
-        sims["file"]["date"] = datetime.fromtimestamp(stat.st_mtime)
-
-        h = self.xmpp.plugin["xep_0300"].compute_hash(path)
+        h = self.xmpp.plugin["xep_0300"].compute_hash(
+            filename=path, data=data, file=file
+        )
         sims["file"].append(h)
 
         ref = self.xmpp.plugin["xep_0372"].stanza.Reference()
