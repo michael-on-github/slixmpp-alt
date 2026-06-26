@@ -7,7 +7,7 @@ import logging
 from base64 import b64encode
 from collections.abc import Callable
 from pathlib import Path
-from typing import ClassVar
+from typing import IO, ClassVar, Protocol, overload
 
 from slixmpp import JID, ClientXMPP, ComponentXMPP
 from slixmpp.plugins import BasePlugin
@@ -41,6 +41,7 @@ class XEP_0300(BasePlugin):
         "enable_BLAKE2b256": True,
         "enable_BLAKE2b512": True,
     }
+    block_size: int
 
     _hashlib_function: ClassVar[dict[str, Callable[[], HashFunc]]] = {
         "sha-1": hashlib.sha1,
@@ -76,7 +77,44 @@ class XEP_0300(BasePlugin):
 
         self.xmpp.plugin["xep_0030"].del_feature(feature=Hash.namespace)
 
-    def compute_hash(self, filename: str | Path, function: str | None = None) -> Hash:
+    @overload
+    def compute_hash(
+        self,
+        filename: str | Path,
+        function: str | None,
+        *,
+        data: None,
+        file: None,
+    ) -> Hash: ...
+
+    @overload
+    def compute_hash(
+        self,
+        filename: None,
+        function: str | None,
+        *,
+        data: bytes,
+        file: None,
+    ) -> Hash: ...
+
+    @overload
+    def compute_hash(
+        self,
+        filename: None,
+        function: str | None,
+        *,
+        data: None,
+        file: IO[bytes],
+    ) -> Hash: ...
+
+    def compute_hash(
+        self,
+        filename: str | Path | None = None,
+        function: str | None = None,
+        *,
+        data: bytes | None = None,
+        file: IO[bytes] | None = None,
+    ) -> Hash:
         """
         Compute the hash of a file, and return the relevant hash XML element.
 
@@ -89,12 +127,17 @@ class XEP_0300(BasePlugin):
         if function is None:
             function = self.preferred
         h = self._hashlib_function[function]()
-        with open(filename, "rb") as f:
-            while True:
-                block = f.read(self.block_size)
-                if not block:
-                    break
+        if data is not None:
+            h.update(data)
+        elif file is not None:
+            file.seek(0)
+            while block := file.read(self.block_size):
                 h.update(block)
+        elif filename is not None:
+            with open(filename, "rb") as file:
+                while block := file.read(self.block_size):
+                    h.update(block)
+
         hash_elem = Hash()
         hash_elem["algo"] = function
         hash_elem["value"] = b64encode(h.digest()).decode()
