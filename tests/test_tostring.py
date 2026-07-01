@@ -119,23 +119,23 @@ class TestToString(SlixTest):
         formatted = tostring_fmt(xml)
         self.assertEqual(formatted, (
 """<message>
-  <body>toto</body>
   <a />
   <b>
     <c />
     <c />
   </b>
+  <body>toto</body>
 </message>\n"""))
         xml = ET.fromstring('<message>  <body>toto</body>\n\n<a/><b>\n<c/><c/> </b> </message>')
         formatted = tostring_fmt(xml)
         self.assertEqual(formatted, (
 """<message>
-  <body>toto</body>
   <a />
   <b>
     <c />
     <c />
   </b>
+  <body>toto</body>
 </message>\n"""))
 
 suite = unittest.TestLoader().loadTestsFromTestCase(TestToString)

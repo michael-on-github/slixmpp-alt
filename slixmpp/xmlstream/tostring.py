@@ -153,7 +153,8 @@ def tostring_fmt(
     indent: str = "",
 ) -> str:
     """Serialize an XML object to a Unicode string, but with extra whitespace
-    for readability.
+    for readability, and attributes/children sorted lexicographically to make
+    diffs more readable.
 
     Code is duplicated from tostring to avoid making it even more complex than
     it is, as well as to keep the additions away from the hot path.
@@ -216,9 +217,9 @@ def tostring_fmt(
     output.append(f"<{tag_name}")
     output.append(namespace)
 
-    # Output escaped attribute values.
+    # Output escaped attribute values (sorted lexicographically).
     new_namespaces = set()
-    for attrib, value in xml.attrib.items():
+    for attrib, value in sorted(xml.attrib.items()):
         value = escape(value, use_cdata)
         if "}" not in attrib:
             output.append(f' {attrib}="{value}"')
@@ -248,7 +249,8 @@ def tostring_fmt(
             output.append(escape(xml.text.strip(), use_cdata))
         if len(xml):
             output.append("\n")
-            for child in xml:
+            # Sort child elements lexicographically by tag name
+            for child in sorted(xml, key=lambda e: e.tag):
                 output.append(
                     tostring_fmt(
                         child,
