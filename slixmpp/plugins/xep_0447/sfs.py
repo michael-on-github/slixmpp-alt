@@ -118,7 +118,7 @@ class XEP_0447(BasePlugin):
         elif data:
             sfs["file"]["size"] = len(data)
 
-        h = self.xmpp.plugin["xep_0300"].compute_hash(
+        h = self.xmpp.plugin["xep_0300"].compute_hash(  # type:ignore[call-overload] # ty:ignore[no-matching-overload]
             filename=path, data=data, file=file
         )
         sfs["file"].append(h)
