@@ -13,13 +13,16 @@
 import datetime
 import os
 import sys
+from pathlib import Path
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath(".."))
+sys.path.append(str(Path(__file__).parent / "_extensions"))
 
 # get version automagically from source tree
+import slixmpp.plugins
 from slixmpp.version import __version__ as version
 
 release = ".".join(version.split(".")[0:2])
@@ -36,6 +39,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
     "sphinx_autodoc_typehints",
+    "slix_plugins",
 ]
 
 
@@ -245,3 +249,5 @@ man_pages = [
 ]
 
 intersphinx_mapping = {"python": ("http://docs.python.org/3.9", "python-objects.inv")}
+
+slixmpp_plugin_path = slixmpp.plugins.__path__[0]
