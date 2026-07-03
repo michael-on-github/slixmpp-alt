@@ -18,6 +18,7 @@ class Privilege(ElementBase):
         for perm in self["perms"]:
             if perm["access"] == access:
                 return perm["type"]
+        return None
 
     def roster(self) -> str | None:
         return self.permission("roster")
