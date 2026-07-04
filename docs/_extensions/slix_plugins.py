@@ -3,7 +3,6 @@ Sphinx extension to auto-discover and document slixmpp plugins.
 """
 
 import importlib
-import re
 from pathlib import Path
 
 from sphinx.application import Config, Sphinx
@@ -49,11 +48,7 @@ def _generate_plugin_content(plugin_name: str) -> str:
     module = importlib.import_module(f"slixmpp.plugins.{plugin_name}")
     cls = getattr(module, plugin_name.upper(), None)
     if cls is not None:
-        doc = cls.__doc__
-        if doc:
-            matches = re.findall(f".*({plugin_name.upper().replace('_', '-')}:.*)", doc)
-            if matches:
-                title = matches[0].removesuffix(".").strip()
+        title = cls.description
     title = title + "\n" + len(title) * "="
 
     base = PLUGIN_TEMPLATE.format(title=title, xep_num=xep_num)
