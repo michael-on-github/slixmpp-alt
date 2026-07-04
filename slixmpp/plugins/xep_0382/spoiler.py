@@ -12,7 +12,7 @@ class XEP_0382(BasePlugin):
     '''XEP-0382: Spoiler Messages'''
 
     name = 'xep_0382'
-    description = 'Spoiler Messages'
+    description = 'XEP-0382: Spoiler Messages'
     dependencies = {'xep_0030'}
     stanza = stanza
     namespace = stanza.NS

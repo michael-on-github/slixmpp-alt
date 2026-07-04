@@ -28,7 +28,7 @@ class XEP_0292(BasePlugin):
     xmpp: ComponentXMPP
 
     name = "xep_0292"
-    description = "vCard4 Over XMPP"
+    description = "XEP-0292: vCard4 Over XMPP"
     dependencies = {"xep_0163", "xep_0060", "xep_0030"}
     stanza = stanza
 
