@@ -694,7 +694,7 @@ class SlixTest(unittest.TestCase):
 
     def send(
         self,
-        data: str,
+        data: str | None,
         defaults: list[str] | None = None,
         use_values: bool = True,
         timeout: float = 0.5,
