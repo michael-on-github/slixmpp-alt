@@ -16,7 +16,7 @@ class TestStreamInvalidJID(SlixTest):
             </presence>
             """
         )
-        self.send(None)
+        self.send(None, timeout=0.05)
 
     def test_component_presence_to(self) -> None:
         self.stream_start(mode="component", plugins=[])
@@ -26,7 +26,7 @@ class TestStreamInvalidJID(SlixTest):
             </presence>
             """
         )
-        self.send(None)
+        self.send(None, timeout=0.05)
 
     def test_client_presence_from(self) -> None:
         self.stream_start(mode="client", plugins=[])
@@ -36,7 +36,7 @@ class TestStreamInvalidJID(SlixTest):
             </presence>
             """
         )
-        self.send(None)
+        self.send(None, timeout=0.05)
 
     def test_iq_get_no_handler(self) -> None:
         # xep_0086 "stays loaded" somwhoe when running the full test suite, so
