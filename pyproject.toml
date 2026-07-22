@@ -8,12 +8,12 @@ authors = [
     { name = "Florent Le Coz", email = "louiz@louiz.org" },
     { name = "Mathieu Pasquet (mathieui)", email = "mathieui@mathieui.net" },
     { name = "Emmanuel Gil Peyrot (Link Mauve)", email = "linkmauve@linkmauve.fr" },
-    { name = "Maxime “pep” Buquet", email = "pep@bouah.org" },
+    { name = "Maxime “pep” Buquet", email = "pep@bouah.net" },
 ]
 maintainers = [
     { name = "Mathieu Pasquet (mathieui)", email = "mathieui@mathieui.net" },
     { name = "Emmanuel Gil Peyrot (Link Mauve)", email = "linkmauve@linkmauve.fr" },
-    { name = "Maxime “pep” Buquet", email = "pep@bouah.org" },
+    { name = "Maxime “pep” Buquet", email = "pep@bouah.net" },
 ]
 requires-python = ">=3.11"
 dependencies = [
