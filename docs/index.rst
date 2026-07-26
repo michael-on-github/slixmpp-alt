@@ -151,7 +151,7 @@ SleekXMPP Credits
 
 Slixmpp is a friendly fork of `SleekXMPP <https://github.com/fritzy/SleekXMPP>`_
 which goal is to use asyncio instead of threads to handle networking. See
-:ref:`differences`. We are crediting SleekXMPP Authors here.
+:ref:`differences`. SleekXMPP is now deprecated. We are crediting SleekXMPP Authors here.
 
 .. note::
     Those people made SleekXMPP, so you should not bother them if
@@ -170,12 +170,6 @@ which goal is to use asyncio instead of threads to handle networking. See
 **Co-Author:** `Lance Stout <http://andyet.net/team/lance>`_
      `lancestout@gmail.com <xmpp:lancestout@gmail.com?message>`_,
      `@lancestout <http://twitter.com/lancestout>`_
-
-Both Fritzy and Lance work for `&yet <http://andyet.net>`_, which specializes in
-realtime web and XMPP applications.
-
-    - `contact@andyet.net <mailto:contact@andyet.net>`_
-    - `XMPP Consulting <http://xmppconsulting.com>`_
 
 **Contributors:**
     - Brian Beggs (`macdiesel <http://github.com/macdiesel>`_)
