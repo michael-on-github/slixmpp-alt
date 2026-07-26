@@ -1,5 +1,8 @@
+Getting Started (with examples)
+-------------------------------
+
 Before starting…
-----------------
+################
 
 Slixmpp is a library for using the XMPP protocol, so if you are not very familiar
 with the core XMPP concepts, here are a few that are essential to
@@ -59,8 +62,6 @@ e.g. ``<message id="some-id" />``. An ``Iq`` must have an identifier.
 
 
 
-Getting Started (with examples)
--------------------------------
 
 .. toctree::
     :maxdepth: 3

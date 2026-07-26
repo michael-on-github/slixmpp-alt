@@ -609,7 +609,7 @@ processing the same stanza twice.
 
 
 Dedicated PubSub Events
-=======================
+#######################
 
 The :class:`~.XEP_0060` plugin (and :class:`~.XEP_0163` plugin, which uses
 the former) allows other plugins to map specific namespaces in
