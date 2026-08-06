@@ -274,21 +274,24 @@ class BaseXMPP(XMLStream):
             load_plugin(plugin, module)
         self.plugin.enable(plugin, pconfig)  # type: ignore
 
-    def register_plugins(self):
+    def register_plugins(self, exclude: set[str] | None = None) -> None:
         """Register and initialize all built-in plugins.
 
         Optionally, the list of plugins loaded may be limited to those
         contained in :attr:`plugin_whitelist`.
 
         Plugin configurations stored in :attr:`plugin_config` will be used.
+
+        :param exclude: set of plugin names to exclude from the loading.
         """
+        exclude = exclude or set()
         if self.plugin_whitelist:
             plugin_list = self.plugin_whitelist
         else:
             plugin_list = plugins.PLUGINS
 
         for plugin in plugin_list:
-            if plugin in plugins.PLUGINS:
+            if plugin in plugins.PLUGINS and plugin not in exclude:
                 self.register_plugin(plugin)
             else:
                 raise NameError("Plugin %s not in plugins.PLUGINS." % plugin)
