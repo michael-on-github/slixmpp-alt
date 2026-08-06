@@ -975,7 +975,7 @@ class XMLStream(asyncio.BaseProtocol):
         """Remove an incoming or outgoing filter."""
         self.__filters[mode].remove(handler)
 
-    def register_handler(self, handler: BaseHandler, before: BaseHandler | None = None, after: BaseHandler | None = None) -> None:
+    def register_handler(self, handler: BaseHandler, before: BaseHandler | None = None) -> None:
         """Add a stream event handler that will be executed when a matching
         stanza is received.
 
