@@ -10,7 +10,6 @@ matrix:
   ARCH:
     - amd64
     - arm64
-    - armv7l
   TARGET:
     - musllinux
     - manylinux
