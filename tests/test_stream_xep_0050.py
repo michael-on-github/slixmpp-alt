@@ -94,6 +94,9 @@ class TestAdHocCommands(SlixTest):
           </iq>
         """)
 
+        self.assertEqual(len(self.xmpp.plugin['xep_0050'].sessions), 0,
+                         'Completed command should clean up session')
+
         self.send("""
           <iq id="11" type="result" to="foo@bar">
             <command xmlns="http://jabber.org/protocol/commands"
@@ -169,6 +172,7 @@ class TestAdHocCommands(SlixTest):
             </command>
           </iq>
         """)
+
 
         self.send("""
           <iq id="12" type="result" to="foo@bar">

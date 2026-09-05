@@ -386,6 +386,8 @@ class XEP_0050(BasePlugin):
         if session['next'] is None:
             iq['command']['actions'] = []
             iq['command']['status'] = 'completed'
+            self._cancel_timeout_task(sessionid)
+            del self.sessions[sessionid]
         elif session['has_next']:
             actions = ['next']
             if session['allow_complete']:
