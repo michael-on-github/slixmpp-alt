@@ -35,6 +35,7 @@ class XEP_0380(BasePlugin):
         'urn:xmpp:otr:0': 'OTR',
         'eu.siacs.conversations.axolotl': 'Legacy OMEMO',
         'urn:xmpp:omemo:0': 'OMEMO',
+        'urn:xmpp:omemo:2': 'OMEMO 2',
     }
 
     def plugin_init(self):
